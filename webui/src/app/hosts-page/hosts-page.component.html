@@ -4,8 +4,10 @@
         <app-help-tip title="this page">
             <p>
                 This page displays a list of host reservations in the network. Kea can store host reservations in two
-                places: a configuration file or a database. The reservations stored in a configuration file are
-                retrieved continuously, while those from a database (MySQL, PostgreSQL, or Cassandra) need Kea to have a
+                places: a configuration file or a database. The location of the host reservation is reported below 
+                under Source.
+                Reservations stored in a configuration file are retrieved continuously, while those from a database 
+                (MySQL, PostgreSQL, or Cassandra) are retrieved only if Kea has a 
                 <a href="https://kea.readthedocs.io/en/latest/arm/hooks.html#host-cmds-host-commands">host_cmds hook</a>
                 loaded.
             </p>
@@ -89,6 +91,7 @@
                     <th rowspan="2" style="width: 25rem;">DHCP Identifiers</th>
                     <th colspan="2" style="width: 40rem;">IP Reservations</th>
                     <th rowspan="2" style="width: 14rem;">Global/Subnet</th>
+                    <th rowspan="2" style="width: 20rem;">Source</th>
                     <th rowspan="2" style="width: 20rem;">AppID @ Machine</th>
                 </tr>
                 <tr>
@@ -145,11 +148,16 @@
                     </td>
                     <td align="center">
                         <a *ngFor="let lh of h.localHosts" routerLink="/apps/kea/{{ lh.appId }}" style="display: block;"
-                            >{{ lh.appId }} @ {{ lh.machineAddress }}
+                        >{{ lh.dataSource }}
                             <sup pTooltip="{{ hostDataSourceTooltip(lh.dataSource) }}">
-                                <span *ngIf="lh.dataSource === 'config'" id="cfg_srctag">config </span>
-                                <span *ngIf="lh.dataSource === 'api'" id="hostcmds_srctag">host_cmds </span>
+                                <span *ngIf="lh.dataSource === 'config'" id="cfg_srctag">local configuration </span>
+                                <span *ngIf="lh.dataSource === 'api'" id="hostcmds_srctag">DB via host_cmds </span>
                             </sup>
+                        </a>
+                    </td>
+                    <td align="center">
+                        <a *ngFor="let lh of h.localHosts" routerLink="/apps/kea/{{ lh.appId }}" style="display: block;"
+                            >{{ lh.appId }} @ {{ lh.machineAddress }}
                         </a>
                     </td>
                 </tr>
