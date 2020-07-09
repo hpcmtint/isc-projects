@@ -355,6 +355,7 @@ func GetAllApps(db *pg.DB) ([]App, error) {
 	q = q.Relation("AccessPoints")
 	q = q.Relation("Daemons.KeaDaemon.KeaDHCPDaemon")
 	q = q.Relation("Daemons.Bind9Daemon")
+	q = q.Relation("Machine")
 	q = q.OrderExpr("id ASC")
 
 	// retrieve apps from db

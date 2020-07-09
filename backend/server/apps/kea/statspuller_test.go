@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"isc.org/stork/server/agentcomm"
+	agentcommtest "isc.org/stork/server/agentcomm/test"
 	dbmodel "isc.org/stork/server/database/model"
 	dbtest "isc.org/stork/server/database/test"
-	storktest "isc.org/stork/server/test"
 )
 
 // Check creating and shutting down StatsPuller.
@@ -27,7 +27,7 @@ func TestStatsPullerBasic(t *testing.T) {
 	require.NoError(t, err)
 
 	// prepare fake agents
-	fa := storktest.NewFakeAgents(nil, nil)
+	fa := agentcommtest.NewFakeAgents(nil, nil)
 
 	sp, _ := NewStatsPuller(db, fa)
 	sp.Shutdown()
@@ -79,7 +79,7 @@ func TestStatsPullerPullStats(t *testing.T) {
                         }]`
 		agentcomm.UnmarshalKeaResponseList(command, json, cmdResponses[1])
 	}
-	fa := storktest.NewFakeAgents(keaMock, nil)
+	fa := agentcommtest.NewFakeAgents(keaMock, nil)
 
 	// prepare apps with subnets and local subnets
 	v4Config := `
@@ -197,7 +197,7 @@ func TestStatsPullerEmptyResponse(t *testing.T) {
                         }]`
 		agentcomm.UnmarshalKeaResponseList(command, json, cmdResponses[1])
 	}
-	fa := storktest.NewFakeAgents(keaMock, nil)
+	fa := agentcommtest.NewFakeAgents(keaMock, nil)
 
 	// add one machine with one kea app
 	m := &dbmodel.Machine{

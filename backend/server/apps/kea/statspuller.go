@@ -265,16 +265,11 @@ func (statsPuller *StatsPuller) storeDaemonStats(resultSet *ResultSetInStatLease
 
 // Get lease stats from given kea app.
 func (statsPuller *StatsPuller) getLeaseStatsFromApp(dbApp *dbmodel.App) error {
-	// prepare URL to CA
-	ctrlPoint, err := dbApp.GetAccessPoint(dbmodel.AccessPointControl)
-	if err != nil {
-		return err
-	}
 	// get active dhcp daemons
 	dhcpDaemons := make(agentcomm.KeaDaemons)
 	found := false
 	for _, d := range dbApp.Daemons {
-		if d.KeaDaemon != nil && (d.Name == "dhcp4" || d.Name == "dhcp6") {
+		if d.KeaDaemon != nil && d.Active && (d.Name == "dhcp4" || d.Name == "dhcp6") {
 			dhcpDaemons[d.Name] = true
 			found = true
 		}
@@ -303,7 +298,7 @@ func (statsPuller *StatsPuller) getLeaseStatsFromApp(dbApp *dbmodel.App) error {
 	statsResp1 := []StatLeaseGetResponse{}
 	statsResp2 := []StatLeaseGetResponse{}
 	ctx := context.Background()
-	cmdsResult, err := statsPuller.Agents.ForwardToKeaOverHTTP(ctx, dbApp.Machine.Address, dbApp.Machine.AgentPort, ctrlPoint.Address, ctrlPoint.Port, cmds, &statsResp1, &statsResp2)
+	cmdsResult, err := statsPuller.Agents.ForwardToKeaOverHTTP(ctx, dbApp, cmds, &statsResp1, &statsResp2)
 	if err != nil {
 		return err
 	}
