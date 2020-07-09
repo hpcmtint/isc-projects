@@ -31,6 +31,7 @@ import { CardModule } from 'primeng/card'
 import { SplitButtonModule } from 'primeng/splitbutton'
 import { FieldsetModule } from 'primeng/fieldset'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { InputSwitchModule } from 'primeng/inputswitch'
 
 // Generated API modules
 import { ApiModule, BASE_PATH, Configuration, ConfigurationParameters } from './backend'
@@ -150,6 +151,7 @@ export function preinitApp(appInitService: AppInitService) {
         SplitButtonModule,
         FieldsetModule,
         OverlayPanelModule,
+        InputSwitchModule,
     ],
     providers: [
         {

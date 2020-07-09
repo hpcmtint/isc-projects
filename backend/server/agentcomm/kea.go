@@ -6,6 +6,8 @@ import (
 	"sort"
 
 	"github.com/pkg/errors"
+
+	//log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -119,6 +121,7 @@ func (c *KeaCommand) Marshal() string {
 
 // Parses response received from the Kea Control Agent.
 func UnmarshalKeaResponseList(request *KeaCommand, response string, parsed interface{}) error {
+	//log.Printf("RESPONSE %s", response)
 	err := json.Unmarshal([]byte(response), parsed)
 	if err != nil {
 		err = errors.Wrapf(err, "failed to parse responses from Kea: %s", response)

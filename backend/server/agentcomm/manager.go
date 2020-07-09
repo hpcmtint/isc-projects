@@ -75,7 +75,6 @@ func (agents *connectedAgentsData) handleRequest(req *commLoopReq) {
 	// get agent and its grpc connection
 	agent, err := agents.GetConnectedAgent(req.AgentAddr)
 	if err != nil {
-		agent.Stats.CurrentErrors++
 		req.RespChan <- &channelResp{Response: nil, Err: err}
 		return
 	}
@@ -85,7 +84,6 @@ func (agents *connectedAgentsData) handleRequest(req *commLoopReq) {
 	response, err := doCall(ctx, agent, req.ReqData)
 
 	if err != nil {
-		agent.Stats.CurrentErrors++
 		// GetConnectedAgent remembers the grpc connection so it might
 		// return an already existing connection.  This connection may
 		// be broken so we should retry at least once.
@@ -115,6 +113,5 @@ func (agents *connectedAgentsData) handleRequest(req *commLoopReq) {
 		}
 	}
 
-	agent.Stats.CurrentErrors = 0
 	req.RespChan <- &channelResp{Response: response, Err: nil}
 }

@@ -146,7 +146,7 @@ func (sa *StorkAgent) ForwardRndcCommand(ctx context.Context, in *agentapi.Forwa
 			"Key":     accessPoints[0].Key,
 		}).Errorf("Failed to forward commands to rndc: %+v", err)
 		rndcRsp.Status.Code = agentapi.Status_ERROR
-		rndcRsp.Status.Message = "Failed to forward commands to rndc"
+		rndcRsp.Status.Message = fmt.Sprintf("Failed to forward commands to rndc: %s", err)
 	} else {
 		rndcRsp.Status.Code = agentapi.Status_OK
 		rndcRsp.Response = string(output)
@@ -178,7 +178,7 @@ func (sa *StorkAgent) ForwardToNamedStats(ctx context.Context, in *agentapi.Forw
 			"URL": reqURL,
 		}).Errorf("Failed to forward commands to named: %+v", err)
 		rsp.Status.Code = agentapi.Status_ERROR
-		rsp.Status.Message = "Failed to forward commands to named"
+		rsp.Status.Message = fmt.Sprintf("Failed to forward commands to named: %s", err)
 		response.NamedStatsResponse = rsp
 		return response, nil
 	}
@@ -191,7 +191,7 @@ func (sa *StorkAgent) ForwardToNamedStats(ctx context.Context, in *agentapi.Forw
 			"URL": reqURL,
 		}).Errorf("Failed to read the body of the named response: %+v", err)
 		rsp.Status.Code = agentapi.Status_ERROR
-		rsp.Status.Message = "Failed to read the body of the named response"
+		rsp.Status.Message = fmt.Sprintf("Failed to read the body of the named response: %s", err)
 		response.NamedStatsResponse = rsp
 		return response, nil
 	}
@@ -206,15 +206,22 @@ func (sa *StorkAgent) ForwardToNamedStats(ctx context.Context, in *agentapi.Forw
 // Forwards one or more Kea commands sent by the Stork server to the appropriate Kea instance over
 // HTTP (via Control Agent).
 func (sa *StorkAgent) ForwardToKeaOverHTTP(ctx context.Context, in *agentapi.ForwardToKeaOverHTTPReq) (*agentapi.ForwardToKeaOverHTTPRsp, error) {
-	reqURL := in.GetUrl()
-
-	requests := in.GetKeaRequests()
-
+	// prepare bas response
 	response := &agentapi.ForwardToKeaOverHTTPRsp{
 		Status: &agentapi.Status{
 			Code: agentapi.Status_OK, // all ok
 		},
 	}
+
+	// check URL to CA
+	reqURL := in.GetUrl()
+	if reqURL == "" {
+		response.Status.Code = agentapi.Status_ERROR
+		response.Status.Message = "Incorrect URL to Kea CA"
+		return response, nil
+	}
+
+	requests := in.GetKeaRequests()
 
 	// forward requests to kea one by one
 	for _, req := range requests {
@@ -226,9 +233,9 @@ func (sa *StorkAgent) ForwardToKeaOverHTTP(ctx context.Context, in *agentapi.For
 		if err != nil {
 			log.WithFields(log.Fields{
 				"URL": reqURL,
-			}).Errorf("Failed to forward commands to Kea: %+v", err)
+			}).Errorf("Failed to forward commands to Kea CA: %+v", err)
 			rsp.Status.Code = agentapi.Status_ERROR
-			rsp.Status.Message = "Failed to forward commands to Kea"
+			rsp.Status.Message = fmt.Sprintf("Failed to forward commands to Kea CA: %s", err)
 			response.KeaResponses = append(response.KeaResponses, rsp)
 			continue
 		}
@@ -241,7 +248,7 @@ func (sa *StorkAgent) ForwardToKeaOverHTTP(ctx context.Context, in *agentapi.For
 				"URL": reqURL,
 			}).Errorf("Failed to read the body of the Kea response to forwarded commands: %+v", err)
 			rsp.Status.Code = agentapi.Status_ERROR
-			rsp.Status.Message = "Failed to read the body of the Kea response"
+			rsp.Status.Message = fmt.Sprintf("Failed to read the body of the Kea response: %s", err)
 			response.KeaResponses = append(response.KeaResponses, rsp)
 			continue
 		}

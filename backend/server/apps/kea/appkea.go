@@ -85,7 +85,7 @@ type VersionGetResponse struct {
 // It also returns:
 // - list of all Kea daemons
 // - list of DHCP daemons (dhcpv4 and/or dhcpv6)
-func getStateFromCA(ctx context.Context, agents agentcomm.ConnectedAgents, caAddress string, caPort int64, dbApp *dbmodel.App, daemonsMap map[string]*dbmodel.Daemon) (agentcomm.KeaDaemons, agentcomm.KeaDaemons, error) {
+func getStateFromCA(ctx context.Context, agents agentcomm.ConnectedAgents, caAddress string, caPort int64, dbApp *dbmodel.App, daemonsMap map[string]*dbmodel.Daemon, daemonsErrors map[string]string) (agentcomm.KeaDaemons, agentcomm.KeaDaemons, error) {
 	// prepare the command to get config and version from CA
 	cmds := []*agentcomm.KeaCommand{
 		{
@@ -100,7 +100,7 @@ func getStateFromCA(ctx context.Context, agents agentcomm.ConnectedAgents, caAdd
 	versionGetResp := []VersionGetResponse{}
 	caConfigGetResp := []CAConfigGetResponse{}
 
-	cmdsResult, err := agents.ForwardToKeaOverHTTP(ctx, dbApp.Machine.Address, dbApp.Machine.AgentPort, caAddress, caPort, cmds, &versionGetResp, &caConfigGetResp)
+	cmdsResult, err := agents.ForwardToKeaOverHTTP(ctx, dbApp, cmds, &versionGetResp, &caConfigGetResp)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -122,30 +122,50 @@ func getStateFromCA(ctx context.Context, agents agentcomm.ConnectedAgents, caAdd
 	// if not found then prepare new record
 	if !found {
 		daemonsMap["ca"] = &dbmodel.Daemon{
-			Name:   "ca",
-			Active: true,
+			Name:      "ca",
+			Active:    true,
+			Monitored: true,
 		}
 	}
 
-	// if no error in the response then copy retrieved info about CA to its record
-	if cmdsResult.CmdsErrors[0] == nil {
-		vRsp := versionGetResp[0]
-		dmn := daemonsMap["ca"]
-		if vRsp.Result != 0 {
-			dmn.Active = false
-			log.Warnf("problem with version-get from CA: %s", vRsp.Text)
+	// if no error in the version-get response then copy retrieved info about CA to its record
+	dmn := daemonsMap["ca"]
+	err = cmdsResult.CmdsErrors[0]
+	if err != nil || versionGetResp == nil || len(versionGetResp) == 0 || versionGetResp[0].Result != 0 {
+		dmn.Active = false
+		errStr := "problem with version-get response from CA: "
+		if err != nil {
+			errStr += fmt.Sprintf("%s", err)
+		} else if versionGetResp == nil || len(versionGetResp) == 0 {
+			errStr += fmt.Sprintf("empty response")
 		} else {
-			dmn.Version = vRsp.Text
-			dbApp.Meta.Version = vRsp.Text
-			if vRsp.Arguments != nil {
-				dmn.ExtendedVersion = vRsp.Arguments.Extended
-			}
+			errStr += fmt.Sprintf("result == %d, msg: %s", versionGetResp[0].Result, versionGetResp[0].Result)
 		}
-	} else {
-		log.Warnf("problem with version-get response from CA: %s", cmdsResult.CmdsErrors[0])
+		log.Warnf(errStr)
+		daemonsErrors["ca"] = errStr
+		return nil, nil, err
 	}
 
-	// prepare a set of available daemons
+	dmn.Version = versionGetResp[0].Text
+	dbApp.Meta.Version = versionGetResp[0].Text
+	if versionGetResp[0].Arguments != nil {
+		dmn.ExtendedVersion = versionGetResp[0].Arguments.Extended
+	}
+
+	// if no error in the config-get response then copy retrieved info about available daemons
+	if caConfigGetResp == nil || len(caConfigGetResp) == 0 || caConfigGetResp[0].Result != 0 || caConfigGetResp[0].Arguments == nil || caConfigGetResp[0].Arguments.ControlAgent == nil || caConfigGetResp[0].Arguments.ControlAgent.ControlSockets == nil {
+		dmn.Active = false
+		errStr := "problem with config-get response from CA: "
+		if caConfigGetResp == nil || len(caConfigGetResp) == 0 || caConfigGetResp[0].Arguments == nil || caConfigGetResp[0].Arguments.ControlAgent == nil || caConfigGetResp[0].Arguments.ControlAgent.ControlSockets == nil {
+			errStr += "response is empty"
+		} else {
+			errStr += fmt.Sprintf("result == %d, msg: %s", caConfigGetResp[0].Result, caConfigGetResp[0].Result)
+		}
+		log.Warnf(errStr)
+		daemonsErrors["ca"] = errStr
+		return nil, nil, err
+	}
+
 	allDaemons := make(agentcomm.KeaDaemons)
 	dhcpDaemons := make(agentcomm.KeaDaemons)
 	if caConfigGetResp[0].Arguments.ControlAgent.ControlSockets != nil {
@@ -167,7 +187,7 @@ func getStateFromCA(ctx context.Context, agents agentcomm.ConnectedAgents, caAdd
 
 // Get state of Kea application daemons (beside Control Agent) using ForwardToKeaOverHTTP function.
 // The state, that is stored into dbApp, includes: version, config and runtime state of indicated Kea daemons.
-func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, caAddress string, caPort int64, dbApp *dbmodel.App, daemonsMap map[string]*dbmodel.Daemon, allDaemons agentcomm.KeaDaemons, dhcpDaemons agentcomm.KeaDaemons) error {
+func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, caAddress string, caPort int64, dbApp *dbmodel.App, daemonsMap map[string]*dbmodel.Daemon, allDaemons agentcomm.KeaDaemons, dhcpDaemons agentcomm.KeaDaemons, daemonsErrors map[string]string) error {
 	now := storkutil.UTCNow()
 
 	// issue 3 commands to Kea daemons at once to get their state
@@ -190,7 +210,7 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 	statusGetResp := []StatusGetResponse{}
 	configGetResp := []agentcomm.KeaResponse{}
 
-	cmdsResult, err := agents.ForwardToKeaOverHTTP(ctx, dbApp.Machine.Address, dbApp.Machine.AgentPort, caAddress, caPort, cmds, &versionGetResp, &statusGetResp, &configGetResp)
+	cmdsResult, err := agents.ForwardToKeaOverHTTP(ctx, dbApp, cmds, &versionGetResp, &statusGetResp, &configGetResp)
 	if err != nil {
 		return err
 	}
@@ -204,6 +224,10 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 		for _, dmn := range dbApp.Daemons {
 			if dmn.Name == name {
 				dmnCopy := *dmn
+
+				// at first all daemons are marked as active; active state will be updated below
+				dmnCopy.Active = true
+
 				daemonsMap[name] = &dmnCopy
 				found = true
 			}
@@ -217,13 +241,19 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 	// process version-get responses
 	err = cmdsResult.CmdsErrors[0]
 	if err != nil {
-		log.Warnf("problem with version-get response: %s", err)
+		return errors.WithMessage(err, "problem with version-get response")
 	} else {
 		for _, vRsp := range versionGetResp {
-			dmn := daemonsMap[vRsp.Daemon]
+			dmn, ok := daemonsMap[vRsp.Daemon]
+			if !ok {
+				log.Warn("unrecognized daemon in version-get response: %v", vRsp)
+				continue
+			}
 			if vRsp.Result != 0 {
 				dmn.Active = false
-				log.Warnf("problem with version-get and kea daemon %s: %s", vRsp.Daemon, vRsp.Text)
+				errStr := fmt.Sprintf("problem with version-get and kea daemon %s: %s", vRsp.Daemon, vRsp.Text)
+				log.Warnf(errStr)
+				daemonsErrors[dmn.Name] = errStr
 				continue
 			}
 
@@ -237,13 +267,19 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 	// process status-get responses
 	err = cmdsResult.CmdsErrors[1]
 	if err != nil {
-		log.Warnf("problem with status-get response: %s", err)
+		return errors.WithMessage(err, "problem with status-get response")
 	} else {
 		for _, sRsp := range statusGetResp {
-			dmn := daemonsMap[sRsp.Daemon]
+			dmn, ok := daemonsMap[sRsp.Daemon]
+			if !ok {
+				log.Warn("unrecognized daemon in status-get response: %v", sRsp)
+				continue
+			}
 			if sRsp.Result != 0 {
 				dmn.Active = false
-				log.Warnf("problem with status-get and kea daemon %s: %s", sRsp.Daemon, sRsp.Text)
+				errStr := fmt.Sprintf("problem with status-get and kea daemon %s: %s", sRsp.Daemon, sRsp.Text)
+				log.Warnf(errStr)
+				daemonsErrors[dmn.Name] = errStr
 				continue
 			}
 
@@ -257,10 +293,14 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 	// process config-get responses
 	err = cmdsResult.CmdsErrors[2]
 	if err != nil {
-		log.Warnf("problem with config-get response: %s", err)
+		return errors.WithMessage(err, "problem with config-get response")
 	} else {
 		for _, cRsp := range configGetResp {
-			dmn := daemonsMap[cRsp.Daemon]
+			dmn, ok := daemonsMap[cRsp.Daemon]
+			if !ok {
+				log.Warn("unrecognized daemon in config-get response: %v", cRsp)
+				continue
+			}
 			if cRsp.Result != 0 {
 				dmn.Active = false
 				log.Warnf("problem with config-get and kea daemon %s: %s", cRsp.Daemon, cRsp.Text)
@@ -276,7 +316,7 @@ func getStateFromDaemons(ctx context.Context, agents agentcomm.ConnectedAgents, 
 
 // Get state of Kea application daemons using ForwardToKeaOverHTTP function.
 // The state that is stored into dbApp includes: version, config and runtime state of indicated Kea daemons.
-func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *dbmodel.App) []*dbmodel.Event {
+func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *dbmodel.App, eventCenter eventcenter.EventCenter) []*dbmodel.Event {
 	// prepare URL to CA
 	ctrlPoint, err := dbApp.GetAccessPoint(dbmodel.AccessPointControl)
 	if err != nil {
@@ -289,31 +329,63 @@ func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *d
 
 	// get state from CA
 	daemonsMap := map[string]*dbmodel.Daemon{}
-	allDaemons, dhcpDaemons, err := getStateFromCA(ctx2, agents, ctrlPoint.Address, ctrlPoint.Port, dbApp, daemonsMap)
+	daemonsErrors := map[string]string{}
+	allDaemons, dhcpDaemons, err := getStateFromCA(ctx2, agents, ctrlPoint.Address, ctrlPoint.Port, dbApp, daemonsMap, daemonsErrors)
+	if err != nil {
+		log.Warnf("problem with getting state from kea CA: %s", err)
+		errStr, ok := daemonsErrors["ca"]
+		if !ok {
+			errStr = fmt.Sprintf("%s", err)
+		}
+		eventCenter.AddErrorEvent("cannot get state from Kea CA from {app} on {machine}", errStr, dbApp.Machine, dbApp)
+	}
 
 	// if no problems then now get state from the rest of Kea daemons
-	if err == nil {
-		err = getStateFromDaemons(ctx2, agents, ctrlPoint.Address, ctrlPoint.Port, dbApp, daemonsMap, allDaemons, dhcpDaemons)
-		if err != nil {
-			log.Warnf("problem with getting state from kea daemons: %s", err)
-		}
-	} else {
-		log.Warnf("problem with getting state from kea CA: %s", err)
+	err = getStateFromDaemons(ctx2, agents, ctrlPoint.Address, ctrlPoint.Port, dbApp, daemonsMap, allDaemons, dhcpDaemons, daemonsErrors)
+	if err != nil {
+		log.Warnf("problem with getting state from kea daemons: %s", err)
+		errStr := fmt.Sprintf("%s", err)
+		eventCenter.AddErrorEvent("cannot get state from Kea CA from {app} on {machine}", errStr, dbApp.Machine, dbApp)
 	}
 
 	// store all collected details in app db record
 	newActive := true
 	var newDaemons []*dbmodel.Daemon
 	var events []*dbmodel.Event
-	for name := range daemonsMap {
-		dmn := daemonsMap[name]
-		// if all daemons are active then whole app is active
-		newActive = newActive && dmn.Active
 
-		newDaemons = append(newDaemons, dmn)
+	// If app already existed then...
+	if dbApp.ID != 0 {
+		newCADmn, ok := daemonsMap["ca"]
+		if !ok || !newCADmn.Active {
+			for _, oldDmn := range dbApp.Daemons {
+				if oldDmn.Active {
+					// add ref to app in daemon so it is available in CreateEvent
+					oldDmn.App = dbApp
+					oldDmn.Active = false
+					errStr, ok := daemonsErrors[oldDmn.Name]
+					if !ok {
+						errStr = ""
+					}
+					ev := eventcenter.CreateEvent(dbmodel.EvError, "{daemon} is down", errStr, dbApp.Machine, dbApp, oldDmn)
+					events = append(events, ev)
+				}
+			}
+			if dbApp.Active {
+				dbApp.Active = false
+				ev := eventcenter.CreateEvent(dbmodel.EvError, "{app} is down", dbApp.Machine, dbApp)
+				events = append(events, ev)
+			}
+			return events
+		}
 
-		// If app already existed then...
-		if dbApp.ID != 0 {
+		for name := range daemonsMap {
+			dmn := daemonsMap[name]
+			// if all daemons are active then whole app is active
+			newActive = newActive && dmn.Active
+
+			// if this is a new app then just add detected daemon
+			newDaemons = append(newDaemons, dmn)
+
 			// Determine changes in app daemons state and store them as events.
 			// Later this events will be passed to EventCenter when all the changes
 			// are stored in database.
@@ -323,7 +395,7 @@ func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *d
 					oldDmn.App = dbApp
 					// check if daemon changed Active state
 					if dmn.Active != oldDmn.Active {
-						lvl := dbmodel.EvInfo
+						lvl := dbmodel.EvWarning
 						text := "{daemon} is "
 						if dmn.Active && !oldDmn.Active {
 							text += "up"
@@ -331,7 +403,17 @@ func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *d
 							text += "down"
 							lvl = dbmodel.EvError
 						}
-						ev := eventcenter.CreateEvent(lvl, text, dbApp.Machine, dbApp, oldDmn)
+						errStr, ok := daemonsErrors[oldDmn.Name]
+						if !ok {
+							errStr = ""
+						}
+						ev := eventcenter.CreateEvent(lvl, text, errStr, dbApp.Machine, dbApp, oldDmn)
+						events = append(events, ev)
+
+					// check if daemon has been restarted
+					} else if dmn.Uptime < oldDmn.Uptime {
+						text := "{daemon} has been restarted"
+						ev := eventcenter.CreateEvent(dbmodel.EvWarning, text, dbApp.Machine, dbApp, oldDmn)
 						events = append(events, ev)
 					}
 
@@ -339,19 +421,26 @@ func GetAppState(ctx context.Context, agents agentcomm.ConnectedAgents, dbApp *d
 					if dmn.Version != oldDmn.Version {
 						text := fmt.Sprintf("{daemon} version changed from %s to %s",
 							oldDmn.Version, dmn.Version)
-						ev := eventcenter.CreateEvent(dbmodel.EvInfo, text, dbApp.Machine, dbApp, oldDmn)
-						events = append(events, ev)
-					}
-
-					// check if daemon has been restarted
-					if dmn.Uptime < oldDmn.Uptime {
-						text := "{daemon} has been restarted"
 						ev := eventcenter.CreateEvent(dbmodel.EvWarning, text, dbApp.Machine, dbApp, oldDmn)
 						events = append(events, ev)
 					}
 					break
 				}
 			}
+		}
+	} else {
+		for name := range daemonsMap {
+			dmn := daemonsMap[name]
+			// if all daemons are active then whole app is active
+			newActive = newActive && dmn.Active
+
+			// if this is new daemon and it is not active then disable its monitoring
+			if !dmn.Active {
+				dmn.Monitored = false
+			}
+
+			// if this is a new app then just add detected daemon
+			newDaemons = append(newDaemons, dmn)
 		}
 	}
 
@@ -409,8 +498,6 @@ func CommitAppIntoDB(db *dbops.PgDB, app *dbmodel.App, eventCenter eventcenter.E
 
 	if newApp {
 		eventCenter.AddInfoEvent("added {app} on {machine}", app.Machine, app)
-	} else {
-		eventCenter.AddInfoEvent("updated {app}", app.Machine, app)
 	}
 
 	for _, dmn := range deletedDaemons {
