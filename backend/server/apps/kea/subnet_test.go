@@ -48,13 +48,15 @@ func createAppWithSubnets(t *testing.T, db *dbops.PgDB, index int64, v4Config, v
 		AccessPoints: accessPoints,
 		Daemons: []*dbmodel.Daemon{
 			{
-				Name: "dhcp4",
+				Name:   "dhcp4",
+				Active: true,
 				KeaDaemon: &dbmodel.KeaDaemon{
 					Config: kea4Config,
 				},
 			},
 			{
-				Name: "dhcp6",
+				Name:   "dhcp6",
+				Active: true,
 				KeaDaemon: &dbmodel.KeaDaemon{
 					Config: kea6Config,
 				},
