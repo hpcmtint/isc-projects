@@ -473,6 +473,10 @@ task :unittest_backend => [GO, RICHGO, MOCKERY, MOCKGEN, :build_server, :build_a
                        'prepareTLS', 'handleRequest', 'pullerLoop', 'Output', 'Collect',
                        'collectTime', 'collectResolverStat', 'collectResolverLabelStat',
 
+                       'getServerTokenFromUser',  # it uses terminal.ReadPassword what is hard to mock
+                       'getAgentAddrAndPortFromUser',  # it uses fmt.Scanln what is hard to mock
+                       'newGRPCServerWithTLS',  # hard to test gRPC server TLS verification, fake gRPC server would be needed
+
                        # Those two are tested in backend/server/server_test.go, in TestCommandLineSwitches*
                        # However, due to how it's executed (calling external binary), it's not detected
                        # by coverage.
@@ -639,7 +643,7 @@ end
 # internal task used by build_all_in_container
 task :build_all_copy_in_subdir do
   sh 'mkdir -p ./build-root'
-  sh 'rsync -av --exclude=webui/node_modules --exclude=webui/dist --exclude=webui/src/assets/arm --exclude=doc/_build --exclude=doc/doctrees --exclude=backend/server/gen --exclude=*~ --delete api backend doc etc webui Rakefile ./build-root'
+  sh 'rsync -av --exclude=webui/node_modules --exclude=webui/dist --exclude=webui/src/assets/arm --exclude=webui/src/assets/pkgs --exclude=doc/_build --exclude=doc/doctrees --exclude=backend/server/gen --exclude=*~ --delete api backend doc etc webui Rakefile ./build-root'
   sh "cd ./build-root && GOPATH=/repo/build-root/go rake install_server install_agent"
 end
 
@@ -786,8 +790,14 @@ def run_bld_pkgs_in_dkr(dkr_image)
 
   if dkr_image.include? 'ubuntu'
     sh "mv #{PKGS_BUILD_DIR}/isc-stork*deb ."
+    # copy pkgs to web app so it can be served to agent installer
+    sh 'rm -f webui/src/assets/pkgs/isc-stork*deb'
+    sh 'cp isc-stork*deb webui/src/assets/pkgs/'
   else
     sh "mv #{PKGS_BUILD_DIR}/isc-stork*rpm ."
+    # copy pkgs to web app so it can be served to agent installer
+    sh 'rm -f webui/src/assets/pkgs/isc-stork*rpm'
+    sh 'cp isc-stork*rpm webui/src/assets/pkgs/'
   end
 end
 
@@ -878,11 +888,17 @@ end
 
 desc 'Build deb package with Stork server. It depends on building and installing tasks.'
 task :deb_server => :install_server do
+  sh "mkdir -p #{WWW_DIR}/assets/pkgs/"
+  # copy pkgs to web app so it can be served to agent installer
+  sh "cp -a isc-stork-agent_#{STORK_VERSION}.#{TIMESTAMP}_amd64.deb #{WWW_DIR}/assets/pkgs/"
   fpm('server', 'deb')
 end
 
 desc 'Build RPM package with Stork server. It depends on building and installing tasks.'
 task :rpm_server => :install_server do
+  sh "mkdir -p #{WWW_DIR}/assets/pkgs/"
+  # copy pkgs to web app so it can be served to agent installer
+  sh "cp -a isc-stork-agent-#{STORK_VERSION}.#{TIMESTAMP}-1.x86_64.rpm #{WWW_DIR}/assets/pkgs/"
   fpm('server', 'rpm')
 end
 

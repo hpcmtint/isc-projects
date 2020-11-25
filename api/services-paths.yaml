@@ -18,6 +18,10 @@
           in: query
           description: Limit returned list of machines to these which provide given app, possible values 'bind' or 'kea'.
           type: string
+        - name: authorized
+          in: query
+          description: Indicate if authorized or unauthorized machines should be returned.
+          type: boolean
       responses:
         200:
           description: List of machines
@@ -33,19 +37,22 @@
         To create new machine at least one parameter is needed: address.
         There are optional parameters as well.
       operationId: createMachine
+      # security disabled because anyone can add machine but it still requires
+      # either server token or manual authorization in web ui
+      security: []
       tags:
         - Services
       parameters:
         - name: machine
           in: body
-          description: Machine
+          description: New machine basic information including CSR.
           schema:
-            $ref: '#/definitions/Machine'
+            $ref: '#/definitions/NewMachineReq'
       responses:
         200:
           description: Machine information
           schema:
-            $ref: "#/definitions/Machine"
+            $ref: '#/definitions/NewMachineResp'
         default:
           description: generic error response
           schema:
@@ -118,6 +125,41 @@
           schema:
             $ref: "#/definitions/ApiError"
 
+  /machines/{id}/ping:
+    post:
+      summary: Check connectivity with machine.
+      operationId: pingMachine
+      security: []
+      tags:
+        - Services
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Machine ID.
+        - in: body
+          name: ping
+          description: The user to create.
+          schema:
+            type: object
+            properties:
+              serverToken:
+                type: string
+                description: Server access token.
+              agentToken:
+                type: string
+                description: Agent token.
+      responses:
+        200:
+          description: Machine
+          schema:
+            $ref: "#/definitions/Machine"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/ApiError"
+
   /machines/{id}/state:
     get:
       summary: Get machine's runtime state.
@@ -135,6 +177,53 @@
           description: Machine
           schema:
             $ref: "#/definitions/Machine"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /machines-server-token:
+    get:
+      summary: Get server token for registering machines.
+      description: >-
+        It is possible to filter list of machines by several fields. It is also always paged.
+        Default page size is 10.
+        A list of machines is returned in items field accompanied by total count
+        which indicates total available number of records for given filtering
+        parameters.
+      operationId: getMachinesServerToken
+      tags:
+        - Services
+      responses:
+        200:
+          description: List of machines
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: The user name.
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/ApiError"
+    put:
+      summary: Regenerate server token.
+      description: >-
+        To create new machine at least one parameter is needed: address.
+        There are optional parameters as well.
+      operationId: regenerateMachinesServerToken
+      tags:
+        - Services
+      responses:
+        200:
+          description: Machine information
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: The user name.
         default:
           description: generic error response
           schema:

@@ -201,7 +201,8 @@ system_testing:
     # - cat /etc/netplan/*
     # - cat /etc/network/interfaces
     # - rake system_tests_ui
-    - rake system_tests
+    # TODO: temporarily disabled for TLS development
+    # - rake system_tests
 
 
 ### upload release notes and tarball to repo.isc.org ###

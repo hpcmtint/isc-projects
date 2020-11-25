@@ -67,6 +67,7 @@ func setupAgentTest(rndc CommandExecutor) (*StorkAgent, context.Context) {
 		logTailer:      newLogTailer(),
 		keaInterceptor: newKeaInterceptor(),
 	}
+	sa.Setup()
 	ctx := context.Background()
 	return sa, ctx
 }
@@ -91,6 +92,7 @@ func makeAccessPoint(tp, address, key string, port int64) (ap []AccessPoint) {
 	})
 }
 
+// Check if NewStorkAgent can be invoked and sets SA members.
 func TestNewStorkAgent(t *testing.T) {
 	fam := &FakeAppMonitor{}
 	var settings cli.Context
@@ -100,6 +102,14 @@ func TestNewStorkAgent(t *testing.T) {
 	require.NotNil(t, sa.RndcClient)
 }
 
+// Check if Ping works.
+func TestPing(t *testing.T) {
+	sa, ctx := setupAgentTest(mockRndc)
+	args := &agentapi.PingReq{}
+	sa.Ping(ctx, args)
+}
+
+// Check if GetState works.
 func TestGetState(t *testing.T) {
 	sa, ctx := setupAgentTest(mockRndc)
 

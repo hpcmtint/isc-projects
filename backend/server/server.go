@@ -7,11 +7,13 @@ import (
 
 	flags "github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
+
 	"isc.org/stork"
 	"isc.org/stork/server/agentcomm"
 	"isc.org/stork/server/apps"
 	"isc.org/stork/server/apps/bind9"
 	"isc.org/stork/server/apps/kea"
+	"isc.org/stork/server/certs"
 	dbops "isc.org/stork/server/database"
 	dbmodel "isc.org/stork/server/database/model"
 	"isc.org/stork/server/eventcenter"
@@ -100,11 +102,18 @@ func NewStorkServer() (ss *StorkServer, err error) {
 		return nil, err
 	}
 
+	// prepare certificates for establish secure connections
+	// between server and agents
+	caCertPEM, serverCertPEM, serverKeyPEM, err := certs.SetupServerCerts(ss.DB)
+	if err != nil {
+		return nil, err
+	}
+
 	// setup event center
 	ss.EventCenter = eventcenter.NewEventCenter(ss.DB)
 
 	// setup connected agents
-	ss.Agents = agentcomm.NewConnectedAgents(&ss.AgentsSettings, ss.EventCenter)
+	ss.Agents = agentcomm.NewConnectedAgents(&ss.AgentsSettings, ss.EventCenter, caCertPEM, serverCertPEM, serverKeyPEM)
 	// TODO: if any operation below fails then this Shutdown here causes segfault.
 	// I do not know why and do not how to fix this. Commenting out for now.
 	// defer func() {

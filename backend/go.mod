@@ -3,6 +3,7 @@ module isc.org/stork
 go 1.13
 
 require (
+	github.com/Showmax/go-fqdn v1.0.0
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/alexedwards/scs/postgresstore v0.0.0-20191019164820-acb041f89bc3
 	github.com/alexedwards/scs/v2 v2.2.0
@@ -20,7 +21,7 @@ require (
 	github.com/go-pg/migrations/v7 v7.1.6
 	github.com/go-pg/pg v8.0.6+incompatible // indirect
 	github.com/go-pg/pg/v9 v9.1.0
-	github.com/golang/mock v1.3.1
+	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/lib/pq v1.2.0
@@ -34,8 +35,9 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vektra/mockery v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
-	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
-	google.golang.org/grpc v1.27.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/net v0.0.0-20200707034311-ab3426394381
+	google.golang.org/grpc v1.33.2
+	google.golang.org/grpc/security/advancedtls v0.0.0-20210122012134-2c42474aca0c
 	gopkg.in/h2non/gock.v1 v1.0.15
 )

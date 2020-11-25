@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -11,21 +13,18 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/security/advancedtls"
+
 	"isc.org/stork"
 	agentapi "isc.org/stork/api"
 )
-
-// Stork Agent settings.
-type Settings struct {
-	Host string `long:"host" description:"the IP or hostname to listen on for incoming Stork server connection." env:"STORK_AGENT_ADDRESS"`
-	Port int    `long:"port" description:"the TCP port to listen on for incoming Stork server connection." default:"8080" env:"STORK_AGENT_PORT"`
-}
 
 // Global Stork Agent state.
 type StorkAgent struct {
@@ -50,8 +49,6 @@ func NewStorkAgent(settings *cli.Context, appMonitor AppMonitor) *StorkAgent {
 
 	httpClient := NewHTTPClient()
 
-	server := grpc.NewServer()
-
 	logTailer := newLogTailer()
 
 	sa := &StorkAgent{
@@ -59,7 +56,6 @@ func NewStorkAgent(settings *cli.Context, appMonitor AppMonitor) *StorkAgent {
 		AppMonitor:     appMonitor,
 		HTTPClient:     httpClient,
 		RndcClient:     rndcClient,
-		server:         server,
 		logTailer:      logTailer,
 		keaInterceptor: newKeaInterceptor(),
 	}
@@ -67,6 +63,82 @@ func NewStorkAgent(settings *cli.Context, appMonitor AppMonitor) *StorkAgent {
 	registerKeaInterceptFns(sa)
 
 	return sa
+}
+
+// Prepare gRPC server with configured TLS.
+func newGRPCServerWithTLS() (*grpc.Server, error) {
+	// Prepare structure for advanced TLS. It defines hook functions
+	// that dynamically load key and cert from files just before establishing
+	// connection. Thanks to this if these files changed in meantime then
+	// always latest version for new connections is used.
+	// Beside that there is enabled client authentication and forced
+	// cert and host verification.
+	options := &advancedtls.ServerOptions{
+		// pull latest root CA cert for stork server cert verification
+		RootOptions: advancedtls.RootCertificateOptions{
+			GetRootCertificates: func(params *advancedtls.GetRootCAsParams) (*advancedtls.GetRootCAsResults, error) {
+				certPool := x509.NewCertPool()
+				ca, err := ioutil.ReadFile(RootCAFile)
+				if err != nil {
+					return nil, errors.Wrapf(err, "could not read ca certificate: %s", "aaa")
+				}
+				// Append the client certificates from the CA
+				if ok := certPool.AppendCertsFromPEM(ca); !ok {
+					return nil, errors.New("failed to append client certs")
+				}
+				log.Printf("loaded CA cert: %s\n", RootCAFile)
+				return &advancedtls.GetRootCAsResults{
+					TrustCerts: certPool,
+				}, nil
+			},
+		},
+		// pull latest stork agent cert for presenting its identity to stork server
+		IdentityOptions: advancedtls.IdentityCertificateOptions{
+			GetIdentityCertificatesForServer: func(info *tls.ClientHelloInfo) ([]*tls.Certificate, error) {
+				keyPEM, err := ioutil.ReadFile(KeyPEMFile)
+				if err != nil {
+					return nil, errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
+				}
+				certPEM, err := ioutil.ReadFile(CertPEMFile)
+				if err != nil {
+					return nil, errors.Wrapf(err, "could not load cert PEM file: %s", CertPEMFile)
+				}
+				certificate, err := tls.X509KeyPair(certPEM, keyPEM)
+				if err != nil {
+					return nil, errors.Wrapf(err, "could not setup tls key pair")
+				}
+				log.Printf("loaded server cert: %s and key: %s\n", CertPEMFile, KeyPEMFile)
+				return []*tls.Certificate{&certificate}, nil
+			},
+		},
+		// force stork server cert verification
+		RequireClientCert: true,
+		// check cert and if it matches host IP
+		VType: advancedtls.CertAndHostVerification,
+	}
+	creds, err := advancedtls.NewServerCreds(options)
+	if err != nil {
+		return nil, errors.Wrapf(err, "cannot create server creds for TLS")
+	}
+
+	srv := grpc.NewServer(grpc.Creds(creds))
+	return srv, nil
+}
+
+// Prepare internals for work: create gRPC server.
+func (sa *StorkAgent) Setup() error {
+	server, err := newGRPCServerWithTLS()
+	if err != nil {
+		return err
+	}
+	sa.server = server
+	return nil
+}
+
+// Check connectivity with machine.
+func (sa *StorkAgent) Ping(ctx context.Context, in *agentapi.PingReq) (*agentapi.PingRsp, error) {
+	rsp := agentapi.PingRsp{}
+	return &rsp, nil
 }
 
 // Get state of machine.
