@@ -1,7 +1,7 @@
 package certs
 
 import (
-	"crypto/rsa"
+	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/pem"
 	"math/rand"
@@ -31,7 +31,7 @@ func GenerateServerToken(db *pg.DB) ([]byte, error) {
 
 // Check if root CA key and certs are present in db. If not generate them
 // and store in database.
-func setupRootKeyAndCert(db *pg.DB) (*rsa.PrivateKey, *x509.Certificate, []byte, error) {
+func setupRootKeyAndCert(db *pg.DB) (*ecdsa.PrivateKey, *x509.Certificate, []byte, error) {
 	// check root key and root cert, if missing then generate them
 	rootKeyPEM, err := dbmodel.GetSecret(db, dbmodel.SecretCAKey)
 	if err != nil {
@@ -42,7 +42,7 @@ func setupRootKeyAndCert(db *pg.DB) (*rsa.PrivateKey, *x509.Certificate, []byte,
 		return nil, nil, nil, errors.Wrapf(err, "problem with getting CA cert from database")
 	}
 
-	var rootKey *rsa.PrivateKey
+	var rootKey *ecdsa.PrivateKey
 	var rootCert *x509.Certificate
 
 	// no root key or no root cert so generate
@@ -70,11 +70,7 @@ func setupRootKeyAndCert(db *pg.DB) (*rsa.PrivateKey, *x509.Certificate, []byte,
 		if err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "cannot parse root CA key")
 		}
-		rootKey = rootKeyIf.(*rsa.PrivateKey)
-		err = rootKey.Validate()
-		if err != nil {
-			return nil, nil, nil, errors.Wrapf(err, "root CA key validation failed")
-		}
+		rootKey = rootKeyIf.(*ecdsa.PrivateKey)
 
 		rootCertPEMBlock, _ := pem.Decode(rootCertPEM)
 		rootCert, err = x509.ParseCertificate(rootCertPEMBlock.Bytes)
@@ -89,7 +85,7 @@ func setupRootKeyAndCert(db *pg.DB) (*rsa.PrivateKey, *x509.Certificate, []byte,
 
 // Check if server key and certs are present in db. If not generate them
 // and store in database.
-func setupServerKeyAndCert(db *pg.DB, rootKey *rsa.PrivateKey, rootCert *x509.Certificate) ([]byte, []byte, error) {
+func setupServerKeyAndCert(db *pg.DB, rootKey *ecdsa.PrivateKey, rootCert *x509.Certificate) ([]byte, []byte, error) {
 	// check server cert, if missing then generate it
 	serverKeyPEM, err := dbmodel.GetSecret(db, dbmodel.SecretServerKey)
 	if err != nil {
@@ -143,14 +139,9 @@ func setupServerKeyAndCert(db *pg.DB, rootKey *rsa.PrivateKey, rootCert *x509.Ce
 	} else {
 		// check server key
 		serverKeyPEMBlock, _ := pem.Decode(serverKeyPEM)
-		serverKeyIf, err := x509.ParsePKCS8PrivateKey(serverKeyPEMBlock.Bytes)
+		_, err := x509.ParsePKCS8PrivateKey(serverKeyPEMBlock.Bytes)
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "cannot parse server key")
-		}
-		serverKey := serverKeyIf.(*rsa.PrivateKey)
-		err = serverKey.Validate()
-		if err != nil {
-			return nil, nil, errors.Wrapf(err, "server key validation failed")
 		}
 
 		serverCertPEMBlock, _ := pem.Decode(serverCertPEM)

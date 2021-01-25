@@ -1,8 +1,9 @@
 package pki
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -22,9 +23,9 @@ func toPEM(blockType string, bytes []byte) []byte {
 	return certPEM
 }
 
-// Generate RSA key and convert it to PEM format.
-func genRSAKey() (*rsa.PrivateKey, []byte, error) {
-	priv, err := rsa.GenerateKey(rand.Reader, 4096)
+// Generate ECDSA key and convert it to PEM format.
+func genECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
+	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		log.Fatalf("cannot generate RSA key: %v", err)
 		return nil, nil, err
@@ -43,7 +44,7 @@ func genRSAKey() (*rsa.PrivateKey, []byte, error) {
 
 // Create certificate based on template using parent cert, publick key and private parent key.
 // Convert it to PEM format.
-func createCert(template, parent *x509.Certificate, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) (*x509.Certificate, []byte, error) {
+func createCert(template, parent *x509.Certificate, publicKey *ecdsa.PublicKey, privateKey *ecdsa.PrivateKey) (*x509.Certificate, []byte, error) {
 	certBytes, err := x509.CreateCertificate(rand.Reader, template, parent, publicKey, privateKey)
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "failed to parse certificate")
@@ -60,7 +61,7 @@ func createCert(template, parent *x509.Certificate, publicKey *rsa.PublicKey, pr
 }
 
 // Generate root CA key and certifacte. Return them in PEM format.
-func GenCACert(serialNumber int64) (*rsa.PrivateKey, []byte, *x509.Certificate, []byte, error) {
+func GenCACert(serialNumber int64) (*ecdsa.PrivateKey, []byte, *x509.Certificate, []byte, error) {
 	rootTemplate := x509.Certificate{
 		SerialNumber: big.NewInt(serialNumber),
 		Subject: pkix.Name{
@@ -75,9 +76,9 @@ func GenCACert(serialNumber int64) (*rsa.PrivateKey, []byte, *x509.Certificate, 
 		MaxPathLen:            1,
 	}
 
-	privKey, privKeyPEM, err := genRSAKey()
+	privKey, privKeyPEM, err := genECDSAKey()
 	if err != nil {
-		return nil, nil, nil, nil, errors.Wrapf(err, "problem with generating RSA key")
+		return nil, nil, nil, nil, errors.Wrapf(err, "problem with generating ECDSA key")
 	}
 	rootCert, rootPEM, err := createCert(&rootTemplate, &rootTemplate, &privKey.PublicKey, privKey)
 	if err != nil {
@@ -88,9 +89,9 @@ func GenCACert(serialNumber int64) (*rsa.PrivateKey, []byte, *x509.Certificate, 
 
 // Generate key and cerfication for provided DNS names and IP addresses, using provided serial number and CA key and cert.
 // Return them in PEM format.
-func GenKeyCert(name string, dnsNames []string, ipAddresses []net.IP, serialNumber int64, parentCert *x509.Certificate, parentKey *rsa.PrivateKey) ([]byte, []byte, error) {
+func GenKeyCert(name string, dnsNames []string, ipAddresses []net.IP, serialNumber int64, parentCert *x509.Certificate, parentKey *ecdsa.PrivateKey) ([]byte, []byte, error) {
 	// generate a key pair
-	privKey, privKeyPEM, err := genRSAKey()
+	privKey, privKeyPEM, err := genECDSAKey()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -130,7 +131,7 @@ func GenCSRUsingKey(name string, dnsNames []string, ipAddresses []net.IP, privKe
 	if err != nil {
 		return nil, fingerprint, errors.Wrapf(err, "parsing priv key")
 	}
-	privKey := privKeyIf.(*rsa.PrivateKey)
+	privKey := privKeyIf.(*ecdsa.PrivateKey)
 
 	var commonName string
 	if len(dnsNames) > 0 {
@@ -162,12 +163,12 @@ func GenCSRUsingKey(name string, dnsNames []string, ipAddresses []net.IP, privKe
 	return csrPEM, fingerprint, nil
 }
 
-// Generate RSA key and CSR for it. Return them in PEM format with fingerprint.
+// Generate ECDSA key and CSR for it. Return them in PEM format with fingerprint.
 func GenKeyAndCSR(name string, dnsNames []string, ipAddresses []net.IP) ([]byte, []byte, [32]byte, error) {
 	var fingerprint [32]byte
 
 	// generate a key pair
-	_, privKeyPEM, err := genRSAKey()
+	_, privKeyPEM, err := genECDSAKey()
 	if err != nil {
 		return nil, nil, fingerprint, err
 	}
@@ -217,7 +218,7 @@ func SignCert(csrPEM []byte, serialNumber int64, parentCertPEM []byte, parentKey
 	if err != nil {
 		return nil, fingerprint, nil, errors.Wrapf(err, "parsing CA keys")
 	}
-	parentKey := parentKeyIf.(*rsa.PrivateKey)
+	parentKey := parentKeyIf.(*ecdsa.PrivateKey)
 	parentCert, err := ParseCert(parentCertPEM)
 	if err != nil {
 		return nil, fingerprint, nil, errors.Wrapf(err, "parsing CA cert")
@@ -239,7 +240,7 @@ func SignCert(csrPEM []byte, serialNumber int64, parentCertPEM []byte, parentKey
 		DNSNames:     csr.DNSNames,
 	}
 
-	cert, pem, err := createCert(&template, parentCert, csr.PublicKey.(*rsa.PublicKey), parentKey)
+	cert, pem, err := createCert(&template, parentCert, csr.PublicKey.(*ecdsa.PublicKey), parentKey)
 	if err != nil {
 		return nil, fingerprint, nil, errors.Wrapf(err, "signing agent cert failed")
 	}

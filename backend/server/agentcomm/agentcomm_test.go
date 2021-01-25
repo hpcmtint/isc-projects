@@ -40,7 +40,7 @@ RXkm1+W4cMzZS14MLfmacBHnI7Z4mRKvc+zEdco/l4omlszafmUXxnCOmqZlhqbm
 -----END CERTIFICATE-----`)
 
 // not used for now
-// var CAKey []byte = []byte(`-----BEGIN RSA PRIVATE KEY-----
+// var CAKey []byte = []byte(`-----BEGIN PRIVATE KEY-----
 // MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQC4HGJJ3R0BhZi5
 // PMovPsnrWggSNXCxv55vocI4eQtq4d5aqg84hqkZnCE8ZBGwhbo28Sc5Wl6KdTHl
 // 8INmCTJMt1jNRlqJlSr94zlUfhpEBu9KadKqbSZlNgrl6DYcDBQNB9tghvKT0Yop
@@ -91,7 +91,7 @@ RXkm1+W4cMzZS14MLfmacBHnI7Z4mRKvc+zEdco/l4omlszafmUXxnCOmqZlhqbm
 // QGLuNJkbZJtejcIzgzYht2AR7YA2RUtLouq4j+xT4HTJiSfnxQ85qWs7gpLGaBZn
 // J2Ai7gtDZY1XT/2fsVeeWqmMNBGrdGuM5WZMhBNe6PkVR3+A9GbIpsYABOswsrdK
 // qi9Usgn7km03+rY9jAWHze0lWQye2274Ew==
-// -----END RSA PRIVATE KEY-----`)
+// -----END PRIVATE KEY-----`)
 
 // nolint:gochecknoglobals
 var ServerCertPEM []byte = []byte(`-----BEGIN CERTIFICATE-----
@@ -132,7 +132,7 @@ wQ==
 -----END CERTIFICATE-----`)
 
 // nolint:gochecknoglobals
-var ServerKeyPEM []byte = []byte(`-----BEGIN RSA PRIVATE KEY-----
+var ServerKeyPEM []byte = []byte(`-----BEGIN PRIVATE KEY-----
 MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQDR8yndmAonFo0d
 KWS3WQ3r60lIwKPOZwsdJy+2+eNrmZixYJ+CdlvH3/AVSBRJfYx14NFrHcRUsbW+
 hn63kUwT3XHluLTs+QJWSaWa1zTLTJqiaEiPZI/xliQrTYoAV00jJip7CDWr0xpA
@@ -183,7 +183,7 @@ K+pJ/hjBApOMnytqJttNz9qPs9jtaFkH0hnIPuwO3VIFi2qVhQM3KTGUl1MliXWL
 iUmebg7yevOh8nkHR3B6GuCoiVQORYtVQo6p60i6oqXSz7tx/mlMqbV5o1hcd8iE
 WESmigg1ZXkl20NEmfDBVZO2O41ODdM+raNVGgtESV4BStc8LO7K3Z4/OcoplV6I
 H/Njg8CqtOWDeTVICuUq60wkbEkxYg==
------END RSA PRIVATE KEY-----`)
+-----END PRIVATE KEY-----`)
 
 // Test that it is possible to connect to a new agent and that the
 // statistics can be gathered for this agent.
