@@ -25,7 +25,7 @@ func runAgent(settings *cli.Context) {
 	// try register agent in the server using agent token
 	if settings.String("server-url") != "" {
 		portStr := strconv.FormatInt(settings.Int64("port"), 10)
-		if !agent.Register(settings.String("server-url"), "", settings.String("address"), portStr, false, true) {
+		if !agent.Register(settings.String("server-url"), "", settings.String("host"), portStr, false, true) {
 			fmt.Println("problem with agent registration in Stork server, exiting")
 			os.Exit(1)
 		}
