@@ -56,13 +56,13 @@
     </p-footer>
 </p-dialog>
 
-<p-dialog header="Deploy Agent Instruction" [(visible)]="displayDeployAgentInstruction">
+<p-dialog header="Agent Installation Instruction" [(visible)]="displayAgentInstallationInstruction">
     <p style="margin: 10px 10px 10px 0; width: 38em">
         Copy this commands and paste into terminal of a machine where Stork Agent is going to be installed.
         <br />
         For more details check
-        <a target="blank" href="/assets/arm/usage.html#deploying-stork-agent"
-            >the Stork Agent Deployment instructions<i class="pi pi-external-link" style="font-size: 1em"></i></a
+        <a target="blank" href="/assets/arm/install.html#installing-from-packages"
+            >the Stork Agent Installation instructions<i class="pi pi-external-link" style="font-size: 1em"></i></a
         >.
     </p>
     <div style="display: flex; align-items: flex-start; margin-bottom: 10px">
@@ -79,7 +79,7 @@
             "
             readonly=""
             rows="3"
-            #agentDeployText
+            #agentInstallationText
         >
 wget {{ getBaseUrl() }}/stork-install-agent.sh
 chmod a+x stork-install-agent.sh
@@ -87,7 +87,7 @@ sudo ./stork-install-agent.sh</textarea
         >
         <button
             type="button"
-            (click)="copyCmdToClipboard(agentDeployText)"
+            (click)="copyCmdToClipboard(agentInstallationText)"
             pButton
             icon="pi pi-copy"
             pTooltip="Copy command to clipboard"
@@ -127,7 +127,7 @@ sudo ./stork-install-agent.sh</textarea
         pButton
         icon="pi pi-refresh"
         label="Close"
-        (click)="closeAgentDeployInstruction()"
+        (click)="closeAgentInstallationInstruction()"
         style="float: right"
     ></button>
 </p-dialog>
@@ -208,10 +208,10 @@ sudo ./stork-install-agent.sh</textarea
             <button
                 type="button"
                 pButton
-                label="How to Deploy Agent to New Machine"
+                label="How to Install Agent to New Machine"
                 icon="pi pi-download"
                 style="margin: 0 20px"
-                (click)="showAgentDeployInstruction()"
+                (click)="showAgentInstallationInstruction()"
             ></button>
             <div>
                 <p-inputSwitch
@@ -243,7 +243,7 @@ sudo ./stork-install-agent.sh</textarea
                     <br />
                     <br />
                     Information about adding new machines to Stork server can be seen after clicking
-                    <b>How to Deploy Agent to New Machine</b> button at the top.
+                    <b>How to Install Agent to New Machine</b> button at the top.
                 </td>
             </tr>
         </ng-template>

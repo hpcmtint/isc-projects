@@ -148,9 +148,14 @@ Detailed instructions for setting up the operating system to use this
 repository are available under the `Set Me Up` button on the
 Cloudsmith repository page.
 
+It is possible to install both ``Stork Agent`` and ``Stork Server`` on
+the same machine.
+
+Installing the Stork Server
+---------------------------
 
 Installing on Debian/Ubuntu
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first step for both Debian and Ubuntu is:
 
@@ -164,17 +169,9 @@ Next, install the package with ``Stork Server``:
 
    $ sudo apt install isc-stork-server
 
-Then, install ``Stork Agent``:
-
-.. code-block:: console
-
-   $ sudo apt install isc-stork-agent
-
-It is possible to install both agent and server on the same machine.
-
 
 Installing on CentOS/RHEL/Fedora
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first step for RPM-based distributions is:
 
@@ -188,17 +185,10 @@ Next, install the package with ``Stork Server``:
 
    $ sudo dnf install isc-stork-server
 
-Then, install ``Stork Agent``:
-
-.. code-block:: console
-
-   $ sudo dnf install isc-stork-agent
-
-It is possible to install both agent and server on the same machine. If ``dnf`` is not available, ``yum`` can be used in similar
-fashion.
+If ``dnf`` is not available, ``yum`` can be used in similar fashion.
 
 Initial Setup of the Stork Server
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These steps are the same for both Debian-based and RPM-based
 distributions that use `SystemD`.
@@ -236,6 +226,26 @@ using `Nginx` or `Apache`. In the ``Stork Server`` package an example
 configuration file is provided for `Nginx`, in
 `/usr/share/stork/examples/nginx-stork.conf`.
 
+Securing Connections Between Stork Server and Stork Agents
+----------------------------------------------------------
+
+Connections between the server and agents are always secured using
+standard cryptography solutions, i.e., PKI and TLS.
+
+During server startup, there are keys and certificates automatically
+generated that are used to:
+
+* register new agents (prepare agents keys and certificates) and,
+* establish safe, encrypted connections where both ends are authenticated.
+
+During agent installation, a registration procedure is conveyed where
+an agent generates its private key and CSR certificate, and then it is
+signed by the server and returned to the agent. The agent is using
+this signed certificate later for authentication and connection
+encryption.
+
+There are two ways of registering an agent: 1) based on agent token and
+2) based on server token. They are described in the following chapters.
 
 Initial Setup of the Stork Agent
 --------------------------------
@@ -243,18 +253,57 @@ Initial Setup of the Stork Agent
 These steps are the same for both Debian-based and RPM-based
 distributions that use `SystemD`.
 
-After installing ``Stork Agent`` from the package, the basic settings
-must be configured. They are stored in ``/etc/stork/agent.env``.
+After installing ``Stork Agent`` from the package, a user needs to set
+the necessary settings. They are stored in ``/etc/stork/agent.env``.
 
-These are the required settings to connect with the database:
+Several settings are available. Some of them are optional, some are
+required to set.
+
+General settings:
 
 * STORK_AGENT_ADDRESS - the IP address of the network interface which ``Stork Agent``
   should use for listening for ``Stork Server`` incoming connections;
   default is `0.0.0.0` (i.e. listen on all interfaces)
 * STORK_AGENT_PORT - the port that should be used for listening; default is `8080`
+* STORK_AGENT_LISTEN_STORK_ONLY - enable Stork functionality only,
+  i.e. disable Prometheus exporters; default is false
+* STORK_AGENT_LISTEN_PROMETHEUS_ONLY - enable Prometheus exporters
+  only, i.e. disable Stork functionality; default is false
 
-With those settings in place, the ``Stork Agent`` service can be
-enabled and started:
+Settings specific to Prometheus exports:
+
+* STORK_AGENT_PROMETHEUS_KEA_EXPORTER_ADDRESS - the IP or hostname to
+  listen on for incoming Prometheus connection; default is `0.0.0.0`
+* STORK_AGENT_PROMETHEUS_KEA_EXPORTER_PORT - the port to listen on for
+  incoming Prometheus connection; default is `9547`
+* STORK_AGENT_PROMETHEUS_KEA_EXPORTER_INTERVAL - specifies how often
+  the agent collects stats from Kea, in seconds; default is `10`
+* STORK_AGENT_PROMETHEUS_BIND9_EXPORTER_ADDRESS - the IP or hostname
+  to listen on for incoming Prometheus connection; default is `0.0.0.0`
+* STORK_AGENT_PROMETHEUS_BIND9_EXPORTER_PORT - the port to listen on
+  for incoming Prometheus connection; default is `9119`
+* STORK_AGENT_PROMETHEUS_BIND9_EXPORTER_INTERVAL - specifies how often
+  the agent collects stats from BIND 9, in seconds; default is `10`
+
+These settings are used when an agent is automatically registered in
+Stork server using agent token based registration:
+
+* STORK_AGENT_SERVER_URL - URL of Stork server, used in agent-token
+  based registration (optional, alternative to server-token based
+  registration)
+
+Agent token based registration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This method requires that after installing ``Stork Agent`` from
+packages, a user will set two parameters. They are:
+``STORK_AGENT_SERVER_URL`` and ``STORK_AGENT_ADDRESS``.
+``STORK_AGENT_SERVER_URL`` should point to URL of ``Stork Server``,
+e.g.: ``http://stork-server.example.com:8080``. The other one,
+``STORK_AGENT_ADDRESS``, should indicate an address and a port of an
+agent, e.g.: ``stork-agent.example.com:8080``.
+
+At that moment, a user should start the agent service:
 
 .. code-block:: console
 
@@ -267,13 +316,94 @@ To check the status:
 
    $ sudo systemctl status isc-stork-agent
 
-After starting, the agent periodically tries to detect installed
-Kea DHCP or BIND 9 services on the system.  If it finds them, they are
+During agent startup, the agent first generates its private key, a CSR
+certificate (using indicated agent address), and an agent token. Then
+it tries to connect to indicated by URL ``Stork Server``. Now it
+starts the registration procedure. The agent sends CSR and agent token
+to the server. The server stores provided agent token, signs CSR, and
+sends it back to the agent. The agent stores, on its side, a signed
+certificate. The agent will use this certificate to authenticate
+itself to the server. At this point registration procedure from the
+agent's perspective is finished.
+
+Still, the agent is not authorized and is not fully functional from
+the server perspective. Now a user needs to visit a machines page in
+``Stork Server`` web UI (menu ``Services -> Machines``). After
+switching to unauthorized machines in UI, the just started agent
+should be visible. The user needs to invoke an authorize function to
+make the agent fully working and visible in ``Stork
+Server``. Switching back to authorized machines should show the full
+state of the machine.
+
+Server token based registration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+At first, the user needs to visit the machines page on the ``Stork
+Server`` web UI (menu ``Services -> Machines``). Clicking ``How to
+Install Agent to New Machine`` button will reveal a dialog box. It
+presents several things:
+
+#. a list of commands for installing an agent package,
+#. a ``server token``,
+#. a button for regenerating ``server token``.
+
+The list of commands should be executed on agent's machine. Invoked
+``stork-install-agent.sh`` will prompt for several things:
+
+1. for ``server token``:
+
+.. code-block::
+
+   >>>> Please, provide server access token (optional):
+
+If server token is skipped with Enter then agent token based
+registration procedure will be executed.
+The ``server token`` should be copied from web UI and pasted here.
+
+2. The next question will be for `agent address`:
+
+.. code-block::
+
+   >>>> Please, provide address (IP or name/FQDN) of current host with Stork Agent (it will be used to connect from Stork Server) [...]:
+
+3. The following thing is `agent port`:
+
+.. code-block::
+
+   >>>> Please, provide port that Stork Agent will use to listen on [8080]:
+
+And that's it. The script execution should end with a message:
+
+.. code-block::
+
+   machine ping over TLS: OK
+   registration completed successfully
+
+Now the agent should be authorized in the server and should be visible on
+the machines page in the web UI.
+
+Agent setup summary
+~~~~~~~~~~~~~~~~~~~
+
+After successful agent setup, the agent periodically tries to detect installed
+Kea DHCP or BIND 9 services on the system. If it finds them, they are
 reported to the ``Stork Server`` when it connects to the agent.
 
 Further configuration and usage of the ``Stork Server`` and the
 ``Stork Agent`` are described in the :ref:`usage` chapter.
 
+
+Upgrading
+---------
+
+An upgrade procedure looks the same as installation procedure.
+
+At first, install new packages on the server. Installation scripts in
+Deb/RPM package will perform the required database and other migrations.
+
+The next step is agent upgrade. The steps are the same: download the
+agent installation script to the agent machine and invoke it. This time
+registration will be skipped as the machine is already registered.
 
 .. _installation_sources:
 

@@ -48,7 +48,7 @@ export class MachinesPageComponent implements OnInit {
     openedMachines: any
     machineTab: any
 
-    displayDeployAgentInstruction = false
+    displayAgentInstallationInstruction = false
 
     constructor(
         private route: ActivatedRoute,
@@ -472,10 +472,10 @@ export class MachinesPageComponent implements OnInit {
     }
 
     /**
-     * Display a dialog with instructions about deploying
+     * Display a dialog with instructions about installing
      * stork agent.
      */
-    showAgentDeployInstruction() {
+    showAgentInstallationInstruction() {
         this.servicesApi.getMachinesServerToken().subscribe(
             (data) => {
                 this.serverToken = data.token
@@ -493,15 +493,15 @@ export class MachinesPageComponent implements OnInit {
                 })
             }
         )
-        this.displayDeployAgentInstruction = true
+        this.displayAgentInstallationInstruction = true
     }
 
     /**
-     * Close the dialog with instructions about deploying
+     * Close the dialog with instructions about installing
      * stork agent.
      */
-    closeAgentDeployInstruction() {
-        this.displayDeployAgentInstruction = false
+    closeAgentInstallationInstruction() {
+        this.displayAgentInstallationInstruction = false
     }
 
     /**
@@ -528,7 +528,7 @@ export class MachinesPageComponent implements OnInit {
     }
 
     /**
-     * Copy commands for agent deployment to clipboard.
+     * Copy commands for agent installation to clipboard.
      */
     copyCmdToClipboard(textEl) {
         textEl.select()
@@ -538,7 +538,7 @@ export class MachinesPageComponent implements OnInit {
 
     /**
      * Return base URL of stork server website.
-     * It is then put into agent deployment instructions.
+     * It is then put into agent installation instructions.
      */
     getBaseUrl() {
         return window.location.origin
