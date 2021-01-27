@@ -184,7 +184,7 @@ func setupApp() *cli.App {
 		Action: func(c *cli.Context) error {
 			if c.String("server-url") != "" && c.String("host") == "0.0.0.0" {
 				log.Errorf("registration in Stork server cannot be made because agent host address is not provided")
-				log.Errorf("use --host option or STORK_AGENT_HOST environment variable")
+				log.Errorf("use --host option or STORK_AGENT_ADDRESS environment variable")
 				os.Exit(1)
 			}
 

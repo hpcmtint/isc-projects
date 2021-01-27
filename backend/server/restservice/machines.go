@@ -301,7 +301,7 @@ func (r *RestAPI) CreateMachine(ctx context.Context, params services.CreateMachi
 	}
 	agentCertPEM, agentCertFingerprint, paramsErr, innerErr := pki.SignCert(agentCSR, certSerialNumber, rootCertPEM, rootKeyPEM)
 	if paramsErr != nil {
-		log.Error(err)
+		log.Error(paramsErr)
 		msg := "problem with agent CSR"
 		rsp := services.NewCreateMachineDefault(http.StatusBadRequest).WithPayload(&models.APIError{
 			Message: &msg,
@@ -309,7 +309,7 @@ func (r *RestAPI) CreateMachine(ctx context.Context, params services.CreateMachi
 		return rsp
 	}
 	if innerErr != nil {
-		log.Error(err)
+		log.Error(innerErr)
 		msg := "problem with signing agent CSR"
 		rsp := services.NewCreateMachineDefault(http.StatusInternalServerError).WithPayload(&models.APIError{
 			Message: &msg,
