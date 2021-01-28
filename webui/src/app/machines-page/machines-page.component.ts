@@ -30,6 +30,10 @@ export class MachinesPageComponent implements OnInit {
     showUnauthorized = false
     serverToken = ''
 
+    // This counter is used to indicate in UI that there are some
+    // unauthorized machines that may require authorization.
+    unauthorizedMachinesCount = 0
+
     // action panel
     filterText = ''
     appTypes: AppType[]
@@ -114,6 +118,12 @@ export class MachinesPageComponent implements OnInit {
                 id: 'authorize-single-machine',
                 icon: 'pi pi-check',
             },
+            {
+                label: 'Remove',
+                id: 'remove-single-machine',
+                icon: 'pi pi-times',
+                title: 'Remove machine from Stork Server',
+            },
         ]
         this.machineMenuItems = this.machineMenuItemsAuth
 
@@ -173,6 +183,24 @@ export class MachinesPageComponent implements OnInit {
                 }
             }
         })
+
+        // check current number of unauthorized machines
+        this.refreshUnauthorizedMachinesCount()
+    }
+
+    /**
+     * Refresh count of unauthorized machines.
+     *
+     * This counter is used to indicate in UI that there are some
+     * unauthorized machines that may require authorization.
+     */
+    refreshUnauthorizedMachinesCount() {
+        if (this.showUnauthorized) {
+            return
+        }
+        this.servicesApi.getMachines(0, 1, null, null, false).subscribe((data) => {
+            this.unauthorizedMachinesCount = data.total
+        })
     }
 
     loadMachines(event) {
@@ -190,6 +218,7 @@ export class MachinesPageComponent implements OnInit {
             this.machines = data.items
             this.totalMachines = data.total
         })
+        this.refreshUnauthorizedMachinesCount()
     }
 
     addNewMachine() {
@@ -352,7 +381,7 @@ export class MachinesPageComponent implements OnInit {
      * @param machine machine object
      * @param authorized bool, true or false
      */
-    _changeMachineAuthorization(machine, authorized) {
+    _changeMachineAuthorization(machine, authorized, machinesTable) {
         machine.authorized = authorized
         this.servicesApi.updateMachine(machine.id, machine).subscribe(
             (data) => {
@@ -361,6 +390,7 @@ export class MachinesPageComponent implements OnInit {
                     summary: 'Machine authorized',
                     detail: 'Machine authorization succeeded.',
                 })
+                this.refreshMachinesList(machinesTable)
             },
             (err) => {
                 let msg = err.statusText
@@ -377,7 +407,7 @@ export class MachinesPageComponent implements OnInit {
         )
     }
 
-    showMachineMenu(event, machineMenu, machine) {
+    showMachineMenu(event, machineMenu, machine, machinesTable) {
         if (this.showUnauthorized) {
             this.machineMenuItems = this.machineMenuItemsUnauth
         } else {
@@ -389,7 +419,12 @@ export class MachinesPageComponent implements OnInit {
         if (this.showUnauthorized) {
             // connect method to authorize machine
             this.machineMenuItems[0].command = () => {
-                this._changeMachineAuthorization(machine, true)
+                this._changeMachineAuthorization(machine, true, machinesTable)
+            }
+
+            // connect method to delete machine
+            this.machineMenuItems[1].command = () => {
+                this.deleteMachine(machine.id)
             }
         } else {
             // connect method to refresh machine state
@@ -399,33 +434,47 @@ export class MachinesPageComponent implements OnInit {
 
             // connect method to authorize machine
             this.machineMenuItems[1].command = () => {
-                this._changeMachineAuthorization(machine, false)
+                this._changeMachineAuthorization(machine, false, machinesTable)
             }
 
             // connect method to delete machine
             this.machineMenuItems[2].command = () => {
-                this.servicesApi.deleteMachine(machine.id).subscribe((data) => {
-                    this.serverData.forceReloadAppsStats()
-
-                    // remove from list of machines
-                    for (let idx = 0; idx < this.machines.length; idx++) {
-                        const m = this.machines[idx]
-                        if (m.id === machine.id) {
-                            this.machines.splice(idx, 1) // TODO: does not work
-                            break
-                        }
-                    }
-                    // remove from opened tabs if present
-                    for (let idx = 0; idx < this.openedMachines.length; idx++) {
-                        const m = this.openedMachines[idx].machine
-                        if (m.id === machine.id) {
-                            this.closeTab(null, idx + 1)
-                            break
-                        }
-                    }
-                })
+                this.deleteMachine(machine.id)
             }
         }
+    }
+
+    /**
+     * Delete indicated machine.
+     *
+     * Additionally app stats will be reloaded and if after deletion
+     * there is no more DHCP or DNS apps then the item in the top menu
+     * is adjusted.
+     *
+     * @param machineId ID of machine
+     */
+    deleteMachine(machineId) {
+        this.servicesApi.deleteMachine(machineId).subscribe((data) => {
+            // reload apps stats to reflect new state (adjust menu content)
+            this.serverData.forceReloadAppsStats()
+
+            // remove from list of machines
+            for (let idx = 0; idx < this.machines.length; idx++) {
+                const m = this.machines[idx]
+                if (m.id === machineId) {
+                    this.machines.splice(idx, 1) // TODO: does not work
+                    break
+                }
+            }
+            // remove from opened tabs if present
+            for (let idx = 0; idx < this.openedMachines.length; idx++) {
+                const m = this.openedMachines[idx].machine
+                if (m.id === machineId) {
+                    this.closeTab(null, idx + 1)
+                    break
+                }
+            }
+        })
     }
 
     editAddress(machineTab) {
