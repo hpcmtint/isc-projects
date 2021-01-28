@@ -352,7 +352,7 @@ The list of commands should be executed on agent's machine. Invoked
 
 1. for ``server token``:
 
-.. code-block::
+.. code-block:: text
 
    >>>> Please, provide server access token (optional):
 
@@ -362,19 +362,19 @@ The ``server token`` should be copied from web UI and pasted here.
 
 2. The next question will be for `agent address`:
 
-.. code-block::
+.. code-block:: text
 
    >>>> Please, provide address (IP or name/FQDN) of current host with Stork Agent (it will be used to connect from Stork Server) [...]:
 
 3. The following thing is `agent port`:
 
-.. code-block::
+.. code-block:: text
 
    >>>> Please, provide port that Stork Agent will use to listen on [8080]:
 
 And that's it. The script execution should end with a message:
 
-.. code-block::
+.. code-block:: text
 
    machine ping over TLS: OK
    registration completed successfully
