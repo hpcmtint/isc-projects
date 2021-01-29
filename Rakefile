@@ -475,7 +475,6 @@ task :unittest_backend => [GO, RICHGO, MOCKERY, MOCKGEN, :build_server, :build_a
 
                        'getServerTokenFromUser',  # it uses terminal.ReadPassword what is hard to mock
                        'getAgentAddrAndPortFromUser',  # it uses fmt.Scanln what is hard to mock
-                       'newGRPCServerWithTLS',  # hard to test gRPC server TLS verification, fake gRPC server would be needed
 
                        # Those two are tested in backend/server/server_test.go, in TestCommandLineSwitches*
                        # However, due to how it's executed (calling external binary), it's not detected

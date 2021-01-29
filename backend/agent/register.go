@@ -66,7 +66,7 @@ func getServerTokenFromUser() (string, error) {
 func getAgentAddrAndPortFromUser(agentAddr, agentPort string) (string, int, error) {
 	if agentAddr == "" {
 		agentAddrTip, err := fqdn.FqdnHostname()
-		msg := ">>>> Please, provide address (IP or name/FQDN) of current host with Stork Agent (it will be used to connect from Stork Server)"
+		msg := ">>>> Please, provide an address (IP or name/FQDN) of current host with Stork Agent (the Stork Server will use to connect to the Stork Agent)"
 		if err != nil {
 			agentAddrTip = ""
 			msg += ": "
@@ -81,7 +81,7 @@ func getAgentAddrAndPortFromUser(agentAddr, agentPort string) (string, int, erro
 	}
 
 	if agentPort == "" {
-		fmt.Printf(">>>> Please, provide port that Stork Agent will use to listen on [8080]: ")
+		fmt.Printf(">>>> Please, provide a port number that Stork Agent will use to listen on [8080]: ")
 		fmt.Scanln(&agentPort)
 		if agentPort == "" {
 			agentPort = "8080"
@@ -116,17 +116,17 @@ func writeAgentFile(path string, content []byte) error {
 
 // Parse provided address and return either IP or name.
 func resolveAddr(addr string) ([]net.IP, []string) {
-	var agntIPs []net.IP
-	var agntNames []string
+	var agentIPs []net.IP
+	var agentNames []string
 
 	ipAddr := net.ParseIP(addr)
 	if ipAddr == nil {
-		agntNames = append(agntNames, addr)
+		agentNames = append(agentNames, addr)
 	} else {
-		agntIPs = append(agntIPs, ipAddr)
+		agentIPs = append(agentIPs, ipAddr)
 	}
 
-	return agntIPs, agntNames
+	return agentIPs, agentNames
 }
 
 // Generate or regenerate agent key and CSR.
@@ -137,14 +137,14 @@ func generateCerts(agentAddr string, regenCerts bool) ([]byte, string, error) {
 		regenCerts2 = true
 	}
 
-	agntIPs, agntNames := resolveAddr(agentAddr)
+	agentIPs, agentNames := resolveAddr(agentAddr)
 
 	var fingerprint [32]byte
 	var csrPEM []byte
 	var privKeyPEM []byte
 	if regenCerts2 {
 		// generate private key and CSR
-		privKeyPEM, csrPEM, fingerprint, err = pki.GenKeyAndCSR("agent", agntNames, agntIPs)
+		privKeyPEM, csrPEM, fingerprint, err = pki.GenKeyAndCSR("agent", agentNames, agentIPs)
 		if err != nil {
 			return nil, "", err
 		}
@@ -162,7 +162,7 @@ func generateCerts(agentAddr string, regenCerts bool) ([]byte, string, error) {
 			return nil, "", errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
 		}
 
-		csrPEM, fingerprint, err = pki.GenCSRUsingKey("agent", agntNames, agntIPs, privKeyPEM)
+		csrPEM, fingerprint, err = pki.GenCSRUsingKey("agent", agentNames, agentIPs, privKeyPEM)
 		if err != nil {
 			return nil, "", err
 		}
@@ -200,7 +200,7 @@ func prepareRegistrationRequest(csrPEM []byte, serverToken, agentToken, agentAdd
 // If retry is true then registration is repeated until it connection to server
 // is established. This case is used when agent automatically tries to register
 // during startup.
-func srvRegister(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, retry bool) (int, string, string, bool) {
+func registerAgentInServer(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, retry bool) (int, string, string, bool) {
 	url, _ := baseSrvURL.Parse("api/machines")
 	var err error
 	var resp *http.Response
@@ -215,6 +215,12 @@ func srvRegister(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, r
 		if err == nil {
 			break
 		}
+
+		// If connection is refused and retries are enabled than wait for 10 seconds
+		// and try again. This method is used in case of agent token based registration
+		// to allow smooth automated registration even if server is down for some time.
+		// In case of server token based registration this method is invoked manuall so
+		// it should fail immediately if there is no connection to the server.
 		if retry && strings.Contains(err.Error(), "connection refused") {
 			log.Println("sleeping for 10 seconds before next registration attempt")
 			time.Sleep(10 * time.Second)
@@ -226,13 +232,13 @@ func srvRegister(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, r
 	data, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		log.Errorf("problem with registering machine: %s", err)
+		log.Errorf("problem with reading server's response while registering the machine: %s", err)
 		return 0, "", "", false
 	}
 	var result map[string]interface{}
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		log.Errorf("problem with parsing response from registering machine: %s", err)
+		log.Errorf("problem with parsing server's response while registering the machine: %s", err)
 		return 0, "", "", false
 	}
 	errTxt := result["error"]
@@ -240,7 +246,7 @@ func srvRegister(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, r
 		log.Errorf("problem with registering machine: %s", errTxt)
 		return 0, "", "", false
 	}
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode >= http.StatusBadRequest {
 		errTxt = result["message"]
 		if errTxt != nil {
 			log.Errorf("problem with registering machine: %s", errTxt)
@@ -249,8 +255,39 @@ func srvRegister(client *http.Client, baseSrvURL *url.URL, body *bytes.Buffer, r
 		}
 		return 0, "", "", false
 	}
+	// check received machine ID
+	if result["id"] == nil {
+		log.Errorf("missing ID in response from server for registration request")
+		return 0, "", "", false
+	}
+	machineID, ok := result["id"].(float64)
+	if !ok {
+		log.Errorf("bad ID in response from server for registration request")
+		return 0, "", "", false
+	}
+	// check received serverCACert
+	if result["serverCACert"] == nil {
+		log.Errorf("missing serverCACert in response from server for registration request")
+		return 0, "", "", false
+	}
+	serverCACert, ok := result["serverCACert"].(string)
+	if !ok {
+		log.Errorf("bad serverCACert in response from server for registration request")
+		return 0, "", "", false
+	}
+	// check received agentCert
+	if result["agentCert"] == nil {
+		log.Errorf("missing agentCert in response from server for registration request")
+		return 0, "", "", false
+	}
+	agentCert, ok := result["agentCert"].(string)
+	if !ok {
+		log.Errorf("bad agentCert in response from server for registration request")
+		return 0, "", "", false
+	}
+	// all ok
 	log.Printf("machine registered")
-	return int(result["id"].(float64)), result["serverCACert"].(string), result["agentCert"].(string), true
+	return int(machineID), serverCACert, agentCert, true
 }
 
 // Check certs received from server.
@@ -280,7 +317,7 @@ func checkAndStoreCerts(serverCACert, agentCert string) error {
 
 // Ping Stork agent service via Stork server. It is used during manual registration
 // to confirm that TLS connection between agent and server can be established.
-func srvPing(client *http.Client, baseSrvURL *url.URL, machineID int, serverToken, agentToken string) bool {
+func pingAgentViaServer(client *http.Client, baseSrvURL *url.URL, machineID int, serverToken, agentToken string) bool {
 	urlSuffix := fmt.Sprintf("api/machines/%d/ping", machineID)
 	url, err := baseSrvURL.Parse(urlSuffix)
 	if err != nil {
@@ -306,13 +343,13 @@ func srvPing(client *http.Client, baseSrvURL *url.URL, machineID int, serverToke
 	data, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		log.Errorf("problem with pinging machine: %s", err)
+		log.Errorf("problem with reading server's response while pinging machine: %s", err)
 		return false
 	}
 	var result map[string]interface{}
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		log.Errorf("problem with parsing response from pinging machine: %s", err)
+		log.Errorf("problem with parsing server's response while pinging machine: %s", err)
 		return false
 	}
 	errTxt := result["error"]
@@ -320,7 +357,7 @@ func srvPing(client *http.Client, baseSrvURL *url.URL, machineID int, serverToke
 		log.Errorf("problem with pinging machine: %s", errTxt)
 		return false
 	}
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode >= http.StatusBadRequest {
 		errTxt = result["message"]
 		if errTxt != nil {
 			log.Warnf("problem with pinging machine: %s", errTxt)
@@ -335,25 +372,23 @@ func srvPing(client *http.Client, baseSrvURL *url.URL, machineID int, serverToke
 	return true
 }
 
-// Main function used to register an agent with given address and port in given server by URL.
-// If regenCerts is true then agent key and cert is regenerated, otherwise the ones stored in files
-// are used. RegenCerts is used when registration is run manually. If retry is true then registration
-// is retried if connection to server cannot be established. This case is used when registration
-// is automatic during agent service startup. Server token can be provided in manual registration
-// via command line switch. This way the agent will be immediately authorized in the server.
-// If server token is empty (in automatic registration or when it is not provided
-// in manual registration) then agent is added to server but requires manual authorization in web UI.
+// Main function used to register an agent (with a given address and
+// port) in a server indicated by given URL. If regenCerts is true
+// then agent key and cert are regenerated, otherwise the ones stored
+// in files are used. RegenCerts is used when registration is run
+// manually. If retry is true then registration is retried if
+// connection to server cannot be established. This case is used when
+// registration is automatic during agent service startup. Server
+// token can be provided in manual registration via command line
+// switch. This way the agent will be immediately authorized in the
+// server.  If server token is empty (in automatic registration or
+// when it is not provided in manual registration) then agent is added
+// to server but requires manual authorization in web UI.
 func Register(serverURL, serverToken, agentAddr, agentPort string, regenCerts bool, retry bool) bool {
 	// parse URL to server
 	baseSrvURL, err := url.Parse(serverURL)
-	if err != nil {
+	if err != nil || baseSrvURL.String() == "" {
 		log.Errorf("cannot parse server URL: %s: %s", serverURL, err)
-		return false
-	}
-
-	// prepare http client to connect to Stork server
-	client, ok := newSrvClient()
-	if !ok {
 		return false
 	}
 
@@ -363,7 +398,7 @@ func Register(serverURL, serverToken, agentAddr, agentPort string, regenCerts bo
 	if serverToken == "" && regenCerts {
 		serverToken2, err = getServerTokenFromUser()
 		if err != nil {
-			log.Errorf("problem with getting password: %s", err)
+			log.Errorf("problem with getting server token: %s", err)
 			return false
 		}
 	}
@@ -390,13 +425,19 @@ func Register(serverURL, serverToken, agentAddr, agentPort string, regenCerts bo
 		log.Println("=============================================================================")
 		err = writeAgentFile(AgentTokenFile, []byte(fingerprint))
 		if err != nil {
-			log.Errorf("problem with storing agent token to %s: %s", AgentTokenFile, err)
+			log.Errorf("problem with storing agent token in %s: %s", AgentTokenFile, err)
 			return false
 		}
-		log.Printf("agent token stored to %s", AgentTokenFile)
+		log.Printf("agent token stored in %s", AgentTokenFile)
 		log.Printf("authorize machine in Stork web UI")
 	} else {
 		log.Printf("machine will be automatically authorized using server token")
+	}
+
+	// prepare http client to connect to Stork server
+	client, ok := newSrvClient()
+	if !ok {
+		return false
 	}
 
 	// register new machine i.e. current agent
@@ -405,7 +446,7 @@ func Register(serverURL, serverToken, agentAddr, agentPort string, regenCerts bo
 		return false
 	}
 	log.Println("try to register agent in Stork server")
-	machineID, serverCACert, agentCert, ok := srvRegister(client, baseSrvURL, req, retry)
+	machineID, serverCACert, agentCert, ok := registerAgentInServer(client, baseSrvURL, req, retry)
 	if !ok {
 		return false
 	}
@@ -421,7 +462,7 @@ func Register(serverURL, serverToken, agentAddr, agentPort string, regenCerts bo
 		// invoke getting machine state via server
 		ok = false
 		for i := time.Duration(1); i < 4; i++ {
-			ok = srvPing(client, baseSrvURL, machineID, serverToken2, agentToken)
+			ok = pingAgentViaServer(client, baseSrvURL, machineID, serverToken2, agentToken)
 			if ok {
 				break
 			}

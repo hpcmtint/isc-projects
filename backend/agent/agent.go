@@ -65,6 +65,41 @@ func NewStorkAgent(settings *cli.Context, appMonitor AppMonitor) *StorkAgent {
 	return sa
 }
 
+// Get latest root CA cert for stork server cert verification.
+func getRootCertificates(params *advancedtls.GetRootCAsParams) (*advancedtls.GetRootCAsResults, error) {
+	certPool := x509.NewCertPool()
+	ca, err := ioutil.ReadFile(RootCAFile)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not read ca certificate: %s", RootCAFile)
+	}
+	// append the client certificates from the CA
+	if ok := certPool.AppendCertsFromPEM(ca); !ok {
+		return nil, errors.New("failed to append client certs")
+	}
+	log.Printf("loaded CA cert: %s\n", RootCAFile)
+	return &advancedtls.GetRootCAsResults{
+		TrustCerts: certPool,
+	}, nil
+}
+
+// Get latest stork agent cert for presenting its identity to stork server.
+func getIdentityCertificatesForServer(info *tls.ClientHelloInfo) ([]*tls.Certificate, error) {
+	keyPEM, err := ioutil.ReadFile(KeyPEMFile)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
+	}
+	certPEM, err := ioutil.ReadFile(CertPEMFile)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not load cert PEM file: %s", CertPEMFile)
+	}
+	certificate, err := tls.X509KeyPair(certPEM, keyPEM)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not setup tls key pair")
+	}
+	log.Printf("loaded server cert: %s and key: %s\n", CertPEMFile, KeyPEMFile)
+	return []*tls.Certificate{&certificate}, nil
+}
+
 // Prepare gRPC server with configured TLS.
 func newGRPCServerWithTLS() (*grpc.Server, error) {
 	// Prepare structure for advanced TLS. It defines hook functions
@@ -76,40 +111,11 @@ func newGRPCServerWithTLS() (*grpc.Server, error) {
 	options := &advancedtls.ServerOptions{
 		// pull latest root CA cert for stork server cert verification
 		RootOptions: advancedtls.RootCertificateOptions{
-			GetRootCertificates: func(params *advancedtls.GetRootCAsParams) (*advancedtls.GetRootCAsResults, error) {
-				certPool := x509.NewCertPool()
-				ca, err := ioutil.ReadFile(RootCAFile)
-				if err != nil {
-					return nil, errors.Wrapf(err, "could not read ca certificate: %s", "aaa")
-				}
-				// Append the client certificates from the CA
-				if ok := certPool.AppendCertsFromPEM(ca); !ok {
-					return nil, errors.New("failed to append client certs")
-				}
-				log.Printf("loaded CA cert: %s\n", RootCAFile)
-				return &advancedtls.GetRootCAsResults{
-					TrustCerts: certPool,
-				}, nil
-			},
+			GetRootCertificates: getRootCertificates,
 		},
 		// pull latest stork agent cert for presenting its identity to stork server
 		IdentityOptions: advancedtls.IdentityCertificateOptions{
-			GetIdentityCertificatesForServer: func(info *tls.ClientHelloInfo) ([]*tls.Certificate, error) {
-				keyPEM, err := ioutil.ReadFile(KeyPEMFile)
-				if err != nil {
-					return nil, errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
-				}
-				certPEM, err := ioutil.ReadFile(CertPEMFile)
-				if err != nil {
-					return nil, errors.Wrapf(err, "could not load cert PEM file: %s", CertPEMFile)
-				}
-				certificate, err := tls.X509KeyPair(certPEM, keyPEM)
-				if err != nil {
-					return nil, errors.Wrapf(err, "could not setup tls key pair")
-				}
-				log.Printf("loaded server cert: %s and key: %s\n", CertPEMFile, KeyPEMFile)
-				return []*tls.Certificate{&certificate}, nil
-			},
+			GetIdentityCertificatesForServer: getIdentityCertificatesForServer,
 		},
 		// force stork server cert verification
 		RequireClientCert: true,

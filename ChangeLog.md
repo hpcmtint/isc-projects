@@ -4,8 +4,8 @@
     script downloaded from the server. The script installs deb/rpm
     packages with stork agent. Then the script registers current
     machine in the server performing key and certs exchange.
-    There are two ways for authorizing the agent: server-token
-    and agent-token based.
+    There are two ways for authorizing the agent: server token
+    and agent token based.
     Added TLS to gRPC traffic between agent and server using certs
     set up during agent registration. Added instruction on machines
     page how to install an agent.

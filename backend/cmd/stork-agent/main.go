@@ -177,7 +177,7 @@ func setupApp() *cli.App {
 			// Registration related settings
 			&cli.StringFlag{
 				Name:    "server-url",
-				Usage:   "URL of Stork server, used in agent-token based registration (optional, alternative to server-token based registration)",
+				Usage:   "URL of Stork server, used in agent token based registration (optional, alternative to server token based registration)",
 				EnvVars: []string{"STORK_AGENT_SERVER_URL"},
 			},
 		},
@@ -199,8 +199,8 @@ func setupApp() *cli.App {
 				Description: `Register current agent in Stork server using provided server URL.
 
 If server access token is provided using --server-token then the agent is automatically
-authorized (server-token based registration). Otherwise, the agent requires explicit
-authorization in the server using either UI or ReST API (agent-token based registration).`,
+authorized (server token based registration). Otherwise, the agent requires explicit
+authorization in the server using either UI or ReST API (agent token based registration).`,
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "server-url",

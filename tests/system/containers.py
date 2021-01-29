@@ -546,7 +546,7 @@ class StorkAgentContainer(Container):
         else:
             self.run('rpm -qa "isc-stork*"')
 
-        # setup params for agent-token based authorization
+        # setup params for agent token based authorization
         if server_ip:
             cmd = "echo -e '\nSTORK_AGENT_ADDRESS=%s' >> /etc/stork/agent.env" % self.mgmt_ip
             self.run('bash -c "%s"' % cmd)

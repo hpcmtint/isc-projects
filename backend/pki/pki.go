@@ -42,7 +42,7 @@ func genECDSAKey() (*ecdsa.PrivateKey, []byte, error) {
 	return priv, pem, nil
 }
 
-// Create certificate based on template using parent cert, publick key and private parent key.
+// Create certificate based on template using parent cert, public key and private parent key.
 // Convert it to PEM format.
 func createCert(template, parent *x509.Certificate, publicKey *ecdsa.PublicKey, privateKey *ecdsa.PrivateKey) (*x509.Certificate, []byte, error) {
 	certBytes, err := x509.CreateCertificate(rand.Reader, template, parent, publicKey, privateKey)
@@ -90,6 +90,17 @@ func GenCACert(serialNumber int64) (*ecdsa.PrivateKey, []byte, *x509.Certificate
 // Generate key and cerfication for provided DNS names and IP addresses, using provided serial number and CA key and cert.
 // Return them in PEM format.
 func GenKeyCert(name string, dnsNames []string, ipAddresses []net.IP, serialNumber int64, parentCert *x509.Certificate, parentKey *ecdsa.PrivateKey) ([]byte, []byte, error) {
+	// check args
+	if len(dnsNames) == 0 {
+		return nil, nil, errors.New("DNS names cannot be empty")
+	}
+	if parentCert == nil {
+		return nil, nil, errors.New("parent cert cannot be empty")
+	}
+	if parentKey == nil {
+		return nil, nil, errors.New("parent key cannot be empty")
+	}
+
 	// generate a key pair
 	privKey, privKeyPEM, err := genECDSAKey()
 	if err != nil {
@@ -107,7 +118,7 @@ func GenKeyCert(name string, dnsNames []string, ipAddresses []net.IP, serialNumb
 		},
 		NotBefore:      time.Now(),
 		NotAfter:       time.Now().AddDate(30, 0, 0), // 30 years of cert validity
-		IsCA:           true,
+		IsCA:           false,
 		MaxPathLenZero: true,
 		IPAddresses:    ipAddresses,
 		DNSNames:       dnsNames,
@@ -125,6 +136,19 @@ func GenKeyCert(name string, dnsNames []string, ipAddresses []net.IP, serialNumb
 func GenCSRUsingKey(name string, dnsNames []string, ipAddresses []net.IP, privKeyPEM []byte) ([]byte, [32]byte, error) {
 	var fingerprint [32]byte
 
+	if privKeyPEM == nil {
+		return nil, fingerprint, errors.New("private key cannot be empty")
+	}
+
+	var commonName string
+	switch {
+	case len(dnsNames) > 0:
+		commonName = dnsNames[0]
+	case len(ipAddresses) > 0:
+		commonName = ipAddresses[0].String()
+	default:
+		return nil, fingerprint, errors.New("DNS names and IP addresses both cannot be empty")
+	}
 	// parse priv key
 	pemBlock, _ := pem.Decode(privKeyPEM)
 	privKeyIf, err := x509.ParsePKCS8PrivateKey(pemBlock.Bytes)
@@ -132,13 +156,6 @@ func GenCSRUsingKey(name string, dnsNames []string, ipAddresses []net.IP, privKe
 		return nil, fingerprint, errors.Wrapf(err, "parsing priv key")
 	}
 	privKey := privKeyIf.(*ecdsa.PrivateKey)
-
-	var commonName string
-	if len(dnsNames) > 0 {
-		commonName = dnsNames[0]
-	} else {
-		commonName = ipAddresses[0].String()
-	}
 
 	// generate a CSR template
 	csrTemplate := x509.CertificateRequest{
@@ -184,6 +201,9 @@ func GenKeyAndCSR(name string, dnsNames []string, ipAddresses []net.IP) ([]byte,
 
 // Parse certificate in PEM format.
 func ParseCert(certPEM []byte) (*x509.Certificate, error) {
+	if certPEM == nil {
+		return nil, errors.New("cannot parse empty cert PEM")
+	}
 	pemBlock, _ := pem.Decode(certPEM)
 	if pemBlock == nil {
 		return nil, errors.New("decoding PEM with cert failed")
@@ -196,8 +216,19 @@ func ParseCert(certPEM []byte) (*x509.Certificate, error) {
 }
 
 // Sign cerificate for given CSR in PEM format using provided serial number and CA key and cert.
+// It returns PEM of signed CSR, fingerprint of signed CSR, parameters error and inner execution error.
 func SignCert(csrPEM []byte, serialNumber int64, parentCertPEM []byte, parentKeyPEM []byte) ([]byte, [32]byte, error, error) {
 	var fingerprint [32]byte
+	// check args
+	if parentKeyPEM == nil {
+		return nil, fingerprint, errors.New("parent key PEM cannot be empty"), nil
+	}
+	if parentCertPEM == nil {
+		return nil, fingerprint, errors.New("parent cert PEM cannot be empty"), nil
+	}
+	if csrPEM == nil {
+		return nil, fingerprint, errors.New("CSR PEM cannot be empty"), nil
+	}
 
 	// parse and check CSR
 	pemBlock, _ := pem.Decode(csrPEM)
