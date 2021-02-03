@@ -113,7 +113,7 @@ Installing the Stork Server
 ---------------------------
 
 Debian/Ubuntu
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 The first step for both Debian and Ubuntu is:
 
@@ -129,7 +129,7 @@ Next, install the package with ``Stork Server``:
 
 
 CentOS/RHEL/Fedora
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 The first step for RPM-based distributions is:
 
