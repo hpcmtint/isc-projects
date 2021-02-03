@@ -210,15 +210,13 @@ There are two ways of registering an agent:
 They are described in the following chapters.
 
 Installing the Stork Agent
---------------------------------
+--------------------------
 
 These steps are the same for both Debian-based and RPM-based
 distributions that use `SystemD`.
 
 After installing ``Stork Agent`` from the package, a user needs to
 specify the necessary settings in ``/etc/stork/agent.env``.
-
-Some settings are required and some are optional..
 
 General settings:
 
@@ -246,12 +244,10 @@ Settings specific to Prometheus exporters:
 * STORK_AGENT_PROMETHEUS_BIND9_EXPORTER_INTERVAL - specifies how often
   the agent collects stats from BIND 9, in seconds; default is `10`
 
-These settings are used when an agent is automatically registered in
+The next setting must be used only if an agent is automatically registered in
 Stork server using agent token:
 
-* STORK_AGENT_SERVER_URL - URL of Stork server, used in agent token
-  based registration (optional, alternative to server token based
-  registration)
+* STORK_AGENT_SERVER_URL - URL of Stork server
 
 Registration using Agent Token
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

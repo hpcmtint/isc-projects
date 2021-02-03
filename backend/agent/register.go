@@ -22,6 +22,7 @@ import (
 	"golang.org/x/net/publicsuffix"
 
 	"isc.org/stork/pki"
+	storkutil "isc.org/stork/util"
 )
 
 // Paths pointing to agent's key and cert, and CA cert from server,
@@ -66,7 +67,7 @@ func getServerTokenFromUser() (string, error) {
 func getAgentAddrAndPortFromUser(agentAddr, agentPort string) (string, int, error) {
 	if agentAddr == "" {
 		agentAddrTip, err := fqdn.FqdnHostname()
-		msg := ">>>> Please, provide an address (IP or name/FQDN) of current host with Stork Agent (the Stork Server will use to connect to the Stork Agent)"
+		msg := ">>>> Please, provide an IP address or FQDN of the host with Stork Agent (the Stork Server will use it to connect to the Stork Agent)"
 		if err != nil {
 			agentAddrTip = ""
 			msg += ": "
@@ -170,11 +171,7 @@ func generateCerts(agentAddr string, regenCerts bool) ([]byte, string, error) {
 	}
 
 	// convert fingerpring to hex string
-	var buf bytes.Buffer
-	for _, f := range fingerprint {
-		fmt.Fprintf(&buf, "%02X", f)
-	}
-	fingerprintStr := buf.String()
+	fingerprintStr := storkutil.BytesToHex(fingerprint)
 
 	return csrPEM, fingerprintStr, nil
 }
@@ -219,7 +216,7 @@ func registerAgentInServer(client *http.Client, baseSrvURL *url.URL, body *bytes
 		// If connection is refused and retries are enabled than wait for 10 seconds
 		// and try again. This method is used in case of agent token based registration
 		// to allow smooth automated registration even if server is down for some time.
-		// In case of server token based registration this method is invoked manuall so
+		// In case of server token based registration this method is invoked manual so
 		// it should fail immediately if there is no connection to the server.
 		if retry && strings.Contains(err.Error(), "connection refused") {
 			log.Println("sleeping for 10 seconds before next registration attempt")

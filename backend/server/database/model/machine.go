@@ -161,11 +161,7 @@ func GetMachinesByPage(db *pg.DB, offset int64, limit int64, filterText *string,
 
 	// prepare filtering by authorized
 	if authorized != nil {
-		if *authorized {
-			q = q.Where("authorized = ?", true)
-		} else {
-			q = q.Where("authorized != ?", true)
-		}
+		q = q.Where("authorized = ?", *authorized)
 	}
 
 	// prepare sorting expression, offset and limit
