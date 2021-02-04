@@ -171,7 +171,7 @@ func generateCerts(agentAddr string, regenCerts bool) ([]byte, string, error) {
 	}
 
 	// convert fingerpring to hex string
-	fingerprintStr := storkutil.BytesToHex(fingerprint)
+	fingerprintStr := storkutil.BytesToHex(fingerprint[:])
 
 	return csrPEM, fingerprintStr, nil
 }
@@ -216,7 +216,7 @@ func registerAgentInServer(client *http.Client, baseSrvURL *url.URL, body *bytes
 		// If connection is refused and retries are enabled than wait for 10 seconds
 		// and try again. This method is used in case of agent token based registration
 		// to allow smooth automated registration even if server is down for some time.
-		// In case of server token based registration this method is invoked manual so
+		// In case of server token based registration this method is invoked manually so
 		// it should fail immediately if there is no connection to the server.
 		if retry && strings.Contains(err.Error(), "connection refused") {
 			log.Println("sleeping for 10 seconds before next registration attempt")

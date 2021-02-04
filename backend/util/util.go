@@ -122,7 +122,7 @@ func (c RealCommander) Output(command string, args ...string) ([]byte, error) {
 }
 
 // Convert bytes to hex string.
-func BytesToHex(bytesArray [32]byte) string {
+func BytesToHex(bytesArray []byte) string {
 	var buf bytes.Buffer
 	for _, f := range bytesArray {
 		fmt.Fprintf(&buf, "%02X", f)
