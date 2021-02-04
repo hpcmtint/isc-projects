@@ -381,6 +381,7 @@ class StorkServerContainer(Container):
         # Stork server should be widely available
         self.run("perl -pi -e 's/.*STORK_REST_HOST.*/STORK_REST_HOST=0\.0\.0\.0/g' /etc/stork/server.env")
 
+        self.run('systemctl daemon-reload')
         self.run('systemctl enable isc-stork-server')
         self.run('systemctl restart isc-stork-server')
         self.run('systemctl status isc-stork-server')
@@ -534,7 +535,7 @@ class StorkAgentContainer(Container):
         else:
             self.run('yum install -y /root/isc-stork-agent.rpm')
 
-    def prepare_stork_agent(self, pkg_ver=None, server_ip=None):
+    def prepare_stork_agent(self, pkg_ver=None, server_ip=None, server_token=None):
         if pkg_ver == 'cloudsmith':
             self.setup_cloudsmith_repo('stork')
             self.install_pkgs('isc-stork-agent')
@@ -552,7 +553,11 @@ class StorkAgentContainer(Container):
             self.run('bash -c "%s"' % cmd)
             cmd = "echo -e '\nSTORK_AGENT_SERVER_URL=http://%s:8080' >> /etc/stork/agent.env" % server_ip
             self.run('bash -c "%s"' % cmd)
+            if server_token:
+                cmd = "echo -e '\nSTORK_AGENT_SERVER_TOKEN=%s' >> /etc/stork/agent.env" % server_token
+                self.run('bash -c "%s"' % cmd)
 
+        self.run('systemctl daemon-reload')
         self.run('systemctl enable isc-stork-agent')
         self.run('systemctl restart isc-stork-agent')
         self.run('systemctl status isc-stork-agent')

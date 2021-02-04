@@ -171,7 +171,7 @@ func setupApp() *cli.App {
 			&cli.IntFlag{
 				Name:    "prometheus-bind9-exporter-interval",
 				Value:   10,
-				Usage:   "specifies how often the agent collects stats from Kea, in seconds",
+				Usage:   "specifies how often the agent collects stats from BIND 9, in seconds",
 				EnvVars: []string{"STORK_AGENT_PROMETHEUS_BIND9_EXPORTER_INTERVAL"},
 			},
 			// Registration related settings

@@ -70,11 +70,15 @@ func getRootCertificates(params *advancedtls.GetRootCAsParams) (*advancedtls.Get
 	certPool := x509.NewCertPool()
 	ca, err := ioutil.ReadFile(RootCAFile)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not read ca certificate: %s", RootCAFile)
+		err = errors.Wrapf(err, "could not read ca certificate: %s", RootCAFile)
+		log.Errorf("%+v", err)
+		return nil, err
 	}
 	// append the client certificates from the CA
 	if ok := certPool.AppendCertsFromPEM(ca); !ok {
-		return nil, errors.New("failed to append client certs")
+		err = errors.New("failed to append client certs")
+		log.Errorf("%+v", err)
+		return nil, err
 	}
 	log.Printf("loaded CA cert: %s\n", RootCAFile)
 	return &advancedtls.GetRootCAsResults{
@@ -86,15 +90,21 @@ func getRootCertificates(params *advancedtls.GetRootCAsParams) (*advancedtls.Get
 func getIdentityCertificatesForServer(info *tls.ClientHelloInfo) ([]*tls.Certificate, error) {
 	keyPEM, err := ioutil.ReadFile(KeyPEMFile)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
+		err = errors.Wrapf(err, "could not load key PEM file: %s", KeyPEMFile)
+		log.Errorf("%+v", err)
+		return nil, err
 	}
 	certPEM, err := ioutil.ReadFile(CertPEMFile)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not load cert PEM file: %s", CertPEMFile)
+		err = errors.Wrapf(err, "could not load cert PEM file: %s", CertPEMFile)
+		log.Errorf("%+v", err)
+		return nil, err
 	}
 	certificate, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not setup tls key pair")
+		err = errors.Wrapf(err, "could not setup tls key pair")
+		log.Errorf("%+v", err)
+		return nil, err
 	}
 	log.Printf("loaded server cert: %s and key: %s\n", CertPEMFile, KeyPEMFile)
 	return []*tls.Certificate{&certificate}, nil

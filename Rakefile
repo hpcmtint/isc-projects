@@ -767,7 +767,23 @@ task :tarball do
   sh "git archive --prefix=stork-#{STORK_VERSION}/ -o stork-#{STORK_VERSION}.tar.gz HEAD"
 end
 
-def run_bld_pkgs_in_dkr(dkr_image)
+desc 'Build RPM and deb packages of Stork Agent and Server using Docker'
+task :build_pkgs_in_docker => [TIMESTAMPED_SRC_TARBALL, :build_server_pkgs_in_docker]
+
+desc 'Build RPM and deb packages of Stork Server using Docker'
+task :build_server_pkgs_in_docker => [TIMESTAMPED_SRC_TARBALL, :build_agent_pkgs_in_docker] do
+  run_bld_pkg_in_dkr('pkgs-ubuntu-18-04', 'deb', 'server')
+  run_bld_pkg_in_dkr('pkgs-centos-8', 'rpm', 'server')
+end
+
+desc 'Build RPM and deb packages of Stork Agent using Docker'
+task :build_agent_pkgs_in_docker => TIMESTAMPED_SRC_TARBALL do
+  run_bld_pkg_in_dkr('pkgs-ubuntu-18-04', 'deb', 'agent')
+  run_bld_pkg_in_dkr('pkgs-centos-8', 'rpm', 'agent')
+end
+
+# Invoke building a package (rpm or deb) of agent or server in given docker image
+def run_bld_pkg_in_dkr(dkr_image, pkg_type, side)
   cmd = "docker run "
   cmd += " -v #{PKGS_BUILD_DIR}:/home/$USER "
   cmd += " -v tools:/tools "
@@ -776,44 +792,30 @@ def run_bld_pkgs_in_dkr(dkr_image)
   cmd += " --volume=\"/etc/group:/etc/group:ro\""
   cmd += " --volume=\"/etc/passwd:/etc/passwd:ro\""
   cmd += " --volume=\"/etc/shadow:/etc/shadow:ro\""
-  cmd += " --rm -ti "
+  cmd += " --rm"
   cmd += " registry.gitlab.isc.org/isc-projects/stork/#{dkr_image}:latest"
   cmd += " bash -c \""
   cmd +=      " mkdir -p /tmp/build "
   cmd +=      " && tar -C /tmp/build -zxvf /home/$USER/stork-#{TIMESTAMP}.tar.gz"
-  cmd +=      " && cd /tmp/build"
-  cmd +=      " && rake build_pkgs STORK_BUILD_TIMESTAMP=#{TIMESTAMP}"
-  cmd +=      " && mv isc-stork* $HOME/"
+  cmd +=      " && cp /home/$USER/isc-stork-agent* /tmp/build"
+  cmd +=      "  ; cd /tmp/build"
+  cmd +=      " && rake build_pkg pkg=#{pkg_type}_#{side} STORK_BUILD_TIMESTAMP=#{TIMESTAMP}"
+  cmd +=      " && mv isc-stork* /home/$USER"
+  cmd +=      " && ls -al /home/$USER/"
   cmd +=      "\""
   sh "#{cmd}"
 
-  if dkr_image.include? 'ubuntu'
-    sh "mv #{PKGS_BUILD_DIR}/isc-stork*deb ."
-    # copy pkgs to web app so it can be served to agent installer
-    sh 'rm -f webui/src/assets/pkgs/isc-stork*deb'
-    sh 'cp isc-stork*deb webui/src/assets/pkgs/'
-  else
-    sh "mv #{PKGS_BUILD_DIR}/isc-stork*rpm ."
-    # copy pkgs to web app so it can be served to agent installer
-    sh 'rm -f webui/src/assets/pkgs/isc-stork*rpm'
-    sh 'cp isc-stork*rpm webui/src/assets/pkgs/'
-  end
+  puts("Build in docker of #{side}/#{pkg_type} completed.")
+  sh "ls -al #{PKGS_BUILD_DIR}/"
+  sh "cp #{PKGS_BUILD_DIR}/isc-stork-#{side}*#{pkg_type} ."
+  # copy pkgs to web app so it can be served to agent installer
+  sh 'mkdir -p webui/src/assets/pkgs'
+  sh "rm -f webui/src/assets/pkgs/isc-stork-#{side}*#{pkg_type}"
+  sh 'cp isc-stork*deb webui/src/assets/pkgs/'
 end
-
-desc 'Build debs in Docker. It is used for developer purposes.'
-task :build_debs_in_docker => TIMESTAMPED_SRC_TARBALL do
-  run_bld_pkgs_in_dkr('pkgs-ubuntu-18-04')
-end
-
-desc 'Build RPMs in Docker. It is used for developer purposes.'
-task :build_rpms_in_docker => TIMESTAMPED_SRC_TARBALL do
-  run_bld_pkgs_in_dkr('pkgs-centos-8')
-end
-
-task :build_pkgs_in_docker => [TIMESTAMPED_SRC_TARBALL, :build_debs_in_docker, :build_rpms_in_docker]
 
 # Internal task that copies sources and builds packages on a side. It is used by build_debs_in_docker and build_rpms_in_docker.
-task :build_pkgs do
+task :build_pkg do
   cwd = Dir.pwd
   # If the host is using an OS other than Linux, e.g. macOS, the appropriate
   # versions of tools will have to be downloaded. Thus, we don't copy the
@@ -828,8 +830,7 @@ task :build_pkgs do
   else
     pkg_type = 'deb'
   end
-  sh "rm -rf root && rake #{pkg_type}_agent STORK_BUILD_TIMESTAMP=#{TIMESTAMP}"
-  sh "rm -rf root && rake #{pkg_type}_server STORK_BUILD_TIMESTAMP=#{TIMESTAMP}"
+  sh "rm -rf root && rake #{ENV['pkg']} STORK_BUILD_TIMESTAMP=#{TIMESTAMP}"
   sh "ls -al isc-stork*"
 end
 
@@ -891,6 +892,7 @@ task :deb_server => :install_server do
   sh "mkdir -p #{WWW_DIR}/assets/pkgs/"
   # copy pkgs to web app so it can be served to agent installer
   sh "cp -a isc-stork-agent_#{STORK_VERSION}.#{TIMESTAMP}_amd64.deb #{WWW_DIR}/assets/pkgs/"
+  sh "cp -a isc-stork-agent-#{STORK_VERSION}.#{TIMESTAMP}-1.x86_64.rpm #{WWW_DIR}/assets/pkgs/"
   fpm('server', 'deb')
 end
 
@@ -898,15 +900,16 @@ desc 'Build RPM package with Stork server. It depends on building and installing
 task :rpm_server => :install_server do
   sh "mkdir -p #{WWW_DIR}/assets/pkgs/"
   # copy pkgs to web app so it can be served to agent installer
+  sh "cp -a isc-stork-agent_#{STORK_VERSION}.#{TIMESTAMP}_amd64.deb #{WWW_DIR}/assets/pkgs/"
   sh "cp -a isc-stork-agent-#{STORK_VERSION}.#{TIMESTAMP}-1.x86_64.rpm #{WWW_DIR}/assets/pkgs/"
   fpm('server', 'rpm')
 end
 
 desc 'Prepare containers with FPM and other dependencies that are used for building RPM and deb packages'
 task :build_fpm_containers do
-#  sh 'docker build -f docker/pkgs/ubuntu-18-04.txt -t registry.gitlab.isc.org/isc-projects/stork/pkgs-ubuntu-18-04:latest docker/pkgs/'
+  sh 'docker build -f docker/pkgs/ubuntu-18-04.txt -t registry.gitlab.isc.org/isc-projects/stork/pkgs-ubuntu-18-04:latest docker/pkgs/'
 #  sh 'docker build -f docker/pkgs/centos-8.txt -t registry.gitlab.isc.org/isc-projects/stork/pkgs-centos-8:latest docker/pkgs/'
-  sh 'docker build -f docker/pkgs/cloudsmith.txt -t registry.gitlab.isc.org/isc-projects/stork/pkgs-cloudsmith:latest docker/pkgs/'
+#  sh 'docker build -f docker/pkgs/cloudsmith.txt -t registry.gitlab.isc.org/isc-projects/stork/pkgs-cloudsmith:latest docker/pkgs/'
 end
 
 

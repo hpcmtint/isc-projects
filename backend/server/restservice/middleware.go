@@ -87,13 +87,15 @@ curl -o isc-stork-agent.deb "http://{{.ServerAddress}}{{.DebPath}}"
 
 if [ -e /etc/debian_version ]; then
     curl -o /tmp/isc-stork-agent.deb "{{.ServerAddress}}{{.DebPath}}"
-    dpkg -i /tmp/isc-stork-agent.deb
+    DEBIAN_FRONTEND=noninteractive dpkg -i --force-confold /tmp/isc-stork-agent.deb
 else
     curl -o /tmp/isc-stork-agent.rpm "{{.ServerAddress}}{{.RpmPath}}"
-    rpm -i /tmp/isc-stork-agent.rpm
+    yum install -y /tmp/isc-stork-agent.rpm
 fi
 
-systemctl start isc-stork-agent
+systemctl daemon-reload
+systemctl enable isc-stork-agent
+systemctl restart isc-stork-agent
 systemctl status isc-stork-agent
 
 su stork-agent -s /bin/sh -c 'stork-agent register -u http://{{.ServerAddress}}'
