@@ -78,6 +78,7 @@ import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component'
 import { EventsPageComponent } from './events-page/events-page.component'
 import { RenameAppDialogComponent } from './rename-app-dialog/rename-app-dialog.component'
 import { LeaseSearchPageComponent } from './lease-search-page/lease-search-page.component'
+import { HostTabComponent } from './host-tab/host-tab.component'
 
 export function cfgFactory() {
     const params: ConfigurationParameters = {
@@ -122,6 +123,7 @@ export function cfgFactory() {
         EventsPageComponent,
         RenameAppDialogComponent,
         LeaseSearchPageComponent,
+        HostTabComponent,
     ],
     imports: [
         BrowserModule,
