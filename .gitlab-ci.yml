@@ -373,3 +373,12 @@ upload_test_packages:
   script:
     - export LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
     - rake release:packages:upload REPO=stork-testing
+
+############################### SAST ################################
+# Read more about this feature here: https://docs.gitlab.com/ee/user/application_security/sast/
+#
+# Configure SAST with CI/CD variables (https://docs.gitlab.com/ee/ci/variables/index.html).
+# List of available variables: https://docs.gitlab.com/ee/user/application_security/sast/index.html#available-variables
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
