@@ -1,3 +1,10 @@
+
+* 156 [func] godfryd
+
+    Added cert-import command to stork-tool. This allows
+    importing CA key and cert, and server key and cert.
+    (Gitlab #570)
+
 * 155 [func] slawek
 
     Added resolving the include statement in Kea configuration when
