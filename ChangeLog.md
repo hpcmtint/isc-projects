@@ -1,3 +1,10 @@
+Stork 0.20.0
+
+* 151 [bug] slawek
+
+    Fixed re-registration problem after agent restart
+    (Gitlab #528 and #558)
+
 Stork 0.19.0 released on 2021-08-11.
 
 * 150 [bug] godfryd
