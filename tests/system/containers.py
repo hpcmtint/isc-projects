@@ -344,7 +344,7 @@ class StorkServerContainer(Container):
         else:
             #self.run('yum install -y postgresql-server postgresql-contrib sudo perl', attempts=5, sleep_time_after_attempt=5)
             #self.run('postgresql-setup initdb')
-            self.run('rpm -Uvh https://yum.postgresql.org/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm')
+            self.run('rpm -Uvh https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/postgresql11-11.13-1PGDG.rhel7.x86_64.rpm')
             self.install_pkgs('postgresql11-server postgresql11 postgresql11-contrib')
             self.run('/usr/pgsql-11/bin/postgresql-11-setup initdb')
             self.run("perl -pi -e 's/(host.*)ident/\\1md5/g'  /var/lib/pgsql/11/data/pg_hba.conf")
