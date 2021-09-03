@@ -33,7 +33,7 @@ STYLES = [dict(fg='red', style=''),
 
 KEA_1_6 = '1.6.3-isc0044120200730112858'
 KEA_1_7 = '1.7.3-isc0009420191217090201'
-KEA_1_8 = '1.8.2-isc0253720210505102801'
+KEA_1_8 = '1.8.2-isc0001520201206093433'
 KEA_LATEST = KEA_1_8
 
 
@@ -549,7 +549,7 @@ class StorkAgentContainer(Container):
         else:
             # install named on rpm distro
             if bind_version:
-                self.install_pkgs('yum-utils epel-release')
+                self.install_pkgs('yum-utils epel-release policycoreutils-python')
 
                 if bind_version == '9.17':
                     repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind-dev/repo/epel-7/isc-bind-dev-epel-7.repo'
