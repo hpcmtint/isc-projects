@@ -8,6 +8,7 @@ import shlex
 import random
 import argparse
 import threading
+import traceback
 import unicodedata
 
 from pylxd import Client
@@ -224,6 +225,7 @@ class Container:
         self.thread.join()
         if self.bg_exc:
             print("problem with container %s" % self.name)
+            traceback.print_exception(type(self.bg_exc), self.bg_exc, self.bg_exc.__traceback__)
             e = self.bg_exc
             self.bg_exc = None
             raise e
@@ -345,8 +347,10 @@ class StorkServerContainer(Container):
             #self.run('yum install -y postgresql-server postgresql-contrib sudo perl', attempts=5, sleep_time_after_attempt=5)
             #self.run('postgresql-setup initdb')
             self.run('yum -y --nogpgcheck localinstall '
-                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-libs-11.13-1PGDG.rhel8.x86_64.rpm ',
-                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-11.13-1PGDG.rhel8.x86_64.rpm'
+                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-libs-11.13-1PGDG.rhel8.x86_64.rpm '
+                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-contrib-11.13-1PGDG.rhel8.x86_64.rpm '
+                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-server-11.13-1PGDG.rhel8.x86_64.rpm '
+                'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-8-x86_64/postgresql11-11.13-1PGDG.rhel8.x86_64.rpm '
             )
             self.install_pkgs('postgresql11-libs postgresql11-server postgresql11 postgresql11-contrib')
             self.run('/usr/pgsql-11/bin/postgresql-11-setup initdb')
