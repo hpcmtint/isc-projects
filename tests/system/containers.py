@@ -349,7 +349,7 @@ class StorkServerContainer(Container):
                 'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/postgresql11-server-11.13-1PGDG.rhel7.x86_64.rpm '
                 'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/postgresql11-libs-11.13-1PGDG.rhel7.x86_64.rpm '
                 'https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/postgresql11-11.13-1PGDG.rhel7.x86_64.rpm')
-            self.install_pkgs('postgresql11-server postgresql11 postgresql11-contrib')
+            self.install_pkgs('postgresql11-server postgresql11 postgresql11-contrib postgresql11-libs')
             self.run('/usr/pgsql-11/bin/postgresql-11-setup initdb')
             self.run("perl -pi -e 's/(host.*)ident/\\1md5/g'  /var/lib/pgsql/11/data/pg_hba.conf")
 
