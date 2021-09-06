@@ -552,11 +552,11 @@ class StorkAgentContainer(Container):
                 self.install_pkgs('yum-utils epel-release policycoreutils-python-utils')
 
                 if bind_version == '9.17':
-                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind-dev/repo/epel-7/isc-bind-dev-epel-7.repo'
+                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind-dev/repo/epel-8/isc-bind-dev-epel-8.repo'
                 elif bind_version == '9.16':
-                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind/repo/epel-7/isc-bind-epel-7.repo'
+                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind/repo/epel-8/isc-bind-epel-8.repo'
                 elif bind_version == '9.11':
-                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind-esv/repo/epel-7/isc-bind-esv-epel-7.repo'
+                    repo = 'https://copr.fedorainfracloud.org/coprs/isc/bind-esv/repo/epel-8/isc-bind-esv-epel-8.repo'
                 else:
                     raise NotImplementedError
 
@@ -577,7 +577,8 @@ class StorkAgentContainer(Container):
             self.upload(conf_file, named_conf_path)
         else:
             # add control points to named.conf
-            cmd = "bash -c \"cat <<EOF >> %s\n" % named_conf_path
+            cmd = "touch %s\n" % named_conf_path
+            cmd += "bash -c \"cat <<EOF >> %s\n" % named_conf_path
             cmd += "controls {\n"
             cmd += "	inet 127.0.0.1 allow { localhost; };\n"
             cmd += "};\n"
