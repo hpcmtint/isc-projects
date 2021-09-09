@@ -56,14 +56,17 @@ def _get_machines_and_authorize_them(server, expected_items=1):
 
 def _get_machine_state(server, m_id):
     for i in range(100):
+        banner("Try: %d" % i)
         r = server.api_get('/machines/%d/state' % m_id)
         data = r.json()
+        banner("Object: %s" % r)
         if data['apps'] and data['apps'][0]['details']:
             break
         time.sleep(2)
     return data
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server", SUPPORTED_DISTROS)
 def test_users_management(agent, server):
     """Check if users can be fetched and added."""
@@ -96,6 +99,7 @@ def test_users_management(agent, server):
     r = server.api_post('/users', json=user, expected_status=200)  # TODO: POST should return 201
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("distro_agent, distro_server", SUPPORTED_DISTROS)
 def test_pkg_upgrade_agent_token(distro_agent, distro_server):
     """Check if Stork agent and server can be upgraded from latest release
@@ -134,6 +138,7 @@ def test_pkg_upgrade_agent_token(distro_agent, distro_server):
     assert m['apps'][0]['version'] == KEA_LATEST.split('-')[0]
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("distro_agent, distro_server", SUPPORTED_DISTROS)
 def test_pkg_upgrade_server_token(distro_agent, distro_server):
     """Check if Stork agent and server can be upgraded from latest release
@@ -210,11 +215,14 @@ def test_add_kea_with_many_subnets(agent, server):
     assert r.json()['login'] == 'admin'
 
     # get machine that automatically registered in the server and authorize it
+    banner("1. Get machines and authorize them")
     m = _get_machines_and_authorize_them(server)[0]
     assert m['address'] == agent.mgmt_ip
+    banner("2. Machine %s" % m)
 
     # check machine state
     m = _get_machine_state(server, m['id'])
+    banner("3. State %s" % m)
     assert m['apps'] is not None
     assert len(m['apps']) == 1
     assert m['apps'][0]['version'] == KEA_LATEST.split('-')[0]
@@ -292,7 +300,7 @@ def _search_leases(server, text=None, host_id=None):
 
     return data['items'], None
 
-
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server", [('centos/8', 'ubuntu/18.04')])
 def test_change_kea_ca_access_point(agent, server):
     """Check if Stork server notices that Kea CA has changed its listening address."""
@@ -343,6 +351,7 @@ def test_change_kea_ca_access_point(agent, server):
     assert m['apps'][0]['accessPoints'][0]['address'] == agent.mgmt_ip
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server", [('ubuntu/18.04', 'centos/8')])
 def test_search_leases(agent, server):
     # Install Kea on the machine with a Stork Agent.
@@ -450,6 +459,7 @@ def run_perfdhcp(src_cntr, dest_ip_addr):
         raise Exception('perfdhcp erred: %s' % str(result))
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent_kea, agent_old_kea, server", [('ubuntu/20.04', 'ubuntu/18.04', 'centos/8')])
 def test_get_kea_stats(agent_kea, agent_old_kea, server):
     """Check if collecting stats from various Kea versions works.
@@ -553,6 +563,7 @@ def test_get_kea_stats(agent_kea, agent_old_kea, server):
     assert sn_with_addrs == 2
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server, bind_version", [('centos/8', 'ubuntu/18.04', None),
                                                          ('centos/8', 'ubuntu/18.04', '9.11'),
                                                          ('centos/8', 'ubuntu/18.04', '9.16'),
@@ -585,6 +596,7 @@ def test_bind9_versions(agent, server, bind_version):
     assert m['apps'][0]['accessPoints'][0]['address'] == '127.0.0.1'
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server", [('ubuntu/18.04', 'centos/8')])
 def test_get_host_leases(agent, server):
     # Install Kea on the machine with a Stork Agent.
@@ -670,6 +682,7 @@ def test_get_host_leases(agent, server):
     assert data['items'] is None
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize("agent, server", [('ubuntu/18.04', 'ubuntu/18.04')])
 def test_agent_reregistration_after_restart(agent, server):
     """Check if after restart the agent isn't re-register.
