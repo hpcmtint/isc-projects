@@ -220,6 +220,8 @@ def test_add_kea_with_many_subnets(agent, server):
     assert m['address'] == agent.mgmt_ip
     banner("2. Machine %s" % m)
 
+    time.sleep(20)
+
     # check machine state
     m = _get_machine_state(server, m['id'])
     banner("3. State %s" % m)
