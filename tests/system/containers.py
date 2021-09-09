@@ -73,7 +73,6 @@ class Container:
 
         # prepare styling for traces
         self.style = random.choice(STYLES)
-        print(colors.color('%s: %s' % (name, str(self.style)), **self.style))
 
         # open separate connection to LXD
         self.lxd = Client()
@@ -564,8 +563,7 @@ class StorkAgentContainer(Container):
                 self.install_pkgs('isc-bind')
                 self.run("bash -c 'rpm -qa | grep isc-bind | grep %s'" % bind_version)
                 srv_name = 'isc-bind-named'
-                named_conf_path = '/etc/opt/isc/isc-bind/named.conf'
-
+                named_conf_path = '/etc/opt/isc/scls/isc-bind/named.conf'
             else:
                 self.install_pkgs('bind bind-utils')
                 srv_name = 'named'
@@ -577,8 +575,7 @@ class StorkAgentContainer(Container):
             self.upload(conf_file, named_conf_path)
         else:
             # add control points to named.conf
-            cmd = "touch %s\n" % named_conf_path
-            cmd += "bash -c \"cat <<EOF >> %s\n" % named_conf_path
+            cmd = "bash -c \"cat <<EOF >> %s\n" % named_conf_path
             cmd += "controls {\n"
             cmd += "	inet 127.0.0.1 allow { localhost; };\n"
             cmd += "};\n"
