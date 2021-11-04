@@ -63,6 +63,15 @@ def get_distro(content):
     return name, ver
 
 
+class RunOnce:
+    def __init__(self, function):
+        if not hasattr(RunOnce, 'has_run'):
+            RunOnce.has_run = {}
+        if function not in RunOnce.has_run:
+            RunOnce.has_run[function] = True
+            function()
+
+
 class Container:
     def __init__(self, name, version, port, alias=DEFAULT_SYSTEM_IMAGE):
         self.name = name
@@ -299,11 +308,20 @@ class Container:
         if self.pkg_format == 'deb':
             self.run("apt-get update")
 
+    def update_system_packages():
+        if self.pkg_format == 'deb':
+            pass
+        else:
+            self.run('dnf clean all')
+            self.run('rm -rf /var/cache/dnf')
+            self.run('dnf upgrade')
+
     def install_pkgs(self, names):
         if self.pkg_format == 'deb':
             cmd = "apt-get install -y --no-install-recommends"
             env = {'DEBIAN_FRONTEND': 'noninteractive', 'TERM': 'linux'}
         else:
+            RunOnce(update_system_packages)
             cmd = "yum install -y"
             env = None
         cmd += " " + names
@@ -410,7 +428,7 @@ class StorkServerContainer(Container):
                      {'DEBIAN_FRONTEND': 'noninteractive', 'TERM': 'linux'},
                      attempts=5, sleep_time_after_attempt=5)
         else:
-            self.run('yum install -y /root/isc-stork-server.rpm', attempts=5, sleep_time_after_attempt=5)
+            self.run('yum install -C -y /root/isc-stork-server.rpm', attempts=5, sleep_time_after_attempt=5)
 
 
     def prepare_stork_server(self, pkg_ver=None):
@@ -705,7 +723,7 @@ class StorkAgentContainer(Container):
                      {'DEBIAN_FRONTEND': 'noninteractive', 'TERM': 'linux'},
                      attempts=5, sleep_time_after_attempt=5)
         else:
-            self.run('yum install -y /root/isc-stork-agent.rpm', attempts=5, sleep_time_after_attempt=5)
+            self.run('yum install -C -y /root/isc-stork-agent.rpm', attempts=5, sleep_time_after_attempt=5)
 
     def prepare_stork_agent(self, pkg_ver=None, server_ip=None, server_token=None):
         if pkg_ver == 'cloudsmith':
