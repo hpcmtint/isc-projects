@@ -1,3 +1,9 @@
+* 170 [bug] slawek
+
+    Agent ignores the lines from the Kea configuration that are
+    commented out using double slashes (single-line comments).
+    (Gitlab #264)
+
 * 169 [func] marcin
 
     Server database connection can be protected with TLS.
