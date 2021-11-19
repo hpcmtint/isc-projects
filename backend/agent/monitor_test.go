@@ -315,6 +315,31 @@ func makeKeaConfFile() (*os.File, error) {
 	return file, nil
 }
 
+// Creates a basic Kea configuration file with the comments.
+// Caller is responsible for remove the file.
+func makeKeaConfFileWithComments() (*os.File, error) {
+	// prepare kea conf file
+	file, err := ioutil.TempFile(os.TempDir(), "prefix-")
+	if err != nil {
+		return nil, pkgerrors.Wrap(err, "Cannot create temporary file")
+	}
+
+	text := []byte("" +
+		"// \"http-host\": \"foobar\",\n" +
+		"   //  \"http-port\": 42424\n" +
+		"\"http-host\": \"localhost\",\n" +
+		"\"http-port\": 45634\n",
+	)
+	if _, err = file.Write(text); err != nil {
+		return nil, pkgerrors.Wrap(err, "Failed to write to temporary file")
+	}
+	if err := file.Close(); err != nil {
+		return nil, pkgerrors.Wrap(err, "Failed to close a temporary file")
+	}
+
+	return file, nil
+}
+
 // Creates a basic Kea configuration file with include statement.
 // It returns both inner and outer files.
 // Caller is responsible for removing the files.
@@ -392,6 +417,15 @@ func TestDetectKeaApp(t *testing.T) {
 	// check kea app detection when kea conf file is relative to CWD of kea process
 	cwd, file = path.Split(tmpFilePath)
 	app = detectKeaApp([]string{"", "", file}, cwd, httpClient)
+	checkApp(app)
+
+	// Check that the commented content is ignored
+	tmpFile, err = makeKeaConfFileWithComments()
+	require.NoError(t, err)
+	tmpFilePath = tmpFile.Name()
+	defer os.Remove(tmpFilePath)
+	defer os.Remove(nestedFile.Name())
+	app = detectKeaApp([]string{"", "", tmpFilePath}, "", httpClient)
 	checkApp(app)
 }
 

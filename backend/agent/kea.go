@@ -195,8 +195,46 @@ func getCtrlTargetFromKeaConfig(path string) (string, int64, bool) {
 		return "", 0, false
 	}
 
+	// Regex pattern that ignores all characters after double
+	// slashes. It should be prepended to the standard patterns.
+	// It doesn't produce a capture group.
+	//
+	// Example usage: regexp.MustCompile(ignoreCommented + `\d`)
+	//
+	// Warnings!
+	// It checks only characters before the next pattern. You
+	// should be aware, for example: regexp.MustCompile(ignoreCommented + `.*bar`)
+	// will match the "foo//bar".
+	//
+	// Single slashes are supported, but no immediately before next pattern
+	// regexp.MustCompile(ignoreCommented + `\d`) has no matches for "/1", but it is correct
+	// for "/ 1".
+	//
+	// The double slashes will be treated as comments even if
+	// they're part of the string (e.g. "//")
+	//
+	// Block comments (/* */) aren't supported.
+	//
+	// See also:
+	//		Current version: https://regex101.com/r/HOhq9z/1
+	//		Better version, but not supported by Go: https://regex101.com/r/xQcJIq/1
+	ignoreCommented := `(?m)` + // Enable multiline mode
+		`^` + // From the beginning of the line
+		`(?:` + // No capture group - main, repeat zero or more times
+		`(?:` + // No capture group - or group
+		`(?:` + // No capture group - first choice
+		`\/[^\/\n]` + // Single slash fallowed by no slash (excluded also new line)
+		`)` + // End of single choice
+		`|` + // Or operator
+		`(?:` + // No capture group - second choice
+		`[^\/\n]` + // No slash and no new line (excluded also new line)
+		`)` + // End of second choice
+		`)` + // End of or group
+		`)` + // End of the main group
+		`*` // Repeat zero or more times
+
 	// Port
-	ptrn := regexp.MustCompile(`"http-port"\s*:\s*([0-9]+)`)
+	ptrn := regexp.MustCompile(ignoreCommented + `"http-port"\s*:\s*([0-9]+)`)
 	m := ptrn.FindStringSubmatch(text)
 	if len(m) == 0 {
 		log.Warnf("cannot parse http-port: %+v", err)
@@ -210,7 +248,7 @@ func getCtrlTargetFromKeaConfig(path string) (string, int64, bool) {
 	}
 
 	// Address
-	ptrn = regexp.MustCompile(`"http-host"\s*:\s*\"(\S+)\"\s*,`)
+	ptrn = regexp.MustCompile(ignoreCommented + `"http-host"\s*:\s*\"(\S+)\"\s*,`)
 	m = ptrn.FindStringSubmatch(text)
 	address := "localhost"
 	if len(m) == 0 {
@@ -225,9 +263,9 @@ func getCtrlTargetFromKeaConfig(path string) (string, int64, bool) {
 	}
 
 	// Secure protocol
-	anchorPtrn := regexp.MustCompile(`"trust-anchor"\s*:\s*".*?"`)
-	certPtrn := regexp.MustCompile(`"cert-file"\s*:\s*".*?"`)
-	keyPtrn := regexp.MustCompile(`"key-file"\s*:\s*".*?"`)
+	anchorPtrn := regexp.MustCompile(ignoreCommented + `"trust-anchor"\s*:\s*".*?"`)
+	certPtrn := regexp.MustCompile(ignoreCommented + `"cert-file"\s*:\s*".*?"`)
+	keyPtrn := regexp.MustCompile(ignoreCommented + `"key-file"\s*:\s*".*?"`)
 
 	hasAnchor := anchorPtrn.MatchString(text)
 	hasCert := certPtrn.MatchString(text)
