@@ -206,7 +206,7 @@ func getCtrlTargetFromKeaConfig(path string) (string, int64, bool) {
 	// should be aware, for example: regexp.MustCompile(ignoreCommented + `.*bar`)
 	// will match the "foo//bar".
 	//
-	// Single slashes are supported, but no immediately before next pattern
+	// Single slashes are supported, but not immediately before the next pattern
 	// regexp.MustCompile(ignoreCommented + `\d`) has no matches for "/1", but it is correct
 	// for "/ 1".
 	//
