@@ -30,13 +30,7 @@ func TestGetApp(t *testing.T) {
 	am := NewAppMonitor()
 
 	var apps []App
-	apps = append(apps, &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "1.2.3.1", "", 1234, true),
-		},
-		HTTPClient: nil,
-	})
+	apps = append(apps, NewKeaApp(makeAccessPoint(AccessPointControl, "1.2.3.1", "", 1234, true), nil))
 
 	accessPoints := makeAccessPoint(AccessPointControl, "2.3.4.4", "abcd", 2345, false)
 	accessPoints = append(accessPoints, AccessPoint{
@@ -46,12 +40,7 @@ func TestGetApp(t *testing.T) {
 		Key:     "",
 	})
 
-	apps = append(apps, &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-	})
+	apps = append(apps, NewBind9App(accessPoints, nil))
 
 	// Monitor holds apps in background goroutine. So to get apps we need
 	// to send a request over a channel to this goroutine and wait for
@@ -214,19 +203,14 @@ func TestDetectApps(t *testing.T) {
 // Test that detectAllowedLogs does not panic when Kea server is unreachable.
 func TestDetectAllowedLogsKeaUnreachable(t *testing.T) {
 	am := &appMonitor{}
-	am.apps = append(am.apps, &KeaApp{
-		BaseApp: BaseApp{
-			Type: AppTypeKea,
-			AccessPoints: []AccessPoint{
-				{
-					Type:    AccessPointControl,
-					Address: "localhost",
-					Port:    45678,
-				},
-			},
+	accessPoints := []AccessPoint{
+		{
+			Type:    AccessPointControl,
+			Address: "localhost",
+			Port:    45678,
 		},
-		HTTPClient: NewHTTPClient(false),
-	})
+	}
+	am.apps = append(am.apps, NewKeaApp(accessPoints, NewHTTPClient(false)))
 
 	settings := cli.NewContext(nil, flag.NewFlagSet("", 0), nil)
 	sa := NewStorkAgent(settings, am)
@@ -432,20 +416,15 @@ func TestGetAccessPoint(t *testing.T) {
 		RndcClient: nil,
 	}
 
-	keaApp := &KeaApp{
-		BaseApp: BaseApp{
-			Type: AppTypeKea,
-			AccessPoints: []AccessPoint{
-				{
-					Type:    AccessPointControl,
-					Address: "localhost",
-					Port:    int64(45634),
-					Key:     "",
-				},
-			},
+	accessPoints := []AccessPoint{
+		{
+			Type:    AccessPointControl,
+			Address: "localhost",
+			Port:    int64(45634),
+			Key:     "",
 		},
-		HTTPClient: nil,
 	}
+	keaApp := NewKeaApp(accessPoints, nil)
 
 	// test get bind 9 access points
 	point, err := getAccessPoint(bind9App, AccessPointControl)
@@ -479,41 +458,31 @@ func TestGetAccessPoint(t *testing.T) {
 }
 
 func TestPrintNewOrUpdatedApps(t *testing.T) {
-	bind9App := &Bind9App{
-		BaseApp: BaseApp{
-			Type: AppTypeBind9,
-			AccessPoints: []AccessPoint{
-				{
-					Type:    AccessPointControl,
-					Address: "127.0.0.53",
-					Port:    int64(5353),
-					Key:     "hmac-sha256:abcd",
-				},
-				{
-					Type:    AccessPointStatistics,
-					Address: "127.0.0.80",
-					Port:    int64(80),
-					Key:     "",
-				},
-			},
+	accessPoints := []AccessPoint{
+		{
+			Type:    AccessPointControl,
+			Address: "127.0.0.53",
+			Port:    int64(5353),
+			Key:     "hmac-sha256:abcd",
 		},
-		RndcClient: nil,
+		{
+			Type:    AccessPointStatistics,
+			Address: "127.0.0.80",
+			Port:    int64(80),
+			Key:     "",
+		},
 	}
+	bind9App := NewBind9App(accessPoints, nil)
 
-	keaApp := &KeaApp{
-		BaseApp: BaseApp{
-			Type: AppTypeKea,
-			AccessPoints: []AccessPoint{
-				{
-					Type:    AccessPointControl,
-					Address: "localhost",
-					Port:    int64(45634),
-					Key:     "",
-				},
-			},
+	accessPoints = []AccessPoint{
+		{
+			Type:    AccessPointControl,
+			Address: "localhost",
+			Port:    int64(45634),
+			Key:     "",
 		},
-		HTTPClient: nil,
 	}
+	keaApp := NewKeaApp(accessPoints, nil)
 
 	newApps := []App{bind9App, keaApp}
 	var oldApps []App

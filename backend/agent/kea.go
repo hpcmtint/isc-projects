@@ -20,6 +20,15 @@ type KeaApp struct {
 	HTTPClient *HTTPClient // to communicate with Kea Control Agent
 }
 
+// Creates new instance of the KeaApp with specified access points and the
+// HTTP client instance.
+func NewKeaApp(accessPoints []AccessPoint, httpClient *HTTPClient) *KeaApp {
+	return &KeaApp{
+		BaseApp:    *NewBaseApp(AppTypeKea, accessPoints),
+		HTTPClient: httpClient,
+	}
+}
+
 // Get base information about Kea app.
 func (ka *KeaApp) GetBaseApp() *BaseApp {
 	return &ka.BaseApp
@@ -238,13 +247,7 @@ func detectKeaApp(match []string, cwd string, httpClient *HTTPClient) App {
 			UseSecureProtocol: useSecureProtocol,
 		},
 	}
-	keaApp := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: accessPoints,
-		},
-		HTTPClient: httpClient,
-	}
+	keaApp := NewKeaApp(accessPoints, httpClient)
 
 	return keaApp
 }

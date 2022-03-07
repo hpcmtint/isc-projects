@@ -27,13 +27,7 @@ func TestSendCommand(t *testing.T) {
 	command, err := keactrl.NewCommand("list-commands", nil, nil)
 	require.NoError(t, err)
 
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "localhost", "", 45634, false),
-		},
-		HTTPClient: httpClient,
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "localhost", "", 45634, false), httpClient)
 	responses := keactrl.ResponseList{}
 	err = ka.sendCommand(command, &responses)
 	require.NoError(t, err)
@@ -58,13 +52,7 @@ func TestSendCommandInvalidResponse(t *testing.T) {
 	command, err := keactrl.NewCommand("list-commands", nil, nil)
 	require.NoError(t, err)
 
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "localhost", "", 45634, false),
-		},
-		HTTPClient: httpClient,
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "localhost", "", 45634, false), httpClient)
 	responses := keactrl.ResponseList{}
 	err = ka.sendCommand(command, &responses)
 	require.Error(t, err)
@@ -75,13 +63,7 @@ func TestSendCommandNoKea(t *testing.T) {
 	command, err := keactrl.NewCommand("list-commands", nil, nil)
 	require.NoError(t, err)
 
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "localhost", "", 45634, false),
-		},
-		HTTPClient: NewHTTPClient(false),
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "localhost", "", 45634, false), NewHTTPClient(false))
 	responses := keactrl.ResponseList{}
 	err = ka.sendCommand(command, &responses)
 	require.Error(t, err)
@@ -180,13 +162,7 @@ func TestKeaAllowedLogs(t *testing.T) {
 		Reply(200).
 		JSON(dhcpResponses)
 
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "localhost", "", 45634, true),
-		},
-		HTTPClient: httpClient,
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "localhost", "", 45634, true), httpClient)
 	paths, err := ka.DetectAllowedLogs()
 	require.NoError(t, err)
 
@@ -225,13 +201,7 @@ func TestKeaAllowedLogsFewerResponses(t *testing.T) {
 		Reply(200).
 		JSON(dhcpResponses)
 
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "localhost", "", 45634, true),
-		},
-		HTTPClient: httpClient,
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "localhost", "", 45634, true), httpClient)
 	_, err = ka.DetectAllowedLogs()
 	require.Error(t, err)
 }

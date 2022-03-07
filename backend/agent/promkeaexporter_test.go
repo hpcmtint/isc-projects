@@ -23,13 +23,7 @@ type PromFakeAppMonitor struct {
 
 func (fam *PromFakeAppMonitor) GetApps() []App {
 	log.Println("GetApps")
-	ka := &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "0.1.2.3", "", 1234, false),
-		},
-		HTTPClient: nil,
-	}
+	ka := NewKeaApp(makeAccessPoint(AccessPointControl, "0.1.2.3", "", 1234, false), nil)
 	return []App{ka}
 }
 

@@ -35,6 +35,15 @@ type Bind9App struct {
 	RndcClient *RndcClient // to communicate with BIND 9 via rndc
 }
 
+// Creates new instance of the Bind9App with specified access points and the
+// Rndc client instance.
+func NewBind9App(accessPoints []AccessPoint, rndcClient *RndcClient) *Bind9App {
+	return &Bind9App{
+		BaseApp:    *NewBaseApp(AppTypeBind9, accessPoints),
+		RndcClient: rndcClient,
+	}
+}
+
 // Get base information about BIND 9 app.
 func (ba *Bind9App) GetBaseApp() *BaseApp {
 	return &ba.BaseApp
@@ -440,13 +449,7 @@ func detectBind9App(match []string, cwd string, cmdr storkutil.Commander) App {
 	}
 
 	// prepare final BIND 9 app
-	bind9App := &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-		RndcClient: rndcClient,
-	}
+	bind9App := NewBind9App(accessPoints, rndcClient)
 
 	return bind9App
 }

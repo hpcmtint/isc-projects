@@ -37,9 +37,22 @@ const (
 	AccessPointStatistics = "statistics"
 )
 
+// A single configuration capability.
+type ConfigCap struct {
+	Name string
+}
+
+// Collection of the configuration capabilities for a daemon.
+type DaemonConfigCaps struct {
+	Daemon string
+	Caps   []ConfigCap
+}
+
+// Basic app information.
 type App struct {
 	Type         string
 	AccessPoints []AccessPoint
+	ConfigCaps   []DaemonConfigCaps
 }
 
 // Currently supported types are: "kea" and "bind9".
@@ -123,9 +136,23 @@ func (agents *connectedAgentsData) GetState(ctx context.Context, address string,
 			})
 		}
 
+		var configCaps []DaemonConfigCaps
+		for _, dc := range app.ConfigCaps {
+			caps := DaemonConfigCaps{
+				Daemon: dc.Daemon,
+			}
+			for _, c := range dc.Caps {
+				caps.Caps = append(caps.Caps, ConfigCap{
+					Name: c.Name,
+				})
+			}
+			configCaps = append(configCaps, caps)
+		}
+
 		apps = append(apps, &App{
 			Type:         app.Type,
 			AccessPoints: accessPoints,
+			ConfigCaps:   configCaps,
 		})
 	}
 

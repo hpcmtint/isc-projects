@@ -142,13 +142,7 @@ func TestGetState(t *testing.T) {
 
 	// add some apps to app monitor so GetState should return something
 	var apps []App
-	apps = append(apps, &KeaApp{
-		BaseApp: BaseApp{
-			Type:         AppTypeKea,
-			AccessPoints: makeAccessPoint(AccessPointControl, "1.2.3.1", "", 1234, false),
-		},
-		HTTPClient: nil,
-	})
+	apps = append(apps, NewKeaApp(makeAccessPoint(AccessPointControl, "1.2.3.1", "", 1234, false), nil))
 
 	accessPoints := makeAccessPoint(AccessPointControl, "2.3.4.4", "abcd", 2345, true)
 	accessPoints = append(accessPoints, AccessPoint{
@@ -159,13 +153,7 @@ func TestGetState(t *testing.T) {
 		UseSecureProtocol: false,
 	})
 
-	apps = append(apps, &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-		RndcClient: nil,
-	})
+	apps = append(apps, NewBind9App(accessPoints, nil))
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
 	rsp, err = sa.GetState(ctx, &agentapi.GetStateReq{})
@@ -428,13 +416,7 @@ func TestForwardRndcCommandSuccess(t *testing.T) {
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
-	apps = append(apps, &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-		RndcClient: NewRndcClient(mockRndc),
-	})
+	apps = append(apps, NewBind9App(accessPoints, NewRndcClient(mockRndc)))
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
 
@@ -482,13 +464,7 @@ func TestForwardRndcCommandError(t *testing.T) {
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
-	apps = append(apps, &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-		RndcClient: NewRndcClient(mockRndcError),
-	})
+	apps = append(apps, NewBind9App(accessPoints, NewRndcClient(mockRndcError)))
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
 
@@ -534,13 +510,7 @@ func TestForwardRndcCommandEmpty(t *testing.T) {
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
-	apps = append(apps, &Bind9App{
-		BaseApp: BaseApp{
-			Type:         AppTypeBind9,
-			AccessPoints: accessPoints,
-		},
-		RndcClient: NewRndcClient(mockRndcEmpty),
-	})
+	apps = append(apps, NewBind9App(accessPoints, NewRndcClient(mockRndcEmpty)))
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
 

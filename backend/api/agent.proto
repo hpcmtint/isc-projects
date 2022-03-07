@@ -82,10 +82,22 @@ message AccessPoint {
   bool useSecureProtocol = 5;
 }
 
+// A single configuration capability.
+message ConfigCap {
+  string name = 1;
+}
+
+// Collection of configuration capabilities for a daemon.
+message DaemonConfigCaps {
+  string daemon = 1;
+  repeated ConfigCap caps = 2;
+}
+
 // Basic information about application.
 message App {
   string type = 1;  // currently supported types are: "kea" and "bind9"
   repeated AccessPoint accessPoints = 2;
+  repeated DaemonConfigCaps ConfigCaps = 3;
 }
 
 // Request to Kea CA.

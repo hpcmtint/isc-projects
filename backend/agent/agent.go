@@ -174,6 +174,7 @@ func (sa *StorkAgent) GetState(ctx context.Context, in *agentapi.GetStateReq) (*
 		apps = append(apps, &agentapi.App{
 			Type:         app.GetBaseApp().Type,
 			AccessPoints: accessPoints,
+			ConfigCaps:   app.GetBaseApp().configCaps.convertToProtobuf(),
 		})
 	}
 
