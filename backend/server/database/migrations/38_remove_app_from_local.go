@@ -36,7 +36,7 @@ func init() {
                 SET (app_id) = (SELECT app_id FROM daemon AS d WHERE d.id = ls.daemon_id);
 
             -- Now that we filled the column with valid app_id values we can
-            -- mark the colum NOT NULL.
+            -- mark the column NOT NULL.
             ALTER TABLE local_subnet ALTER COLUMN app_id SET NOT NULL;
 
             -- Remove current primary key.
@@ -63,7 +63,7 @@ func init() {
                 SET (app_id) = (SELECT app_id FROM daemon AS d WHERE d.id = lh.daemon_id);
 
             -- Now that we filled the column with valid app_id values we can
-            -- mark the colum NOT NULL.
+            -- mark the column NOT NULL.
             ALTER TABLE local_host ALTER COLUMN app_id SET NOT NULL;
 
             -- Remove current primary key.

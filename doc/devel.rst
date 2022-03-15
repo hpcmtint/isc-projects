@@ -309,7 +309,7 @@ be run by clicking on its name.
 
 By default, all tests are executed. To run only a specific test file,
 set the "test" environment variable to a relative path to any ``.spec.ts``
-file (relative from the bproject directory).
+file (relative from the project directory).
 
 When adding a new component or service with ``ng generate component|service ...``, the Angular framework
 adds a ``.spec.ts`` file with boilerplate code. In most cases, the first step in

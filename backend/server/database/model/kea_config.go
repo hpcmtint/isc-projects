@@ -41,11 +41,11 @@ type KeaConfig struct {
 }
 
 // KeaConfig doesn't implement a custom JSON marshaler but only calls
-// the marshaling on the internal keaconfig.Map.
+// the marshalling on the internal keaconfig.Map.
 var _ json.Marshaler = (*KeaConfig)(nil)
 
 // KeaConfig doesn't implement a custom JSON unmarshaler but only calls
-// the unmarshaling on the internal keaconfig.Map.
+// the unmarshalling on the internal keaconfig.Map.
 var _ json.Unmarshaler = (*KeaConfig)(nil)
 
 // The database serializer that workarounds the bufpool.

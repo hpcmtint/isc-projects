@@ -203,7 +203,7 @@ func UnmarshalResponseList(request *Command, response []byte, parsed interface{}
 	}
 
 	// Start computing hashes from the arguments received in the response.
-	// We may consider optimizing it to hash while unmarshaling the response. This,
+	// We may consider optimizing it to hash while unmarshalling the response. This,
 	// however, would require having a dedicated structure for arguments and custom
 	// unmarshaller to be implemented for it. While this makes sense, it gives
 	// significantly less flexibility on the caller side to use different structures

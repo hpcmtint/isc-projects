@@ -95,7 +95,7 @@ func sharedNetworkDispensable(ctx *ReviewContext) (*Report, error) {
 			details += storkutil.FormatNoun(singleCount, "shared network", "s")
 			details += " with only a single subnet"
 		}
-		r, err := NewReport(ctx, fmt.Sprintf("Kea {daemon} configuration includes %s. Shared networks create an overhead for a Kea server configuration and DHCP message processing, affecting its performance. It is recommended to remove the shared networks haing none or a single subnet and specify these subnets at the global configuration level.", details)).
+		r, err := NewReport(ctx, fmt.Sprintf("Kea {daemon} configuration includes %s. Shared networks create an overhead for a Kea server configuration and DHCP message processing, affecting its performance. It is recommended to remove the shared networks having none or a single subnet and specify these subnets at the global configuration level.", details)).
 			referencingDaemon(ctx.subjectDaemon).
 			create()
 		return r, err
@@ -431,7 +431,7 @@ func checkDHCPv4ReservationsOutOfPool(ctx *ReviewContext) (*Report, error) {
 				}
 			}
 			// Didn't find in-pool reservations in the configuration file and in
-			// the host daabase.
+			// the host database.
 			if ipResrvExist && !inPool {
 				// No in-pool reservation.
 				oopSubnetsCount++
@@ -563,7 +563,7 @@ func checkDHCPv6ReservationsOutOfPool(ctx *ReviewContext) (*Report, error) {
 				}
 			}
 			// Didn't find in-pool reservations in the configuration file and in
-			// the host daabase.
+			// the host database.
 			if ipResrvExist && !inPool {
 				// No in-pool reservation.
 				oopSubnetsCount++

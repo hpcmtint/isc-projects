@@ -356,7 +356,7 @@ func pingAgentViaServer(client *http.Client, baseSrvURL *url.URL, machineID int6
 	}
 	var result map[string]interface{}
 	err = json.Unmarshal(data, &result)
-	// normally the response is empty so unmarshaling is failing, if it didn't fail it means
+	// normally the response is empty so unmarshalling is failing, if it didn't fail it means
 	// that there could be some error information
 	if err == nil {
 		errTxt := result["error"]

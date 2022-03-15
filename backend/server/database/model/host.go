@@ -34,7 +34,7 @@ type IPReservation struct {
 	HostID  int64
 }
 
-// Checks if reservation is a delagated prefix.
+// Checks if reservation is a delegated prefix.
 func (r *IPReservation) IsPrefix() bool {
 	ip := storkutil.ParseIP(r.Address)
 	if ip == nil {
@@ -791,7 +791,7 @@ func CountOutOfPoolPrefixReservations(dbi dbops.DBI) (map[int64]uint64, error) {
 		// We need to exclude address reservations. We take into account
 		// only IPv6 reservations (as only IPv6 has prefix concept) and
 		// non single IPv6 hosts - entries with mask length less then 128 (128 mask length
-		// implies that is's IPv6 address).
+		// implies that they are IPv6 addresses).
 		Where("family(ip_reservation.address) = 6").
 		Where("masklen(ip_reservation.address) != 128").
 		// Is it out of all pools? - Is it not in any pool?
