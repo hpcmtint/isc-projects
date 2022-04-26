@@ -28,6 +28,8 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { DropdownModule } from 'primeng/dropdown'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { HostFormComponent } from '../host-form/host-form.component'
+import { DhcpOptionFormComponent } from '../dhcp-option-form/dhcp-option-form.component'
+import { DhcpOptionSetFormComponent } from '../dhcp-option-set-form/dhcp-option-set-form.component'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -89,6 +91,8 @@ describe('HostsPageComponent', () => {
                     HostTabComponent,
                     IdentifierComponent,
                     HostFormComponent,
+                    DhcpOptionFormComponent,
+                    DhcpOptionSetFormComponent,
                 ],
             }).compileComponents()
         })

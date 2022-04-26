@@ -310,6 +310,7 @@ export class HostFormComponent implements OnInit, OnDestroy {
                 ),
                 ipGroups: this._formBuilder.array([this._createNewIPGroup()]),
                 hostname: [''],
+                options: this._formBuilder.array([]),
             },
             {
                 validators: [subnetRequiredValidator, reservationRequiredValidator],
@@ -561,6 +562,15 @@ export class HostFormComponent implements OnInit, OnDestroy {
             this.ipGroups.clear()
             this.ipGroups.push(this._createNewIPGroup(this.form.dhcpv6 ? 'ia_na' : 'ipv4'))
         }
+    }
+
+    /**
+     * Convenience function returning the form array with DHCP options.
+     *
+     * @returns form array with DHCP options.
+     */
+    get optionsArray(): FormArray {
+        return this.formGroup.get('options') as FormArray
     }
 
     /**

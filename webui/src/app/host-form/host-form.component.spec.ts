@@ -13,6 +13,10 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { MessagesModule } from 'primeng/messages'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { HostFormComponent } from './host-form.component'
+import { ToggleButtonModule } from 'primeng/togglebutton'
+import { SplitButtonModule } from 'primeng/splitbutton'
+import { DhcpOptionFormComponent } from '../dhcp-option-form/dhcp-option-form.component'
+import { DhcpOptionSetFormComponent } from '../dhcp-option-set-form/dhcp-option-set-form.component'
 import { DHCPService } from '../backend'
 
 describe('HostFormComponent', () => {
@@ -116,12 +120,15 @@ describe('HostFormComponent', () => {
                 FieldsetModule,
                 FormsModule,
                 HttpClientTestingModule,
+                InputNumberModule,
                 MessagesModule,
                 MultiSelectModule,
                 NoopAnimationsModule,
                 ReactiveFormsModule,
+                SplitButtonModule,
+                ToggleButtonModule,
             ],
-            declarations: [HostFormComponent],
+            declarations: [DhcpOptionFormComponent, DhcpOptionSetFormComponent, HostFormComponent],
         }).compileComponents()
     })
 
@@ -662,5 +669,31 @@ describe('HostFormComponent', () => {
 
         expect(component.formSubmit.emit).not.toHaveBeenCalled()
         expect(messageService.add).toHaveBeenCalled()
+    }))
+
+    it('should include dhcpv4 options form', fakeAsync(() => {
+        spyOn(dhcpApi, 'createHostBegin').and.returnValue(of(cannedResponseBegin))
+        component.ngOnInit()
+        tick()
+        fixture.detectChanges()
+
+        const optionsForm = fixture.debugElement.query(By.css('app-dhcp-option-set-form'))
+        expect(optionsForm).toBeTruthy()
+        expect(optionsForm.componentInstance.v6).toBeFalse()
+    }))
+
+    it('should include dhcpv6 options form', fakeAsync(() => {
+        spyOn(dhcpApi, 'createHostBegin').and.returnValue(of(cannedResponseBegin))
+        component.ngOnInit()
+        tick()
+        fixture.detectChanges()
+
+        component.formGroup.get('selectedDaemons').setValue([3])
+        component.onDaemonsChange()
+        fixture.detectChanges()
+
+        const optionsForm = fixture.debugElement.query(By.css('app-dhcp-option-set-form'))
+        expect(optionsForm).toBeTruthy()
+        expect(optionsForm.componentInstance.v6).toBeTrue()
     }))
 })
