@@ -363,7 +363,7 @@ communication with the database. Other settings have the following meanings:
 
 * ``require`` - use secure communication but do not verify the server's identity
   unless the root certificate location is specified and that certificate exists.
-  If the root certificate exists, the behavior is the same as  in case of ``verify-ca``
+  If the root certificate exists, the behavior is the same as in case of ``verify-ca``
   mode.
 * ``verify-ca`` - use secure communication and verify the server's identity by
   checking it against the root certificate stored on the Stork server machine.
