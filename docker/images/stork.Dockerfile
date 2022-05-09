@@ -58,7 +58,7 @@ WORKDIR /app/rakelib/init_debs
 COPY rakelib/init_debs ./
 WORKDIR /app
 COPY Rakefile ./
-# It must be split into the separate stages
+# It must be split into separate stages.
 RUN rake prepare
 
 # Backend dependencies installation
