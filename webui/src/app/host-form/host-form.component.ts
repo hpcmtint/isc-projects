@@ -17,6 +17,7 @@ import { IPReservation } from '../backend/model/iPReservation'
 import { KeaDaemon } from '../backend/model/keaDaemon'
 import { LocalHost } from '../backend/model/localHost'
 import { Subnet } from '../backend/model/subnet'
+import { DhcpOptionSetForm } from '../forms/dhcp-option-set-form'
 import { stringToHex } from '../utils'
 
 /**
@@ -72,53 +73,6 @@ function identifierRequiredValidator(group: FormGroup): ValidationErrors | null 
             return Validators.required(idInputText)
     }
     return null
-}
-
-/**
- * A form validator checking if a user specified at least one reservation.
- *
- * Besides IP reservations it is also possible to specify hostname
- * reservation. This validator checks if hostname reservation has been
- * specified. Otherwise, it checks if at least one IP reservation has been
- * specified.
- *
- * @param group top-level component form group.
- * @returns validation errors if neither hostname or IP address reservations
- *          have been specified.
- */
-function reservationRequiredValidator(group: FormGroup): ValidationErrors | null {
-    // The easiest check is whether the hostname reservation has been
-    // specified.
-    if (!Validators.required(group.get('hostname'))) {
-        return null
-    }
-    // Iterate over the IP reservations and see if they are specified.
-    if (group.get('ipGroups')) {
-        for (let i = 0; i < (group.get('ipGroups') as FormArray).length; i++) {
-            const ipg = (group.get('ipGroups') as FormArray).at(i)
-            switch (ipg.get('ipType').value) {
-                case 'ipv4':
-                    if (!Validators.required(ipg.get('inputIPv4'))) {
-                        return null
-                    }
-                    break
-                case 'ia_na':
-                    if (!Validators.required(ipg.get('inputNA'))) {
-                        return null
-                    }
-                    break
-                case 'ia_pd':
-                    if (!Validators.required(ipg.get('inputPD'))) {
-                        return null
-                    }
-                    break
-            }
-        }
-    }
-    // No hostname nor IP reservation found.
-    return {
-        err: 'at least one IP or hostname reservation is required',
-    }
 }
 
 /**
@@ -313,7 +267,7 @@ export class HostFormComponent implements OnInit, OnDestroy {
                 options: this._formBuilder.array([]),
             },
             {
-                validators: [subnetRequiredValidator, reservationRequiredValidator],
+                validators: [subnetRequiredValidator],
             }
         )
 
@@ -714,6 +668,23 @@ export class HostFormComponent implements OnInit, OnDestroy {
             }
         }
 
+        let options = []
+        if (this.optionsArray) {
+            try {
+                const optionsForm = new DhcpOptionSetForm(this.optionsArray)
+                optionsForm.process()
+                options = optionsForm.getSerializedOptions()
+            } catch (err) {
+                this._messageService.add({
+                    severity: 'error',
+                    summary: 'Cannot commit new host',
+                    detail: 'Processing specified DHCP options failed: ' + err,
+                    life: 10000,
+                })
+                return
+            }
+        }
+
         // Create host.
         let host: Host = {
             subnetId: selectedSubnet,
@@ -727,6 +698,7 @@ export class HostFormComponent implements OnInit, OnDestroy {
             prefixReservations: prefixReservations,
             hostname: this.formGroup.get('hostname').value.trim(),
             localHosts: localHosts,
+            options: options,
         }
 
         // Submit the host.

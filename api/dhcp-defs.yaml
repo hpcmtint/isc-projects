@@ -80,6 +80,36 @@
       total:
         type: integer
 
+# Option
+
+  DHCPOptionField:
+    type: object
+    properties:
+      fieldType:
+        type: string
+      values:
+        type: array
+        items:
+          type: string
+
+  DHCPOption:
+    type: object
+    properties:
+      code:
+        type: integer
+      alwaysSend:
+        type: boolean
+      encapsulates:
+        type: string
+      fields:
+        type: array
+        items:
+          $ref: '#/definitions/DHCPOptionField'
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/DHCPOption'
+
 # Host
 
   HostIdentifier:
@@ -135,6 +165,10 @@
         type: array
         items:
           $ref: '#/definitions/LocalHost'
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/DHCPOption'
 
   Hosts:
     type: object
