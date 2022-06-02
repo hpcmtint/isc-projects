@@ -7,6 +7,7 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { ToggleButtonModule } from 'primeng/togglebutton'
 import { SplitButtonModule } from 'primeng/splitbutton'
 import { DhcpOptionFormComponent } from '../dhcp-option-form/dhcp-option-form.component'
+import { createDefaultDhcpOptionFormGroup } from '../forms/dhcp-option-form'
 import { DhcpOptionSetFormComponent } from '../dhcp-option-set-form/dhcp-option-set-form.component'
 
 describe('DhcpOptionSetFormComponent', () => {
@@ -46,8 +47,14 @@ describe('DhcpOptionSetFormComponent', () => {
         let addBtn = fixture.debugElement.query(By.css('[label="Add Option"]'))
         expect(addBtn).toBeTruthy()
 
+        spyOn(component.optionAdd, 'emit').and.callFake(() => {
+            component.formArray.push(createDefaultDhcpOptionFormGroup())
+        })
+
         addBtn.nativeElement.dispatchEvent(new Event('click'))
         fixture.detectChanges()
+
+        expect(component.optionAdd.emit).toHaveBeenCalled()
 
         expect(component.formArray.length).toBe(1)
         expect(fixture.debugElement.query(By.css('app-dhcp-option-form'))).toBeTruthy()

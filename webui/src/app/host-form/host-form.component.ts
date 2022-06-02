@@ -17,6 +17,7 @@ import { IPReservation } from '../backend/model/iPReservation'
 import { KeaDaemon } from '../backend/model/keaDaemon'
 import { LocalHost } from '../backend/model/localHost'
 import { Subnet } from '../backend/model/subnet'
+import { createDefaultDhcpOptionFormGroup } from '../forms/dhcp-option-form'
 import { DhcpOptionSetForm } from '../forms/dhcp-option-set-form'
 import { stringToHex } from '../utils'
 
@@ -606,6 +607,15 @@ export class HostFormComponent implements OnInit, OnDestroy {
         if (!this.form.filteredSubnets.find((fs) => fs.id === this.formGroup.get('selectedSubnet').value)) {
             this.formGroup.get('selectedSubnet').patchValue(null)
         }
+    }
+
+    /**
+     * A function called when a user clicked to add a new option form.
+     *
+     * It creates a new default form group for the option.
+     */
+    onOptionAdd(): void {
+        this.optionsArray.push(createDefaultDhcpOptionFormGroup())
     }
 
     /**

@@ -1,4 +1,4 @@
-<div *ngIf="formGroupReady" [formGroup]="formGroup" class="p-d-flex p-flex-column">
+<div [formGroup]="formGroup" class="p-d-flex p-flex-column">
     <div class="p-d-flex p-flex-column">
         <div *ngIf="topLevel; else showSuboptionInput">
             <span *ngIf="selectCode; else showOptionCodeInput" class="p-float-label">

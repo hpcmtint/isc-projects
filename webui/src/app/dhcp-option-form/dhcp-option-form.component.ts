@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import {
     AbstractControl,
     AbstractControlOptions,
@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { MenuItem } from 'primeng/api'
 import { LinkedFormGroup } from '../forms/linked-form-group'
 import { DhcpOptionField, DhcpOptionFieldFormGroup, DhcpOptionFieldType } from '../forms/dhcp-option-field'
+import { createDefaultDhcpOptionFormGroup } from '../forms/dhcp-option-form'
 import { StorkValidators } from '../validators'
 
 /**
@@ -37,7 +38,7 @@ import { StorkValidators } from '../validators'
     templateUrl: './dhcp-option-form.component.html',
     styleUrls: ['./dhcp-option-form.component.sass'],
 })
-export class DhcpOptionFormComponent implements OnChanges, OnInit {
+export class DhcpOptionFormComponent implements OnInit {
     /**
      * Sets the options universe: DHCPv4 or DHCPv6.
      */
@@ -75,12 +76,6 @@ export class DhcpOptionFormComponent implements OnChanges, OnInit {
      * the form group to remove.
      */
     @Output() optionDelete = new EventEmitter<number>()
-
-    /**
-     * Indicates that the form group has been initialized by this component
-     * in the ngOnChanges function.
-     */
-    formGroupReady = false
 
     /**
      * Defines a list of standard DHCPv4 options.
@@ -1452,26 +1447,6 @@ export class DhcpOptionFormComponent implements OnChanges, OnInit {
     constructor(private _formBuilder: FormBuilder) {}
 
     /**
-     * A component lifecycle hook invoked before ngOnInit and on each change.
-     *
-     * This hook is used to initialize the controls in the form group. It sets
-     * the flag that causes this call to return if it is later called upon
-     * detecting changes.
-     */
-    ngOnChanges(): void {
-        if (this.formGroupReady) {
-            return
-        }
-        this.formGroup.addControl(
-            'optionCode',
-            this._formBuilder.control({ value: null, disabled: false }, Validators.required)
-        )
-        this.formGroup.addControl('optionFields', this._formBuilder.array([]))
-        this.formGroup.addControl('suboptions', this._formBuilder.array([]))
-        this.formGroupReady = true
-    }
-
-    /**
      * A component lifecycle hook called on component initialization.
      *
      * It initializes the list of selectable option fields and associates
@@ -1721,7 +1696,7 @@ export class DhcpOptionFormComponent implements OnChanges, OnInit {
      * Initializes a new sub-option in the current option.
      */
     addSuboption(): void {
-        this.suboptions.push(this._formBuilder.group({}))
+        this.suboptions.push(createDefaultDhcpOptionFormGroup())
     }
 
     /**

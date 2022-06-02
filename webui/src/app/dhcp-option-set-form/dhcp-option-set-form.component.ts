@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { FormArray, FormBuilder, Validators } from '@angular/forms'
 
 /**
@@ -32,6 +32,11 @@ export class DhcpOptionSetFormComponent {
     @Input() nestLevel = 0
 
     /**
+     * An event emitter sending an event when user adds a new option.
+     */
+    @Output() optionAdd = new EventEmitter<void>()
+
+    /**
      * Constructor.
      *
      * @param _formBuilder a form builder instance used in this component.
@@ -39,10 +44,10 @@ export class DhcpOptionSetFormComponent {
     constructor(private _formBuilder: FormBuilder) {}
 
     /**
-     * Adds new option to the form array.
+     * Notifies a parent component to create new option form group.
      */
-    addOption(): void {
-        this.formArray.push(this._formBuilder.group({}))
+    notifyOptionAdded(): void {
+        this.optionAdd.emit()
     }
 
     /**

@@ -16,7 +16,7 @@
         pButton
         class="p-button-text p-button-sm p-ml-0"
         label="Add Option"
-        (click)="addOption()"
+        (click)="notifyOptionAdded()"
     ></button>
     <ng-template #nonEmptyFormArray>
         <button
@@ -24,7 +24,7 @@
             pButton
             label="Add More Options"
             class="p-button-text p-button-sm p-ml-0"
-            (click)="addOption()"
+            (click)="notifyOptionAdded()"
         ></button>
     </ng-template>
 </ng-container>

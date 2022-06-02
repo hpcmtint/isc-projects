@@ -6,6 +6,7 @@ import { DropdownModule } from 'primeng/dropdown'
 import { InputNumberModule } from 'primeng/inputnumber'
 import { ToggleButtonModule } from 'primeng/togglebutton'
 import { SplitButtonModule } from 'primeng/splitbutton'
+import { createDefaultDhcpOptionFormGroup } from '../forms/dhcp-option-form'
 import { DhcpOptionFormComponent } from './dhcp-option-form.component'
 import { DhcpOptionSetFormComponent } from '../dhcp-option-set-form/dhcp-option-set-form.component'
 
@@ -35,11 +36,7 @@ describe('DhcpOptionFormComponent', () => {
         component = fixture.componentInstance
         fb = new FormBuilder()
         // Our component needs a form group instance to be initialized.
-        component.formGroup = fb.group({})
-        // The first ngOnChanges invocation initializes our form group. We need
-        // to call it here because the tests don't do it automatically. Normally,
-        // this function is called before ngOnInit.
-        component.ngOnChanges()
+        component.formGroup = createDefaultDhcpOptionFormGroup()
         fixture.detectChanges()
     })
 
@@ -48,7 +45,6 @@ describe('DhcpOptionFormComponent', () => {
         expect(component.formGroup.contains('optionCode')).toBeTrue()
         expect(component.formGroup.contains('optionFields')).toBeTrue()
         expect(component.formGroup.contains('suboptions')).toBeTrue()
-        expect(component.formGroupReady).toBeTrue()
     })
 
     it('should display DHCPv4 options selection', () => {
@@ -342,6 +338,7 @@ describe('DhcpOptionFormComponent', () => {
 
         component.addPsidField()
         component.optionFields.at(0).get('psid').setValue(null)
+        component.optionFields.at(0).get('psidLength').setValue(10)
         expect(component.formGroup.valid).toBeFalse()
 
         component.optionFields.at(0).get('psid').setValue(12)

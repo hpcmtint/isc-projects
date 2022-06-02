@@ -165,7 +165,11 @@
     <p-fieldset legend="DHCP options" styleClass="p-mt-4">
         <div class="host-form-abs-width">
             <div class="p-mb-3 p-mt-3">
-                <app-dhcp-option-set-form [v6]="form.dhcpv6" [formArray]="optionsArray"></app-dhcp-option-set-form>
+                <app-dhcp-option-set-form
+                    [v6]="form.dhcpv6"
+                    [formArray]="optionsArray"
+                    (optionAdd)="onOptionAdd()"
+                ></app-dhcp-option-set-form>
             </div>
         </div>
     </p-fieldset>

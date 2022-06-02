@@ -565,6 +565,7 @@ describe('HostFormComponent', () => {
             options: [
                 {
                     code: 5,
+                    encapsulates: '',
                     fields: [
                         {
                             fieldType: 'ipv4-address',
