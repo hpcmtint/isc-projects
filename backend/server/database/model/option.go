@@ -13,12 +13,13 @@ type DHCPOptionField struct {
 
 // Represents a DHCP option.
 type DHCPOption struct {
-	AlwaysSend   bool
-	Code         uint16
-	Encapsulates string
-	Fields       []DHCPOptionField
-	Name         string
-	Universe     storkutil.IPType
+	AlwaysSend  bool
+	Code        uint16
+	Encapsulate string
+	Fields      []DHCPOptionField
+	Name        string
+	Space       string
+	Universe    storkutil.IPType
 }
 
 // Returns option field type.
@@ -43,8 +44,8 @@ func (option DHCPOption) GetCode() uint16 {
 }
 
 // Returns an encapsulated option space name.
-func (option DHCPOption) GetEncapsulates() string {
-	return option.Encapsulates
+func (option DHCPOption) GetEncapsulate() string {
+	return option.Encapsulate
 }
 
 // Returns option fields belonging to the option.
@@ -63,4 +64,9 @@ func (option DHCPOption) GetName() string {
 // Returns option universe (i.e., IPv4 or IPv6).
 func (option DHCPOption) GetUniverse() storkutil.IPType {
 	return option.Universe
+}
+
+// Returns option space name.
+func (option DHCPOption) GetSpace() string {
+	return option.Space
 }

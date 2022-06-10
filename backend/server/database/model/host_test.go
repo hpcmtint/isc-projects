@@ -1341,9 +1341,9 @@ func TestKeaConfigHostInterface(t *testing.T) {
 				DaemonID: 1,
 				DHCPOptionSet: []DHCPOption{
 					{
-						Code:         123,
-						Encapsulates: "dhcp4",
-						Universe:     storkutil.IPv4,
+						Code:        123,
+						Encapsulate: "dhcp4",
+						Universe:    storkutil.IPv4,
 					},
 				},
 			},
@@ -1369,7 +1369,7 @@ func TestKeaConfigHostInterface(t *testing.T) {
 	options := host.GetDHCPOptions(1)
 	require.Len(t, options, 1)
 	require.EqualValues(t, 123, options[0].GetCode())
-	require.Equal(t, "dhcp4", options[0].GetEncapsulates())
+	require.Equal(t, "dhcp4", options[0].GetEncapsulate())
 	require.Equal(t, storkutil.IPv4, options[0].GetUniverse())
 }
 

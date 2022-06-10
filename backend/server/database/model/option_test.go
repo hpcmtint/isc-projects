@@ -12,11 +12,12 @@ import (
 func TestDHCPOptionInterface(t *testing.T) {
 	// Create an option.
 	option := DHCPOption{
-		AlwaysSend:   true,
-		Code:         1776,
-		Encapsulates: "dhcp6",
-		Name:         "foo",
-		Universe:     storkutil.IPv6,
+		AlwaysSend:  true,
+		Code:        1776,
+		Encapsulate: "bar",
+		Name:        "foo",
+		Space:       "dhcp6",
+		Universe:    storkutil.IPv6,
 		Fields: []DHCPOptionField{
 			{
 				FieldType: keaconfig.StringField,
@@ -27,8 +28,9 @@ func TestDHCPOptionInterface(t *testing.T) {
 	// Validate returned values.
 	require.True(t, option.IsAlwaysSend())
 	require.EqualValues(t, 1776, option.GetCode())
-	require.Equal(t, "dhcp6", option.GetEncapsulates())
+	require.Equal(t, "bar", option.GetEncapsulate())
 	require.Equal(t, "foo", option.GetName())
+	require.Equal(t, "dhcp6", option.GetSpace())
 	require.Equal(t, storkutil.IPv6, option.GetUniverse())
 	require.Len(t, option.GetFields(), 1)
 	require.Equal(t, keaconfig.StringField, option.GetFields()[0].GetFieldType())

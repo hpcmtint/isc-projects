@@ -17,11 +17,12 @@ type testDHCPOptionField struct {
 
 // DHCP option used in the tests implementing the DHCPOption interface.
 type testDHCPOption struct {
-	alwaysSend   bool
-	code         uint16
-	encapsulates string
-	fields       []testDHCPOptionField
-	name         string
+	alwaysSend  bool
+	code        uint16
+	encapsulate string
+	fields      []testDHCPOptionField
+	name        string
+	space       string
 }
 
 // DHCP option definition lookup used in the tests.
@@ -59,8 +60,8 @@ func (option testDHCPOption) GetCode() uint16 {
 }
 
 // Returns an encapsulated option space name.
-func (option testDHCPOption) GetEncapsulates() string {
-	return option.encapsulates
+func (option testDHCPOption) GetEncapsulate() string {
+	return option.encapsulate
 }
 
 // Returns option fields belonging to the option.
@@ -74,6 +75,11 @@ func (option testDHCPOption) GetFields() (returnedFields []DHCPOptionField) {
 // Returns option name.
 func (option testDHCPOption) GetName() string {
 	return option.name
+}
+
+// Returns option space name.
+func (option testDHCPOption) GetSpace() string {
+	return option.space
 }
 
 // Returns option universe (i.e., IPv4 or IPv6).
@@ -92,9 +98,9 @@ func (lookup testDHCPOptionDefinitionLookup) DefinitionExists(daemonID int64, op
 // fields and simulates the case that a definition for this option exists.
 func TestCreateSingleOptionDataMultiplFields(t *testing.T) {
 	option := &testDHCPOption{
-		alwaysSend:   true,
-		code:         1600,
-		encapsulates: "foo",
+		alwaysSend:  true,
+		code:        1600,
+		encapsulate: "foo",
 		fields: []testDHCPOptionField{
 			{
 				fieldType: "uint8",
@@ -137,7 +143,8 @@ func TestCreateSingleOptionDataMultiplFields(t *testing.T) {
 				values:    []interface{}{"foobar"},
 			},
 		},
-		name: "bar",
+		name:  "bar",
+		space: "foobar",
 	}
 
 	lookup := &testDHCPOptionDefinitionLookup{
@@ -153,7 +160,8 @@ func TestCreateSingleOptionDataMultiplFields(t *testing.T) {
 	require.True(t, data.AlwaysSend)
 	require.EqualValues(t, 1600, data.Code)
 	require.True(t, data.CSVFormat)
-	require.Equal(t, "foo", data.Space)
+	require.Equal(t, "foo", data.Encapsulate)
+	require.Equal(t, "foobar", data.Space)
 	require.Equal(t, "bar", data.Name)
 
 	// Make sure that the option data were set correctly.
@@ -198,9 +206,9 @@ func TestCreateSingleOptionDataHexBytesField(t *testing.T) {
 // fields and simulates the case that a definition for this DOES NOT exist.
 func TestCreateSingleOptionDataNoDefinition(t *testing.T) {
 	option := &testDHCPOption{
-		alwaysSend:   true,
-		code:         16,
-		encapsulates: "foo",
+		alwaysSend:  true,
+		code:        16,
+		encapsulate: "foobar",
 		fields: []testDHCPOptionField{
 			{
 				fieldType: "uint8",
@@ -243,7 +251,8 @@ func TestCreateSingleOptionDataNoDefinition(t *testing.T) {
 				values:    []interface{}{"foobar"},
 			},
 		},
-		name: "bar",
+		name:  "bar",
+		space: "foo",
 	}
 
 	lookup := &testDHCPOptionDefinitionLookup{
@@ -259,6 +268,7 @@ func TestCreateSingleOptionDataNoDefinition(t *testing.T) {
 	require.True(t, data.AlwaysSend)
 	require.EqualValues(t, 16, data.Code)
 	require.False(t, data.CSVFormat)
+	require.Equal(t, "foobar", data.Encapsulate)
 	require.Equal(t, "foo", data.Space)
 	require.Equal(t, "bar", data.Name)
 

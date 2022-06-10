@@ -60,15 +60,15 @@ func (host TestHost) GetSubnetID(int64) (int64, error) {
 func (host TestHost) GetDHCPOptions(int64) (options []DHCPOption) {
 	testOptions := []testDHCPOption{
 		{
-			code:         5,
-			encapsulates: "dhcp4",
+			code:        5,
+			encapsulate: "dhcp4",
 			fields: []testDHCPOptionField{
 				*newTestDHCPOptionField("ipv4-address", "192.0.2.1"),
 			},
 		},
 		{
-			code:         7,
-			encapsulates: "dhcp4",
+			code:        7,
+			encapsulate: "dhcp4",
 			fields: []testDHCPOptionField{
 				*newTestDHCPOptionField("ipv4-address", "10.0.0.1"),
 			},

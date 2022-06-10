@@ -22,14 +22,14 @@ type DHCPOptionDefinitionLookup struct {
 func (lookup DHCPOptionDefinitionLookup) DefinitionExists(daemonID int64, option keaconfig.DHCPOption) bool {
 	switch option.GetUniverse() {
 	case storkutil.IPv4:
-		return option.GetEncapsulates() == "dhcp4" &&
+		return option.GetSpace() == "dhcp4" &&
 			(option.GetCode() < 101 ||
 				(option.GetCode() > 107 && option.GetCode() < 162) ||
 				(option.GetCode() > 174 && option.GetCode() < 178) ||
 				(option.GetCode() > 207 && option.GetCode() < 214) ||
 				(option.GetCode() > 219 && option.GetCode() < 222))
 	case storkutil.IPv6:
-		return option.GetEncapsulates() == "dhcp6" && option.GetCode() < 144
+		return option.GetSpace() == "dhcp6" && option.GetCode() < 144
 	}
 	return false
 }

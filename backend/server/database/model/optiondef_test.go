@@ -15,9 +15,9 @@ func TestStandardDHCPv4OptionDefinitionExists(t *testing.T) {
 	existingCodes := []uint16{99, 108, 175, 210, 220}
 	for _, code := range existingCodes {
 		option := DHCPOption{
-			Code:         code,
-			Encapsulates: "dhcp4",
-			Universe:     storkutil.IPv4,
+			Code:     code,
+			Space:    "dhcp4",
+			Universe: storkutil.IPv4,
 		}
 		require.True(t, lookup.DefinitionExists(1, option))
 	}
@@ -29,9 +29,9 @@ func TestDHCPv4SuboptionDefinition(t *testing.T) {
 	lookup := &DHCPOptionDefinitionLookup{}
 
 	option := DHCPOption{
-		Code:         15,
-		Encapsulates: "foo",
-		Universe:     storkutil.IPv4,
+		Code:     15,
+		Space:    "foo",
+		Universe: storkutil.IPv4,
 	}
 	require.False(t, lookup.DefinitionExists(1, option))
 }
@@ -44,9 +44,9 @@ func TestStandardDHCPv4OptionDefinitionNotExists(t *testing.T) {
 	nonExistingCodes := []uint16{106, 165, 180, 215, 224}
 	for _, code := range nonExistingCodes {
 		option := DHCPOption{
-			Code:         code,
-			Encapsulates: "dhcp4",
-			Universe:     storkutil.IPv4,
+			Code:     code,
+			Space:    "dhcp4",
+			Universe: storkutil.IPv4,
 		}
 		require.False(t, lookup.DefinitionExists(1, option))
 	}
@@ -58,9 +58,9 @@ func TestStandardDHCPv6OptionDefinitionExists(t *testing.T) {
 	lookup := &DHCPOptionDefinitionLookup{}
 
 	option := DHCPOption{
-		Code:         100,
-		Encapsulates: "dhcp6",
-		Universe:     storkutil.IPv6,
+		Code:     100,
+		Space:    "dhcp6",
+		Universe: storkutil.IPv6,
 	}
 	require.True(t, lookup.DefinitionExists(1, option))
 }
@@ -71,9 +71,9 @@ func TestStandardDHCPv6OptionDefinitionNotExists(t *testing.T) {
 	lookup := &DHCPOptionDefinitionLookup{}
 
 	option := DHCPOption{
-		Code:         145,
-		Encapsulates: "dhcp6",
-		Universe:     storkutil.IPv6,
+		Code:     145,
+		Space:    "dhcp6",
+		Universe: storkutil.IPv6,
 	}
 	require.False(t, lookup.DefinitionExists(1, option))
 }
@@ -84,9 +84,9 @@ func TestDHCPv6SuboptionDefinition(t *testing.T) {
 	lookup := &DHCPOptionDefinitionLookup{}
 
 	option := DHCPOption{
-		Code:         15,
-		Encapsulates: "foo",
-		Universe:     storkutil.IPv6,
+		Code:     15,
+		Space:    "foo",
+		Universe: storkutil.IPv6,
 	}
 	require.False(t, lookup.DefinitionExists(1, option))
 }

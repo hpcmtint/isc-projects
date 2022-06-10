@@ -93,6 +93,7 @@ func convertToHost(restHost *models.Host) *dbmodel.Host {
 			DaemonID:   lh.DaemonID,
 			DataSource: lh.DataSource,
 		}
+		localHost.DHCPOptionSet = flattenDHCPOptions("", lh.Options)
 		host.LocalHosts = append(host.LocalHosts, localHost)
 	}
 	return host
