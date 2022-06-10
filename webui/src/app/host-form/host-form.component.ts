@@ -630,6 +630,24 @@ export class HostFormComponent implements OnInit, OnDestroy {
             ? 0
             : this.formGroup.get('selectedSubnet').value
 
+        // DHCP options.
+        let options = []
+        if (this.optionsArray) {
+            try {
+                const optionsForm = new DhcpOptionSetForm(this.optionsArray)
+                optionsForm.process()
+                options = optionsForm.getSerializedOptions()
+            } catch (err) {
+                this._messageService.add({
+                    severity: 'error',
+                    summary: 'Cannot commit new host',
+                    detail: 'Processing specified DHCP options failed: ' + err,
+                    life: 10000,
+                })
+                return
+            }
+        }
+
         // Create associations with the daemons.
         let localHosts: LocalHost[] = []
         const selectedDaemons = this.formGroup.get('selectedDaemons').value
@@ -637,6 +655,7 @@ export class HostFormComponent implements OnInit, OnDestroy {
             localHosts.push({
                 daemonId: id,
                 dataSource: 'api',
+                options: options,
             })
         }
 
@@ -678,23 +697,6 @@ export class HostFormComponent implements OnInit, OnDestroy {
             }
         }
 
-        let options = []
-        if (this.optionsArray) {
-            try {
-                const optionsForm = new DhcpOptionSetForm(this.optionsArray)
-                optionsForm.process()
-                options = optionsForm.getSerializedOptions()
-            } catch (err) {
-                this._messageService.add({
-                    severity: 'error',
-                    summary: 'Cannot commit new host',
-                    detail: 'Processing specified DHCP options failed: ' + err,
-                    life: 10000,
-                })
-                return
-            }
-        }
-
         // Create host.
         let host: Host = {
             subnetId: selectedSubnet,
@@ -708,7 +710,6 @@ export class HostFormComponent implements OnInit, OnDestroy {
             prefixReservations: prefixReservations,
             hostname: this.formGroup.get('hostname').value.trim(),
             localHosts: localHosts,
-            options: options,
         }
 
         // Submit the host.

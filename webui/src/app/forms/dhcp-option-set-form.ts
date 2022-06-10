@@ -31,7 +31,7 @@ export class DhcpOptionSetForm {
      *
      * @param nestingLevel nesting level of the currently processed options.
      * Its value is 0 for top-level options, 1 for top-level option suboptions etc.
-     * @param optionSpace option space encapsulates by a parent option.
+     * @param optionSpace option space encapsulated by a parent option.
      * @throw An error for nesting level higher than 1 or if option data is invalid
      * or missing.
      */
@@ -49,7 +49,7 @@ export class DhcpOptionSetForm {
             }
             const item = {
                 code: option.get('optionCode').value,
-                encapsulates: '',
+                encapsulate: '',
                 fields: [],
                 options: [],
             }
@@ -103,9 +103,9 @@ export class DhcpOptionSetForm {
             const suboptions = option.get('suboptions') as FormArray
             // Suboptions are not mandatory.
             if (suboptions && suboptions.length > 0) {
-                item.encapsulates = optionSpace.length > 0 ? `${optionSpace}.${item.code}` : `option-${item.code}`
+                item.encapsulate = optionSpace.length > 0 ? `${optionSpace}.${item.code}` : `option-${item.code}`
                 const suboptionsForm = new DhcpOptionSetForm(suboptions)
-                suboptionsForm._process(nestingLevel + 1, item.encapsulates)
+                suboptionsForm._process(nestingLevel + 1, item.encapsulate)
                 item.options = suboptionsForm.getSerializedOptions()
             }
             // Done extracting an option.

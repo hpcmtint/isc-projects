@@ -99,7 +99,7 @@
         type: integer
       alwaysSend:
         type: boolean
-      encapsulates:
+      encapsulate:
         type: string
       fields:
         type: array
@@ -137,6 +137,10 @@
         type: string
       dataSource:
         type: string
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/DHCPOption'
 
   Host:
     type: object
@@ -165,10 +169,6 @@
         type: array
         items:
           $ref: '#/definitions/LocalHost'
-      options:
-        type: array
-        items:
-          $ref: '#/definitions/DHCPOption'
 
   Hosts:
     type: object

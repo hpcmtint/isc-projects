@@ -560,19 +560,19 @@ describe('HostFormComponent', () => {
                 {
                     daemonId: 1,
                     dataSource: 'api',
-                },
-            ],
-            options: [
-                {
-                    code: 5,
-                    encapsulates: '',
-                    fields: [
+                    options: [
                         {
-                            fieldType: 'ipv4-address',
-                            values: ['192.0.2.1'],
+                            code: 5,
+                            encapsulate: '',
+                            fields: [
+                                {
+                                    fieldType: 'ipv4-address',
+                                    values: ['192.0.2.1'],
+                                },
+                            ],
+                            options: [],
                         },
                     ],
-                    options: [],
                 },
             ],
         }
@@ -619,9 +619,9 @@ describe('HostFormComponent', () => {
                 {
                     daemonId: 1,
                     dataSource: 'api',
+                    options: [],
                 },
             ],
-            options: [],
         }
         expect(dhcpApi.createHostSubmit).toHaveBeenCalledWith(component.form.transactionId, host)
         expect(component.formSubmit.emit).toHaveBeenCalled()
@@ -685,9 +685,9 @@ describe('HostFormComponent', () => {
                 {
                     daemonId: 5,
                     dataSource: 'api',
+                    options: [],
                 },
             ],
-            options: [],
         }
         expect(dhcpApi.createHostSubmit).toHaveBeenCalledWith(component.form.transactionId, host)
         expect(component.formSubmit.emit).toHaveBeenCalled()
@@ -736,9 +736,9 @@ describe('HostFormComponent', () => {
                 {
                     daemonId: 5,
                     dataSource: 'api',
+                    options: [],
                 },
             ],
-            options: [],
         }
         expect(dhcpApi.createHostSubmit).toHaveBeenCalledWith(component.form.transactionId, host)
         expect(component.formSubmit.emit).toHaveBeenCalled()
