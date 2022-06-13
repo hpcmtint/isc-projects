@@ -79,12 +79,14 @@ export class DhcpOptionFormComponent implements OnInit {
 
     /**
      * Defines a list of standard DHCPv4 options.
+     *
+     * Commented out options are not configurable by a user.
      */
     dhcp4Options: any = [
-        {
+        /* {
             label: '(1) Subnet Mask',
             value: 1,
-        },
+        }, */
         {
             label: '(2) Time Offset',
             value: 2,
@@ -125,10 +127,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(11) RLP Server',
             value: 11,
         },
-        {
+        /* {
             label: '(12) Hostname',
             value: 12,
-        },
+        }, */
         {
             label: '(13) Boot File Size',
             value: 13,
@@ -277,30 +279,30 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(49) X Window Manager',
             value: 49,
         },
-        {
+        /*{
             label: '(50) Address Request',
             value: 50,
         },
         {
             label: '(51) Address Time',
             value: 51,
-        },
+        },*/
         {
             label: '(52) Overload',
             value: 52,
         },
-        {
+        /*{
             label: '(53) DHCP Msg Type',
             value: 53,
-        },
+        },*/
         {
             label: '(54) DHCP Server Id',
             value: 54,
         },
-        {
+        /*{
             label: '(55) Parameter List',
             value: 55,
-        },
+        },*/
         {
             label: '(56) DHCP Message',
             value: 56,
@@ -309,22 +311,22 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(57) DHCP Max Msg Size',
             value: 57,
         },
-        {
+        /*{
             label: '(58) Renewal Time',
             value: 58,
         },
         {
             label: '(59) Rebinding Time',
             value: 59,
-        },
+        },*/
         {
             label: '(60) Class Id',
             value: 60,
         },
-        {
+        /*{
             label: '(61) Client Id',
             value: 61,
-        },
+        },*/
         {
             label: '(62) NetWare/IP Domain',
             value: 62,
@@ -397,7 +399,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(79) Service Scope',
             value: 79,
         },
-        {
+        /*{
             label: '(80) Rapid Commit',
             value: 80,
         },
@@ -416,7 +418,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(84) REMOVED/Unassigned',
             value: 84,
-        },
+        },*/
         {
             label: '(85) NDS Servers',
             value: 85,
@@ -437,7 +439,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(89) BCMCS Controller IPv(4) address option',
             value: 89,
         },
-        {
+        /*{
             label: '(90) Authentication',
             value: 90,
         },
@@ -448,7 +450,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(92) associated-ip option',
             value: 92,
-        },
+        },*/
         {
             label: '(93) Client System',
             value: 93,
@@ -457,14 +459,14 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(94) Client NDI',
             value: 94,
         },
-        {
+        /*{
             label: '(95) LDAP',
             value: 95,
         },
         {
             label: '(96) REMOVED/Unassigned',
             value: 96,
-        },
+        },*/
         {
             label: '(97) UUID/GUID',
             value: 97,
@@ -493,7 +495,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(108) IPv6-Only Preferred',
             value: 108,
         },
-        {
+        /*{
             label: '(109) OPTION_DHCP4O6_S46_SADDR',
             value: 109,
         },
@@ -504,7 +506,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(111) Unassigned',
             value: 111,
-        },
+        },*/
         {
             label: '(112) Netinfo Address',
             value: 112,
@@ -517,10 +519,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(114) DHCP Captive-Portal',
             value: 114,
         },
-        {
+        /*{
             label: '(115) REMOVED/Unassigned',
             value: 115,
-        },
+        },*/
         {
             label: '(116) Auto-Config',
             value: 116,
@@ -529,15 +531,15 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(117) Name Service Search',
             value: 117,
         },
-        {
+        /*{
             label: '(118) Subnet Selection Option',
             value: 118,
-        },
+        },*/
         {
             label: '(119) Domain Search',
             value: 119,
         },
-        {
+        /*{
             label: '(120) SIP Servers DHCP Option',
             value: 120,
         },
@@ -552,7 +554,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(123) GeoConf Option',
             value: 123,
-        },
+        },*/
         {
             label: '(124) V-I Vendor Class',
             value: 124,
@@ -561,7 +563,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(125) V-I Vendor-Specific Information',
             value: 125,
         },
-        {
+        /*{
             label: '(126) Removed/Unassigned',
             value: 126,
         },
@@ -648,7 +650,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(135) HTTP Proxy for phone-specific applications',
             value: 135,
-        },
+        },*/
         {
             label: '(136) OPTION_PANA_AGENT',
             value: 136,
@@ -661,19 +663,19 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(138) OPTION_CAPWAP_AC_V4',
             value: 138,
         },
-        {
+        /*{
             label: '(139) OPTION-IPv4_Address-MoS',
             value: 139,
         },
         {
             label: '(140) OPTION-IPv4_FQDN-MoS',
             value: 140,
-        },
+        },*/
         {
             label: '(141) SIP UA Configuration Service Domains',
             value: 141,
         },
-        {
+        /*{
             label: '(142) OPTION-IPv4_Address-ANDSF',
             value: 142,
         },
@@ -688,12 +690,12 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(145) FORCERENEW_NONCE_CAPABLE',
             value: 145,
-        },
+        },*/
         {
             label: '(146) RDNSS Selection',
             value: 146,
         },
-        {
+        /*{
             label: '(147) OPTION_V4_DOTS_RI',
             value: 147,
         },
@@ -761,10 +763,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(161) OPTION_MUD_URL_V4',
             value: 161,
         },
-        /*{
+        {
             label: '(162-174) Unassigned',
             value: 162 - 174,
-        },*/
+        },
         {
             label: '(175) Etherboot (Tentatively Assigned - 2005-06-23)',
             value: 175,
@@ -781,10 +783,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(177) PacketCable and CableHome (replaced by 122)',
             value: 177,
         },
-        /*{
+        {
             label: '(178-207) Unassigned',
             value: 178 - 207,
-        },*/
+        },
         {
             label: '(208) PXELINUX Magic',
             value: 208,
@@ -800,7 +802,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(211) Reboot Time',
             value: 211,
-        },
+        },*/
         {
             label: '(212) OPTION_6RD',
             value: 212,
@@ -812,7 +814,7 @@ export class DhcpOptionFormComponent implements OnInit {
         /*{
             label: '(214-219) Unassigned',
             value: 214 - 219,
-        },*/
+        },
         {
             label: '(220) Subnet Allocation Option',
             value: 220,
@@ -821,11 +823,11 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(221) Virtual Subnet Selection (VSS) Option',
             value: 221,
         },
-        /*{
+        {
             label: '(222-223) Unassigned',
             value: 222 - 223,
-        },*/
-        /*{
+        },
+        {
             label: '(224-254) Reserved (Private Use)',
             value: 224 - 254,
         },*/
@@ -833,12 +835,14 @@ export class DhcpOptionFormComponent implements OnInit {
 
     /**
      * Defines a list of standard DHCPv6 options.
+     *
+     * Commented out options are not configurable by a user.
      */
     dhcp6Options: any = [
         /*{
             label: '(0) Reserved',
             value: 0,
-        },*/
+        },
         {
             label: '(1) OPTION_CLIENTID',
             value: 1,
@@ -862,12 +866,12 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(6) OPTION_ORO',
             value: 6,
-        },
+        },*/
         {
             label: '(7) OPTION_PREFERENCE',
             value: 7,
         },
-        {
+        /*{
             label: '(8) OPTION_ELAPSED_TIME',
             value: 8,
         },
@@ -875,19 +879,19 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(9) OPTION_RELAY_MSG',
             value: 9,
         },
-        /*{
+        {
             label: '(10) Unassigned',
             value: 10,
-        },*/
+        },
         {
             label: '(11) OPTION_AUTH',
             value: 11,
-        },
+        },*/
         {
             label: '(12) OPTION_UNICAST',
             value: 12,
         },
-        {
+        /*{
             label: '(13) OPTION_STATUS_CODE',
             value: 13,
         },
@@ -918,7 +922,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(20) OPTION_RECONF_ACCEPT',
             value: 20,
-        },
+        },*/
         {
             label: '(21) OPTION_SIP_SERVER_D',
             value: 21,
@@ -935,14 +939,14 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(24) OPTION_DOMAIN_LIST',
             value: 24,
         },
-        {
+        /*{
             label: '(25) OPTION_IA_PD',
             value: 25,
         },
         {
             label: '(26) OPTION_IAPREFIX',
             value: 26,
-        },
+        },*/
         {
             label: '(27) OPTION_NIS_SERVERS',
             value: 27,
@@ -1031,14 +1035,14 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(48) OPTION_LQ_CLIENT_LINK',
             value: 48,
         },
-        {
+        /*{
             label: '(49) OPTION_MIP6_HNIDF',
             value: 49,
         },
         {
             label: '(50) OPTION_MIP6_VDINF',
             value: 50,
-        },
+        },*/
         {
             label: '(51) OPTION_V6_LOST',
             value: 51,
@@ -1051,7 +1055,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(53) OPTION_RELAY_ID',
             value: 53,
         },
-        {
+        /*{
             label: '(54) OPTION-IPv6_Address-MoS',
             value: 54,
         },
@@ -1062,7 +1066,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(56) OPTION_NTP_SERVER',
             value: 56,
-        },
+        },*/
         {
             label: '(57) OPTION_V6_ACCESS_DOMAIN',
             value: 57,
@@ -1087,10 +1091,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(62) OPTION_NII',
             value: 62,
         },
-        {
+        /*{
             label: '(63) OPTION_GEOLOCATION',
             value: 63,
-        },
+        },*/
         {
             label: '(64) OPTION_AFTR_NAME',
             value: 64,
@@ -1107,7 +1111,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(67) OPTION_PD_EXCLUDE',
             value: 67,
         },
-        {
+        /*{
             label: '(68) OPTION_VSS',
             value: 68,
         },
@@ -1130,12 +1134,12 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(73) OPTION_MIP6_HAF',
             value: 73,
-        },
+        },*/
         {
             label: '(74) OPTION_RDNSS_SELECTION',
             value: 74,
         },
-        {
+        /*{
             label: '(75) OPTION_KRB_PRINCIPAL_NAME',
             value: 75,
         },
@@ -1150,7 +1154,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(78) OPTION_KRB_KDC',
             value: 78,
-        },
+        },*/
         {
             label: '(79) OPTION_CLIENT_LINKLAYER_ADDR',
             value: 79,
@@ -1159,10 +1163,10 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(80) OPTION_LINK_ADDRESS',
             value: 80,
         },
-        {
+        /*{
             label: '(81) OPTION_RADIUS',
             value: 81,
-        },
+        },*/
         {
             label: '(82) OPTION_SOL_MAX_RT',
             value: 82,
@@ -1171,7 +1175,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(83) OPTION_INF_MAX_RT',
             value: 83,
         },
-        {
+        /*{
             label: '(84) OPTION_ADDRSEL',
             value: 84,
         },
@@ -1186,7 +1190,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(87) OPTION_DHCPV4_MSG',
             value: 87,
-        },
+        },*/
         {
             label: '(88) OPTION_DHCP4_O_DHCP6_SERVER',
             value: 88,
@@ -1223,7 +1227,7 @@ export class DhcpOptionFormComponent implements OnInit {
             label: '(96) OPTION_S46_CONT_LW',
             value: 96,
         },
-        {
+        /*{
             label: '(97) OPTION_4RD',
             value: 97,
         },
@@ -1246,12 +1250,12 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(102) OPTION_LQ_END_TIME',
             value: 102,
-        },
+        },*/
         {
             label: '(103) DHCP Captive-Portal',
             value: 103,
         },
-        {
+        /*{
             label: '(104) OPTION_MPL_PARAMETERS',
             value: 104,
         },
@@ -1406,7 +1410,7 @@ export class DhcpOptionFormComponent implements OnInit {
         {
             label: '(142) OPTION_V6_DOTS_ADDRESS',
             value: 142,
-        },
+        },*/
         {
             label: '(143) OPTION-IPv6_Address-ANDSF',
             value: 143,
