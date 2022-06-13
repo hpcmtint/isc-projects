@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { CheckboxModule } from 'primeng/checkbox'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputNumberModule } from 'primeng/inputnumber'
 import { ToggleButtonModule } from 'primeng/togglebutton'
@@ -19,6 +20,7 @@ describe('DhcpOptionFormComponent', () => {
         await TestBed.configureTestingModule({
             providers: [FormBuilder],
             imports: [
+                CheckboxModule,
                 DropdownModule,
                 FormsModule,
                 InputNumberModule,

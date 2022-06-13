@@ -1440,6 +1440,11 @@ export class DhcpOptionFormComponent implements OnInit {
     codeInputId: string
 
     /**
+     * A unique id of the Always Send checkbox.
+     */
+    alwaysSendCheckboxId: string
+
+    /**
      * Constructor.
      *
      * @param _formBuilder a form builder instance used in this component.
@@ -1456,6 +1461,7 @@ export class DhcpOptionFormComponent implements OnInit {
         this.lastFieldCommand = this.addHexBytesField
         this.selectCode = true
         this.codeInputId = uuidv4()
+        this.alwaysSendCheckboxId = uuidv4()
         this.fieldTypes = [
             {
                 label: 'hex-bytes',

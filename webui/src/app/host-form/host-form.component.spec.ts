@@ -520,6 +520,7 @@ describe('HostFormComponent', () => {
         component.optionsArray.push(
             formBuilder.group({
                 optionCode: [5],
+                alwaysSend: true,
                 optionFields: formBuilder.array([
                     new DhcpOptionFieldFormGroup(DhcpOptionFieldType.IPv4Address, {
                         control: formBuilder.control('192.0.2.1'),
@@ -563,6 +564,7 @@ describe('HostFormComponent', () => {
                     dataSource: 'api',
                     options: [
                         {
+                            alwaysSend: true,
                             code: 5,
                             encapsulate: '',
                             fields: [
@@ -760,6 +762,7 @@ describe('HostFormComponent', () => {
         component.optionsArray.push(
             formBuilder.group({
                 optionCode: [],
+                alwaysSend: false,
                 optionFields: formBuilder.array([
                     new DhcpOptionFieldFormGroup(DhcpOptionFieldType.IPv4Address, {
                         control: formBuilder.control('192.0.2.1'),

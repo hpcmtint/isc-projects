@@ -14,6 +14,7 @@ export function createDefaultDhcpOptionFormGroup(): FormGroup {
     const fb = new FormBuilder()
     return fb.group({
         optionCode: [{ value: null, disabled: false }, Validators.required],
+        alwaysSend: [{ value: false }],
         optionFields: fb.array([]),
         suboptions: fb.array([]),
     })

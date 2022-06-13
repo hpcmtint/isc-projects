@@ -10,6 +10,7 @@ describe('DhcpOptionSetForm', () => {
         // Add a form with three options.
         const formArray = formBuilder.array([
             formBuilder.group({
+                alwaysSend: formBuilder.control(true),
                 optionCode: formBuilder.control(1024),
                 optionFields: formBuilder.array([
                     new DhcpOptionFieldFormGroup(DhcpOptionFieldType.IPv6Prefix, {
@@ -29,6 +30,7 @@ describe('DhcpOptionSetForm', () => {
                 ]),
             }),
             formBuilder.group({
+                alwaysSend: formBuilder.control(false),
                 optionCode: formBuilder.control(2024),
                 optionFields: formBuilder.array([
                     new DhcpOptionFieldFormGroup(DhcpOptionFieldType.Uint8, {
@@ -40,9 +42,11 @@ describe('DhcpOptionSetForm', () => {
                 ]),
             }),
             formBuilder.group({
+                alwaysSend: formBuilder.control(true),
                 optionCode: formBuilder.control(3087),
                 suboptions: formBuilder.array([
                     formBuilder.group({
+                        alwaysSend: formBuilder.control(false),
                         optionCode: formBuilder.control(1),
                         optionFields: formBuilder.array([
                             new DhcpOptionFieldFormGroup(DhcpOptionFieldType.Uint16, {
@@ -61,10 +65,12 @@ describe('DhcpOptionSetForm', () => {
         const serialized = options.getSerializedOptions()
         expect(serialized.length).toBe(3)
 
+        expect(serialized[0].hasOwnProperty('alwaysSend')).toBeTrue()
         expect(serialized[0].hasOwnProperty('code')).toBeTrue()
         expect(serialized[0].hasOwnProperty('encapsulate')).toBeTrue()
         expect(serialized[0].hasOwnProperty('fields')).toBeTrue()
         expect(serialized[0].hasOwnProperty('options')).toBeTrue()
+        expect(serialized[0].alwaysSend).toBeTrue()
         expect(serialized[0].code).toBe(1024)
         expect(serialized[0].encapsulate.length).toBe(0)
         // It should have 4 option fields of different types.
@@ -84,10 +90,12 @@ describe('DhcpOptionSetForm', () => {
         expect(serialized[0].fields[3].values.length).toBe(1)
         expect(serialized[0].fields[3].values[0]).toBe('foobar')
 
+        expect(serialized[1].hasOwnProperty('alwaysSend')).toBeTrue()
         expect(serialized[1].hasOwnProperty('code')).toBeTrue()
         expect(serialized[1].hasOwnProperty('encapsulate')).toBeTrue()
         expect(serialized[1].hasOwnProperty('fields')).toBeTrue()
         expect(serialized[1].hasOwnProperty('options')).toBeTrue()
+        expect(serialized[1].alwaysSend).toBeFalse()
         expect(serialized[1].code).toBe(2024)
         expect(serialized[1].encapsulate.length).toBe(0)
         expect(serialized[1].fields.length).toBe(2)
@@ -97,10 +105,12 @@ describe('DhcpOptionSetForm', () => {
         expect(serialized[1].fields[1].values[0]).toBe('16523')
         expect(serialized[1].hasOwnProperty('options')).toBeTrue()
 
+        expect(serialized[2].hasOwnProperty('alwaysSend')).toBeTrue()
         expect(serialized[2].hasOwnProperty('code')).toBeTrue()
         expect(serialized[2].hasOwnProperty('encapsulate')).toBeTrue()
         expect(serialized[2].hasOwnProperty('fields')).toBeTrue()
         expect(serialized[2].hasOwnProperty('options')).toBeTrue()
+        expect(serialized[2].alwaysSend).toBeTrue()
         expect(serialized[2].code).toBe(3087)
         expect(serialized[2].encapsulate).toBe('option-3087')
         expect(serialized[2].fields.length).toBe(0)

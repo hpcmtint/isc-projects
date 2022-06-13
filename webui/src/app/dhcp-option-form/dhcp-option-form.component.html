@@ -44,6 +44,15 @@
             </div>
         </ng-template>
         <div class="p-d-flex p-mt-1">
+            <div *ngIf="topLevel" class="p-ml-1 p-button p-button-secondary p-button-text p-button-sm p-field-checkbox">
+                <p-checkbox
+                    ngDefaultControl
+                    formControlName="alwaysSend"
+                    [binary]="true"
+                    inputId="{{ alwaysSendCheckboxId }}"
+                ></p-checkbox>
+                <label for="{{ alwaysSendCheckboxId }}">Always Send</label>
+            </div>
             <div>
                 <p-splitButton
                     label="Add Payload"

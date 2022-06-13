@@ -50,6 +50,7 @@ export class DhcpOptionSetForm {
                 throw new Error('form group does not contain control with an option code')
             }
             const item = {
+                alwaysSend: option.get('alwaysSend').value,
                 code: option.get('optionCode').value,
                 encapsulate: '',
                 fields: [],
