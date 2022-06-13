@@ -160,7 +160,6 @@ func TestCreateSingleOptionDataMultiplFields(t *testing.T) {
 	require.True(t, data.AlwaysSend)
 	require.EqualValues(t, 1600, data.Code)
 	require.True(t, data.CSVFormat)
-	require.Equal(t, "foo", data.Encapsulate)
 	require.Equal(t, "foobar", data.Space)
 	require.Equal(t, "bar", data.Name)
 
@@ -268,7 +267,6 @@ func TestCreateSingleOptionDataNoDefinition(t *testing.T) {
 	require.True(t, data.AlwaysSend)
 	require.EqualValues(t, 16, data.Code)
 	require.False(t, data.CSVFormat)
-	require.Equal(t, "foobar", data.Encapsulate)
 	require.Equal(t, "foo", data.Space)
 	require.Equal(t, "bar", data.Name)
 

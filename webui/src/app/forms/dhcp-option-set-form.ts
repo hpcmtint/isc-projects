@@ -1,5 +1,6 @@
 import { FormArray, FormGroup } from '@angular/forms'
 import { DhcpOptionFieldFormGroup, DhcpOptionFieldType } from './dhcp-option-field'
+import { Universe } from '../universe'
 
 /**
  * A class processing DHCP options forms.
@@ -29,13 +30,14 @@ export class DhcpOptionSetForm {
     /**
      * DHCP options form processing implementation.
      *
+     * @param universe options universe (i.e., IPv4 or IPv6).
      * @param nestingLevel nesting level of the currently processed options.
      * Its value is 0 for top-level options, 1 for top-level option suboptions etc.
      * @param optionSpace option space encapsulated by a parent option.
      * @throw An error for nesting level higher than 1 or if option data is invalid
      * or missing.
      */
-    private _process(nestingLevel: number, optionSpace: string = '') {
+    private _process(universe: Universe, nestingLevel: number, optionSpace: string = '') {
         // To avoid too much recursion, we only parse first level of suboptions.
         if (this._formArray.length > 0 && nestingLevel > 1) {
             throw new Error('options serialization supports up to two nesting levels')
@@ -51,6 +53,7 @@ export class DhcpOptionSetForm {
                 code: option.get('optionCode').value,
                 encapsulate: '',
                 fields: [],
+                universe: universe,
                 options: [],
             }
             const optionFieldsArray = option.get('optionFields') as FormArray
@@ -105,7 +108,7 @@ export class DhcpOptionSetForm {
             if (suboptions && suboptions.length > 0) {
                 item.encapsulate = optionSpace.length > 0 ? `${optionSpace}.${item.code}` : `option-${item.code}`
                 const suboptionsForm = new DhcpOptionSetForm(suboptions)
-                suboptionsForm._process(nestingLevel + 1, item.encapsulate)
+                suboptionsForm._process(universe, nestingLevel + 1, item.encapsulate)
                 item.options = suboptionsForm.getSerializedOptions()
             }
             // Done extracting an option.
@@ -119,9 +122,11 @@ export class DhcpOptionSetForm {
      * Processes top-level DHCP options with their suboptions.
      *
      * The result of the processing can be retrieved with getSerializedOptions().
+     *
+     * @param universe options universe (i.e., IPv4 or IPv6).
      */
-    process() {
-        this._process(0)
+    process(universe: Universe) {
+        this._process(universe, 0)
     }
 
     /**

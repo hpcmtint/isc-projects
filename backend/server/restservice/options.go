@@ -1,8 +1,10 @@
 package restservice
 
 import (
+	"isc.org/stork/appcfg/kea"
 	dbmodel "isc.org/stork/server/database/model"
 	"isc.org/stork/server/gen/models"
+	storkutil "isc.org/stork/util"
 )
 
 func flattenDHCPOptions(optionSpace string, restOptions []*models.DHCPOption) (options []dbmodel.DHCPOption) {
@@ -14,6 +16,12 @@ func flattenDHCPOptions(optionSpace string, restOptions []*models.DHCPOption) (o
 		}
 		if len(optionSpace) > 0 {
 			option.Space = optionSpace
+		} else {
+			if storkutil.IPType(restOption.Universe) == storkutil.IPv4 {
+				option.Space = keaconfig.DHCPv4OptionSpace
+			} else {
+				option.Space = keaconfig.DHCPv6OptionSpace
+			}
 		}
 		for _, restField := range restOption.Fields {
 			field := dbmodel.DHCPOptionField{

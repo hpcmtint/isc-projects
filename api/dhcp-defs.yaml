@@ -1,3 +1,10 @@
+# Universe
+  Universe:
+    type: integer
+    enum: &UNIVERSE
+      - 4
+      - 6
+
 # Lease
 
   Lease:
@@ -109,6 +116,9 @@
         type: array
         items:
           $ref: '#/definitions/DHCPOption'
+      universe:
+        type: integer
+        enum: *UNIVERSE
 
 # Host
 

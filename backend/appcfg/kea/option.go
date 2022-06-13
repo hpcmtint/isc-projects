@@ -11,6 +11,12 @@ import (
 	storkutil "isc.org/stork/util"
 )
 
+// Top level DHCP option spaces.
+const (
+	DHCPv4OptionSpace = "dhcp4"
+	DHCPv6OptionSpace = "dhcp6"
+)
+
 // Types of DHCP option fields.
 const (
 	HexBytesField    string = "hex-bytes"
@@ -66,13 +72,12 @@ type DHCPOptionDefinitionLookup interface {
 // Represents a DHCP option in the format used by Kea (i.e., an item of the
 // option-data list).
 type SingleOptionData struct {
-	AlwaysSend  bool   `mapstructure:"always-send"`
-	Code        uint16 `mapstructure:"code"`
-	CSVFormat   bool   `mapstructure:"csv-format"`
-	Data        string `mapstructure:"data"`
-	Encapsulate string `mapstructure:"encapsulate"`
-	Name        string `mapstructure:"name"`
-	Space       string `mapstructure:"space"`
+	AlwaysSend bool   `mapstructure:"always-send" json:"always-send,omitempty"`
+	Code       uint16 `mapstructure:"code" json:"code,omitempty"`
+	CSVFormat  bool   `mapstructure:"csv-format" json:"csv-format,omitempty"`
+	Data       string `mapstructure:"data" json:"data,omitempty"`
+	Name       string `mapstructure:"name" json:"name,omitempty"`
+	Space      string `mapstructure:"space" json:"space,omitempty"`
 }
 
 // Creates a SingleOptionData instance from the DHCP option model used
@@ -83,12 +88,11 @@ type SingleOptionData struct {
 // false.
 func CreateSingleOptionData(daemonID int64, lookup DHCPOptionDefinitionLookup, option DHCPOption) (*SingleOptionData, error) {
 	data := &SingleOptionData{
-		AlwaysSend:  option.IsAlwaysSend(),
-		Code:        option.GetCode(),
-		CSVFormat:   lookup.DefinitionExists(daemonID, option),
-		Encapsulate: option.GetEncapsulate(),
-		Name:        option.GetName(),
-		Space:       option.GetSpace(),
+		AlwaysSend: option.IsAlwaysSend(),
+		Code:       option.GetCode(),
+		CSVFormat:  lookup.DefinitionExists(daemonID, option),
+		Name:       option.GetName(),
+		Space:      option.GetSpace(),
 	}
 	// Convert option fields depending on the csv-format setting.
 	converted := []string{}
