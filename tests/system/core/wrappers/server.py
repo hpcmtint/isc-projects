@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
+import ipaddress
 import re
-from time import time
 from typing import Callable, List
 
 import openapi_client
@@ -39,9 +39,22 @@ class Server(ComposeServiceWrapper):
         super().__init__(compose, service_name)
         internal_port = 8080
         mapped = self._compose.port(service_name, internal_port)
-        url = "http://%s:%d/api" % mapped
+        url = Server._build_api_url(*mapped)
         configuration = openapi_client.Configuration(host=url)
         self._api_client = openapi_client.ApiClient(configuration)
+
+    @staticmethod
+    def _is_ipv6(address: str):
+        try:
+            return type(ipaddress.ip_address(address)) is ipaddress.IPv6Address
+        except ValueError:
+            return False
+
+    @staticmethod
+    def _build_api_url(address: str, port: int):
+        if Server._is_ipv6(address):
+            address = "[%s]" % address
+        return "http://%s:%d/api" % (address, port)
 
     def close(self):
         """Free the resources used by the wrapper."""

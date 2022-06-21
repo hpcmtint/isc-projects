@@ -1,5 +1,5 @@
 from core.wrappers import Kea, Server
-from core.fixtures import kea_parametrize
+from core.fixtures import kea_parametrize, server_parametrize
 
 
 def test_agent_reregistration_after_restart(server_service: Server, kea_service: Kea):
@@ -19,6 +19,7 @@ def test_agent_reregistration_after_restart(server_service: Server, kea_service:
 
 
 @kea_parametrize("agent-kea6")
+@server_parametrize("server6")
 def test_agent_over_ipv6(server_service: Server, kea_service: Kea):
     server_service.log_in_as_admin()
     machine = server_service.authorize_all_machines()['items'][0]

@@ -9,6 +9,7 @@ services:
       target: server
     networks:
       - storknet
+    hostname: server
     expose:
       - "8080"
     ports:
@@ -41,6 +42,15 @@ services:
     extends: server-base
     environment:
       STORK_DATABASE_SSLMODE: ca-verify
+    depends_on:
+      - postgres
+
+  server6:
+    extends: server-base
+    ports:
+      - ":::42081:8080"
+    environment:
+      STORK_REST_HOST: "::"
     depends_on:
       - postgres
 

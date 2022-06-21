@@ -476,6 +476,21 @@ def test_port_replaces_default_address():
     assert tuple(result) == ("foobar", 1234)
 
 
+def test_port_ipv6_address():
+    # Arrange
+    compose = DockerCompose("project-dir")
+    mock = MagicMock()
+    mock.return_value = (0, "3001:42::1:1234", "")
+    compose._call_command = mock
+    base_cmd = compose.docker_compose_command()
+    # Act
+    result = compose.port("service", 80)
+    # Assert
+    assert len(result) == 2
+    assert result[0] == "3001:42::1"
+    assert result[1] == 1234
+
+
 def test_get_service_ip_address_uses_proper_network_name():
     # Assert
     compose = DockerCompose("project-dir", project_name="prefix")

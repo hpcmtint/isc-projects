@@ -388,13 +388,13 @@ class DockerCompose(object):
         port_cmd = self.docker_compose_command() + ["port", service_name,
                                                     str(port)]
         _, stdout, _ = self._call_command(cmd=port_cmd)
-        result = stdout.split(":")
+        result = stdout.rsplit(':', 1)
         if len(result) == 1:
             raise NoSuchPortExposed("Port {} was not exposed for service {}"
                                     .format(port, service_name))
         mapped_host, mapped_port = result
         mapped_port = int(mapped_port)
-        if self._default_mapped_hostname is not None and mapped_host == "0.0.0.0":
+        if self._default_mapped_hostname is not None and mapped_host in ("0.0.0.0", "::"):
             mapped_host = self._default_mapped_hostname
         return mapped_host, mapped_port
 
