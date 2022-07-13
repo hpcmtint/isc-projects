@@ -225,6 +225,7 @@ mockgen_ver='v1.6.0'
 golangcilint_ver='1.46.2'
 yamlinc_ver='0.1.10'
 node_ver='14.18.2'
+npm_ver='8.13.2'
 dlv_ver='v1.8.3'
 gdlv_ver='v1.8.0'
 sphinx_ver='4.4.0'
@@ -386,10 +387,10 @@ file DANGER => [ruby_tools_bin_bundle_dir, ruby_tools_dir, danger_gemfile, BUNDL
     sh DANGER, "--version"
 end
 
-NPM = File.join(node_bin_dir, "npm")
-file NPM => [node_dir] do
+NODE = File.join(node_bin_dir, "node")
+file NODE => [node_dir] do
     if use_system_nodejs
-        fail "missing system NPM"
+        fail "missing system NODE"
     end
 
     Dir.chdir(node_dir) do
@@ -398,11 +399,34 @@ file NPM => [node_dir] do
         sh "tar", "-Jxf", "node.tar.xz", "--strip-components=1"
         sh "rm", "node.tar.xz"
     end
+    sh NODE, "--version"
+    sh "touch", "-c", NODE
+end
+if !use_system_nodejs
+    add_version_guard(NODE, node_ver)
+end
+
+NPM = File.join(node_bin_dir, "npm")
+file NPM => [NODE] do
+    if use_system_nodejs
+        fail "missing system NPM"
+    end
+
+    ci_opts = []
+    if ENV["CI"] == "true"
+        ci_opts += ["--no-audit", "--no-progress"]
+    end
+
+    sh NPM, "install",
+        "-g", 
+        *ci_opts,
+        "--prefix", "#{node_dir}/node_modules","npm@#{npm_ver}"
+
     sh NPM, "--version"
     sh "touch", "-c", NPM
 end
 if !use_system_nodejs
-    add_version_guard(NPM, node_ver)
+    add_version_guard(NPM, npm_ver)
 end
 
 NPX = File.join(node_bin_dir, "npx")
