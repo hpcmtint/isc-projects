@@ -9,7 +9,8 @@ image: registry.gitlab.isc.org/isc-projects/stork/ci-base:latest
 
 my_task:
   variables:
-    FOO: BAR
+    FOO:
+      description: "No value"
   script:
     - echo $FOO
   rules:
