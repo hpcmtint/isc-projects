@@ -12,4 +12,6 @@ my_task:
     FOO: BAR
   script:
     - echo $FOO
+  rules:
+    - when: manual
 
