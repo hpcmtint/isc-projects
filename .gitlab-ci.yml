@@ -9,9 +9,9 @@ image: registry.gitlab.isc.org/isc-projects/stork/ci-base:latest
 
 my_task:
   variables:
-    FOO: BAR
+    DRY_RUN: "true"
   script:
-    - echo $FOO
+    - "echo DRY RUN: ${DRY_RUN}"
   rules:
     - when: manual
 
