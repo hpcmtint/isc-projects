@@ -17,6 +17,12 @@ warn("This MR does not refer to an existing milestone", sticky: true) unless has
 # check commits' comments
 commit_lint.check warn: :all
 
+# disable checking if the subject is terminated by a dot
+commit_lint.check disable: [:subject_period]
+
+# disable checking if the subject is no longer than 50 characters
+commit_lint.check disable: [:subject_length]
+
 # check gitlab issue in commit message
 git.commits.each do |c|
   m = c.message.match(/^\[\#(\d+)\]\ (.*)/)
