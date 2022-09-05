@@ -15,7 +15,14 @@ has_milestone = gitlab.mr_json["milestone"] != nil
 warn("This MR does not refer to an existing milestone", sticky: true) unless has_milestone
 
 # check commits' comments
-commit_lint.check warn: :all
+commit_lint.check warn: [:subject_cap]
+commit_lint.check warn: [:subject_word]
+commit_lint.check warn: [:empty_line]
+
+# disable checking if the subject is terminated by a dot
+commit_lint.check disable: [:subject_period]
+commit_lint.check disable: [:subject_length]
+
 
 # check gitlab issue in commit message
 git.commits.each do |c|
