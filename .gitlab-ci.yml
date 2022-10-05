@@ -382,3 +382,6 @@ upload_test_packages:
 
 include:
   - template: Security/SAST.gitlab-ci.yml
+
+sast:
+  stage: checks
