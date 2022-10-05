@@ -281,6 +281,30 @@ upload_to_repo:
   needs:
     - tarball
   script:
+    - git clone https://gitlab-ci:${STORK_CI_TOKEN_FOR_REGISTRY}@gitlab.isc.org/isc-projects/stork.wiki
+    - stork_version=`perl -lne 'print $1 if /(\d+\.\d+\.\d+)/' < backend/version.go`
+    - output=Stork-${stork_version}-ReleaseNotes.txt
+    - changelog=$(awk "/${stork_version} released on/{ f = 1; next } /released on/{ f = 0 } f" ./ChangeLog.md)
+    - sed '/# Changes/q' ./stork.wiki/Releases/Release-notes-${stork_version}.md > /tmp/release-notes
+    - printf '
+       The following summarizes changes and important upgrades since the Stork %s release.
+
+       ```plaintext
+       %s
+       ```
+
+       Thank you again to everyone who assisted us in making this release possible.
+
+       We look forward to receiving your feedback.
+       ' "${stork_version}" "${changelog}" >> /tmp/release-notes
+    - cp /tmp/release-notes ./stork.wiki/Releases/Release-notes-${stork_version}.md
+    # TODO: provide credentials to Gitlab CI to be able to push to stork-ci
+    - git config --global user.email 'gitlab@gitlab.isc.org'
+    - git config --global user.name 'ISC Gitlab'
+    - git add -u
+    - git diff --staged || true
+    - git commit -m "add changelog to ${stork_version} release notes"
+    - git push
     - eval $(ssh-agent -s)
     - echo "${REPO_SSH_PRIVATE_KEY}" | base64 -d | ssh-add -
     - mkdir ~/.ssh
