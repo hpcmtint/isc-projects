@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core'
 import { HttpErrorResponse, HttpClient } from '@angular/common/http'
-import { Router, ActivatedRoute } from '@angular/router'
+import { Router } from '@angular/router'
 import { BehaviorSubject, Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
 
 import { MessageService } from 'primeng/api'
 
 import { UsersService } from './backend/api/users.service'
-import { ApiError } from './backend'
 
 /**
  * Represents credentials of the user who is logging in to the system.
