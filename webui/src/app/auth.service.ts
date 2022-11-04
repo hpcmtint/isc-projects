@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
+import { HttpErrorResponse, HttpClient } from '@angular/common/http'
 import { Router, ActivatedRoute } from '@angular/router'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators'
 import { MessageService } from 'primeng/api'
 
 import { UsersService } from './backend/api/users.service'
+import { ApiError } from './backend'
 
 /**
  * Represents credentials of the user who is logging in to the system.
@@ -94,11 +95,18 @@ export class AuthService {
                     this.router.navigate([returnUrl])
                 }
             },
-            (err: Error) => {
-                if (err.message.slice(-15) == '0 Unknown Error') {
-                    this.msgSrv.add({ severity: 'error', summary: `No connection to Stork server` })
+            (err) => {
+                if (err.status != null) {
+                    const apiError = err as HttpErrorResponse
+                    if (apiError.status == 0) {
+                        this.msgSrv.add({ severity: 'error', summary: `No connection to Stork server` })
+                    } else if (apiError.status == 400) {
+                        this.msgSrv.add({ severity: 'error', summary: `Invalid login or password` })
+                    } else {
+                        this.msgSrv.add({ severity: 'error', summary: `Unknown error: ${apiError.message}` })
+                    }
                 } else {
-                    this.msgSrv.add({ severity: 'error', summary: `Invalid login or password` })
+                    this.msgSrv.add({ severity: 'error', summary: `Unknown error: ${err.message}` })
                 }
             }
         )
