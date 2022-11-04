@@ -94,8 +94,15 @@ export class AuthService {
                     this.router.navigate([returnUrl])
                 }
             },
-            (err) => {
-                this.msgSrv.add({ severity: 'error', summary: 'Invalid login or password' })
+            (err: Error) => {
+                if (err.message.slice(-15) == '0 Unknown Error')
+                {
+                    this.msgSrv.add({ severity: 'error', summary: `No connection to Stork server` })
+                }
+                else
+                {
+                    this.msgSrv.add({ severity: 'error', summary: `Invalid login or password` })
+                }
             }
         )
         return user
