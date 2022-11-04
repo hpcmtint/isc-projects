@@ -285,7 +285,7 @@ protoc_gen_go_grpc_ver='v1.1.0'
 richgo_ver='v0.3.10'
 mockery_ver='v2.13.1'
 mockgen_ver='v1.6.0'
-golangcilint_ver='1.46.2'
+golangcilint_ver='v1.46.2'
 yamlinc_ver='0.1.10'
 node_ver='14.18.2'
 dlv_ver='v1.8.3'
@@ -643,16 +643,9 @@ file PROTOC_GEN_GO_GRPC => [GO] do
 end
 add_version_guard(PROTOC_GEN_GO_GRPC, protoc_gen_go_grpc_ver)
 
-GOLANGCILINT = File.join(go_tools_dir, "golangci-lint")
+GOLANGCILINT = File.join(gobin, "golangci-lint")
 file GOLANGCILINT => [go_tools_dir] do
-    Dir.chdir(go_tools_dir) do
-        sh *WGET, "https://github.com/golangci/golangci-lint/releases/download/v#{golangcilint_ver}/golangci-lint-#{golangcilint_ver}-#{golangcilint_suffix}.tar.gz", "-O", "golangci-lint.tar.gz"
-        sh "mkdir", "tmp"
-        sh "tar", "-zxf", "golangci-lint.tar.gz", "-C", "tmp", "--strip-components=1"
-        sh "mv", "tmp/golangci-lint", "."
-        sh "rm", "-rf", "tmp"
-        sh "rm", "-f", "golangci-lint.tar.gz"
-    end
+    sh GO, "install", "github.com/golangci/golangci-lint/cmd/golangci-lint@#{golangcilint_ver}"
     sh GOLANGCILINT, "--version"
 end
 require_manual_install_on(GOLANGCILINT, openbsd_system)
