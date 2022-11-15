@@ -352,7 +352,7 @@ func TestNewLazySubnetNameLookup(t *testing.T) {
 	require.Zero(t, sender.callCount)
 }
 
-// Test that the subnet names are retrivied.
+// Test that the subnet names are retrieved.
 func TestLazySubnetNameLookupFetchesNames(t *testing.T) {
 	// Arrange
 	sender := newFakeKeaCASender()

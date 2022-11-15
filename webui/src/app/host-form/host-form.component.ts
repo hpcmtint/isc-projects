@@ -236,22 +236,22 @@ export class HostFormComponent implements OnInit, OnDestroy {
     ]
 
     /**
-     * Default placeholder displayed in the IPv4 resevation input box.
+     * Default placeholder displayed in the IPv4 reservation input box.
      */
     static defaultIPv4Placeholder = '?.?.?.?'
 
     /**
-     * Default placeholder displayed in the IPv6 resevation input box.
+     * Default placeholder displayed in the IPv6 reservation input box.
      */
     static defaultIPv6Placeholder = 'e.g. 2001:db8:1::'
 
     /**
-     * Current placeholder displayed in the IPv4 resevation input box.
+     * Current placeholder displayed in the IPv4 reservation input box.
      */
     ipv4Placeholder = HostFormComponent.defaultIPv4Placeholder
 
     /**
-     * Current placeholder displayed in the IPv6 resevation input box.
+     * Current placeholder displayed in the IPv6 reservation input box.
      */
     ipv6Placeholder = HostFormComponent.defaultIPv6Placeholder
 
@@ -407,7 +407,7 @@ export class HostFormComponent implements OnInit, OnDestroy {
      * Sends a request to the server to begin a new transaction for updating
      * a host reservation.
      *
-     * If the call is successful, the form components initialized wih the
+     * If the call is successful, the form components initialized with the
      * returned data, i.e., a list of available servers, subnets, host reservation
      * information. If an error occurs, the error text is remembered and displayed
      * along with the retry button.

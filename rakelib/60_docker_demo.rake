@@ -195,7 +195,7 @@ namespace :demo do
             docker_up_services("agent-kea-ha1", "agent-kea-ha2")
         end
         
-        desc 'Build and run container with Stork Agent and Kea with host reseverations in db
+        desc 'Build and run container with Stork Agent and Kea with host reservations in db
         CS_REPO_ACCESS_TOKEN - CloudSmith token - required
         See "up" command for more arguments.'
         task :kea_premium do

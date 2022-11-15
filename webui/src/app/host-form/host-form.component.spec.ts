@@ -1006,7 +1006,7 @@ describe('HostFormComponent', () => {
         expect(messageService.add).toHaveBeenCalled()
     }))
 
-    it('should submit new dhcpv6 host with different opion sets', fakeAsync(() => {
+    it('should submit new dhcpv6 host with different option sets', fakeAsync(() => {
         spyOn(dhcpApi, 'createHostBegin').and.returnValue(of(cannedResponseBegin))
         component.ngOnInit()
         tick()

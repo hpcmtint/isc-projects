@@ -1,4 +1,4 @@
-# A general purpose type used to diferentiate between various
+# A general purpose type used to differentiate between various
 # IPv4 (or DHCPv4) and IPv6 (or DHCPv6 cases).
   IPType:
     type: integer

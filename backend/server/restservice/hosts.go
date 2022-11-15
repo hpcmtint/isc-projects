@@ -287,7 +287,7 @@ func (r *RestAPI) CreateHostBegin(ctx context.Context, params dhcp.CreateHostBeg
 		})
 		return rsp
 	}
-	// Remember the context, i.e. new transaction has been succcessfully created.
+	// Remember the context, i.e. new transaction has been successfully created.
 	_ = r.ConfigManager.RememberContext(cctx, time.Minute*10)
 
 	// Return transaction ID, apps and subnets to the user.

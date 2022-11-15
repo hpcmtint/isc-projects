@@ -60,5 +60,5 @@ class ComposeServiceWrapper:
                                                     subnet_name, family=family)
 
     def _get_pid(self, process_name: str):
-        """Returns a PID of the specfified process."""
+        """Returns a PID of the specified process."""
         return self._compose.get_pid(self._service_name, process_name)

@@ -563,7 +563,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
     /**
      * Event handler triggered when a host form is submitted.
      *
-     * It marks the form as submitted to prevent the component from canceling
+     * It marks the form as submitted to prevent the component from cancelling
      * the transaction. Next, it closes the form tab.
      *
      * @param event an event holding updated form data.

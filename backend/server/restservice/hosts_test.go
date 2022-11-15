@@ -644,7 +644,7 @@ func TestCreateHostBeginCancel(t *testing.T) {
 	require.Nil(t, cctx)
 }
 
-// Test error cases for canceling new host reservation.
+// Test error cases for cancelling new host reservation.
 func TestCreateHostDeleteError(t *testing.T) {
 	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
 	defer teardown()

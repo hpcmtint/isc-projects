@@ -644,7 +644,7 @@ servers and information about failover progress.
 
 The failover progress information is only presented when one of the
 active servers has been unable to communicate with the partner via
-refthe heartbeat exchange for a time exceeding the ``max-heartbeat-delay``
+the heartbeat exchange for a time exceeding the ``max-heartbeat-delay``
 threshold. If the server is configured to monitor the DHCP traffic
 directed to the partner, to verify that the partner is not responding
 to this traffic before transitioning to the ``partner-down`` state, the

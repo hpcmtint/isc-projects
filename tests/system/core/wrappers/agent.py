@@ -80,7 +80,7 @@ class Agent(ComposeServiceWrapper):
         self._reload_supervisor_service('stork-agent')
 
     def is_registered(self):
-        """True if an agent was successfuly registered. Otherwise False."""
+        """True if an agent was successfully registered. Otherwise False."""
         if self._server_service is None:
             return False
         # ToDo: Using logs is a little dangerous. They can contain a bloat data.

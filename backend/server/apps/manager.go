@@ -90,7 +90,7 @@ func (manager *configManagerImpl) generateContextID() (int64, error) {
 	return 0, pkgerrors.Errorf("failed to generate a unique context ID after several attempts")
 }
 
-// Checks if the confguration of the specified daemon is already locked
+// Checks if the configuration of the specified daemon is already locked
 // for updates. The first returned parameter is an ID of the user who
 // owns the lock. It is equal to 0 when the lock is not present.
 func (manager *configManagerImpl) isLocked(daemonID int64) (int64, bool) {

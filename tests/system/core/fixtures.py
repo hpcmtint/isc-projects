@@ -264,7 +264,7 @@ def bind9_service(request):
 @pytest.fixture
 def perfdhcp_service():
     """
-    A fixture that allows controlling the perdhcp application.
+    A fixture that allows controlling the perfdhcp application.
 
     Returns
     -------
