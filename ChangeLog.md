@@ -1,3 +1,9 @@
+* 265 [func] tomek
+    Stork agent and server now have logging levels configurable using
+    STORK_LOG_LEVEL environment variable. The location of a BIND 9 config file
+    can now be explicitly specified using STORK_BIND9_CONFIG environment
+    variable.
+
 * 264 [func] marcin
 
      Added configuration of the DHCPv4 siaddr, sname, and file fields in the
