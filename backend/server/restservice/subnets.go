@@ -2,6 +2,7 @@ package restservice
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -103,6 +104,33 @@ func (r *RestAPI) GetSubnets(ctx context.Context, params dhcp.GetSubnetsParams) 
 		return rsp
 	}
 	rsp := dhcp.NewGetSubnetsOK().WithPayload(subnets)
+	return rsp
+}
+
+// Get the DHCP subnet by ID.
+func (r *RestAPI) GetSubnet(ctx context.Context, params dhcp.GetSubnetParams) middleware.Responder {
+	subnet, err := dbmodel.GetSubnet(r.DB, params.ID)
+
+	if err != nil {
+		// Error while communicating with the database.
+		msg := fmt.Sprintf("Problem fetching subnet with ID %d from db", params.ID)
+		log.Error(err)
+		rsp := dhcp.NewGetSubnetDefault(http.StatusInternalServerError).WithPayload(&models.APIError{
+			Message: &msg,
+		})
+		return rsp
+	}
+	if subnet == nil {
+		// Host not found.
+		msg := fmt.Sprintf("Cannot find subnet with ID %d", params.ID)
+		rsp := dhcp.NewGetSubnetDefault(http.StatusNotFound).WithPayload(&models.APIError{
+			Message: &msg,
+		})
+		return rsp
+	}
+
+	apiSubnet := subnetToRestAPI(subnet)
+	rsp := dhcp.NewGetSubnetOK().WithPayload(apiSubnet)
 	return rsp
 }
 
