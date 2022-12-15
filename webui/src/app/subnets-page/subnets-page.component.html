@@ -165,15 +165,10 @@
                         </div>
                     </td>
                     <td>
-                        {{ sn.sharedNetwork }}
+                        <app-entity-link entity="shared-network" [attrs]="{ name: sn.sharedNetwork }"></app-entity-link>
                     </td>
                     <td>
-                        <a
-                            *ngFor="let lsn of sn.localSubnets"
-                            routerLink="/apps/kea/{{ lsn.appId }}"
-                            style="display: block"
-                            >{{ lsn.appName }}</a
-                        >
+                        <app-entity-link entity="app-local-subnet" [attrs]="lsn" *ngFor="let lsn of sn.localSubnets" class="block"></app-entity-link>
                     </td>
                     <td *ngIf="grafanaUrl">
                         <a
@@ -196,5 +191,5 @@
 
 <!-- Single subnet tab -->
 <ng-template #openedTabBlock>
-    <app-subnet-tab></app-subnet-tab>
+    <app-subnet-tab [subnet]="openedSubnets[activeTabIndex]"></app-subnet-tab>
 </ng-template>

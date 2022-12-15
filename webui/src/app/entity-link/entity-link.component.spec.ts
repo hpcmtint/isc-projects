@@ -146,12 +146,12 @@ describe('EntityLinkComponent', () => {
 
     it('should construct subnet link', () => {
         component.entity = 'subnet'
-        component.attrs = { id: 8, prefix: 'fe80::/64' }
+        component.attrs = { id: 8, subnet: 'fe80::/64' }
         component.showEntityName = false
         fixture.detectChanges()
         const link = fixture.debugElement.query(By.css('#subnet-link'))
         expect(link.attributes.href).toEqual('/dhcp/subnets/8')
-        expect(link.nativeElement.innerText).toEqual('[8] fe80::/64')
+        expect(link.nativeElement.innerText).toEqual('fe80::/64')
 
         // Test entity name is not displayed.
         let native = fixture.nativeElement

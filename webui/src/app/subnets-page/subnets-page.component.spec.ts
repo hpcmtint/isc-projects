@@ -18,6 +18,8 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TabMenuModule } from 'primeng/tabmenu'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
+import { RouterTestingModule } from '@angular/router/testing'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -42,26 +44,24 @@ describe('SubnetsPageComponent', () => {
                     useValue: {
                         snapshot: { queryParamMap: new MockParamMap() },
                         queryParamMap: of(new MockParamMap()),
+                        paramMap: of(new MockParamMap())
                     },
                 },
-                {
-                    provide: Router,
-                    useValue: {},
-                },
+                RouterTestingModule
             ],
             imports: [
                 FormsModule,
                 DropdownModule,
                 TableModule,
                 TooltipModule,
-                RouterModule,
+                RouterTestingModule,
                 HttpClientTestingModule,
                 BreadcrumbModule,
                 OverlayPanelModule,
                 NoopAnimationsModule,
                 TabMenuModule,
             ],
-            declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent],
+            declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent],
         })
         dhcpService = TestBed.inject(DHCPService)
     }))

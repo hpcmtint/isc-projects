@@ -17,6 +17,12 @@
         <a id="app-link" routerLink="/apps/{{ attrs.type }}/{{ attrs.id }}">{{ attrs.name }}</a>
     </ng-container>
 
+    <!-- app-local-subnet -->
+    <ng-container *ngSwitchCase="'app-local-subnet'">
+        {{ showEntityName ? 'app' : '' }}
+        <a id="app-link" routerLink="/apps/kea/{{ attrs.appId }}">{{ attrs.appName }}</a>
+    </ng-container>
+
     <!-- machine -->
     <ng-container *ngSwitchCase="'machine'">
         {{ showEntityName ? 'machine' : '' }}
@@ -27,7 +33,7 @@
     <ng-container *ngSwitchCase="'subnet'">
         {{ showEntityName ? 'subnet ' : '' }}
         <a id="subnet-link" routerLink="/dhcp/subnets/{{ attrs.id }}">
-            [{{ attrs.id }}] {{ attrs.prefix }}
+            {{ attrs.subnet }}
         </a>
     </ng-container>
 
@@ -43,6 +49,13 @@
     <ng-container *ngSwitchCase="'host'">
         {{ showEntityName ? 'host' : '' }}
         <a id="host-link" routerLink="/dhcp/hosts/{{ attrs.id }}">{{ attrs.label }}</a>
+    </ng-container>
+
+    <!-- shared network -->
+    <ng-container *ngSwitchCase="'shared-network'">
+        {{ showEntityName ? 'shared network' : '' }}
+        <!-- Shared networks don't have a dedicated page yet. -->
+        <a id="shared-network-link" routerLink="/dhcp/shared-networks?text={{ attrs.name }}"></a>
     </ng-container>
 
     <!-- unsupported -->

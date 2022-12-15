@@ -19,6 +19,7 @@ import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { TooltipModule } from 'primeng/tooltip'
 import { TableModule } from 'primeng/table'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
 
 describe('DashboardComponent', () => {
     let component: DashboardComponent
@@ -39,7 +40,7 @@ describe('DashboardComponent', () => {
                 HttpClientTestingModule,
                 TableModule,
             ],
-            declarations: [DashboardComponent, EventsPanelComponent, HelpTipComponent, SubnetBarComponent],
+            declarations: [DashboardComponent, EventsPanelComponent, HelpTipComponent, SubnetBarComponent, EntityLinkComponent],
             providers: [
                 ServicesService,
                 LocationStrategy,

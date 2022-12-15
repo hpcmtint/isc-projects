@@ -16,9 +16,9 @@ import { Component, Input } from '@angular/core'
 })
 export class EntityLinkComponent {
     /**
-     * Entity name, one of: machine, app, daemon, subnet, host.
+     * Entity name, one of: machine, app, daemon, subnet, host, etc.
      */
-    @Input() entity: string
+    @Input() entity: "machine" | "app" | "daemon" | "subnet" | "host" | "user" | "shared-network" | "app-local-subnet"
 
     /**
      * Attributes that describe given entity e.g. id, name, etc.
@@ -28,7 +28,7 @@ export class EntityLinkComponent {
     /**
      * Boolean flag indicating if the entity name should be displayed.
      */
-    @Input() showEntityName = true
+    @Input() showEntityName = false
 
     /**
      * Name of the class overriding original component style.

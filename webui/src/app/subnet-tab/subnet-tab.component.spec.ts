@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { FieldsetModule } from 'primeng/fieldset'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
 
 import { SubnetTabComponent } from './subnet-tab.component'
 
@@ -8,11 +11,16 @@ describe('SubnetTabComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SubnetTabComponent],
+            declarations: [SubnetTabComponent, EntityLinkComponent],
+            imports: [FieldsetModule, NoopAnimationsModule]
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)
         component = fixture.componentInstance
+        component.subnet = {
+            id: 42,
+            subnet: "42.42.42.42"
+        }
         fixture.detectChanges()
     })
 

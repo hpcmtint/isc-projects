@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
+import { Subnet } from '../backend'
 
 @Component({
     selector: 'app-subnet-tab',
@@ -7,6 +8,11 @@ import { Component, OnInit } from '@angular/core'
 })
 export class SubnetTabComponent implements OnInit {
     constructor() {}
+
+    /**
+     * Subnet data.
+     */
+    @Input() subnet: Subnet
 
     ngOnInit(): void {}
 }

@@ -274,6 +274,7 @@
         items:
           type: string
       sharedNetwork:
+        description: 'Shared network name'
         type: string
       clientClass:
         type: string

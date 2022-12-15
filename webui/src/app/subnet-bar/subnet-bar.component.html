@@ -1,4 +1,4 @@
 <div class="utilization" pTooltip="{{ tooltip }}" [escape]="false">
-    <a routerLink="/dhcp/subnets/{{ subnet.id }}" class="label">{{ subnet.subnet }}</a>
+    <app-entity-link entity="subnet" [attrs]="subnet" class="label"></app-entity-link>
     <div class="bar" [ngStyle]="style"></div>
 </div>

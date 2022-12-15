@@ -1,1 +1,42 @@
-<p>subnet-tab works!</p>
+<div class="grid p-5">
+    <!-- General info -->
+    <div class="col">
+        <p-fieldset legend="General">
+            <table class="w-full">
+                <tr>
+                    <td class="w-4">Prefix</td>
+                    <td>{{ subnet.subnet }}</td>
+                </tr>
+                <tr>
+                    <td class="w-4">Client class</td>
+                    <td>{{ subnet.clientClass }}</td>
+                </tr>
+                <tr *ngIf="subnet.sharedNetwork">
+                    <td class="w-4">Shared network</td>
+                    <td>
+                        <app-entity-link entity="shared-network" [attrs]="{ name: subnet.sharedNetwork }"></app-entity-link>
+                    </td>
+                </tr>
+            </table>
+        </p-fieldset>
+    </div>
+
+    <!-- Metrics -->
+    <div class="col">
+        
+    </div>
+</div>
+
+<!-- Local subnets -->
+
+<div class="grid p-5">
+    <!-- Address/PD pools -->
+    <div class="col">
+
+    </div>
+
+    <!-- Hosts -->
+    <div class="col">
+
+    </div>
+</div>

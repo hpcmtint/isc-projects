@@ -17,6 +17,7 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
 
 describe('SharedNetworksPageComponent', () => {
     let component: SharedNetworksPageComponent
@@ -37,7 +38,7 @@ describe('SharedNetworksPageComponent', () => {
                 RouterModule,
                 RouterTestingModule,
             ],
-            declarations: [SharedNetworksPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent],
+            declarations: [SharedNetworksPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent],
             providers: [DHCPService],
         })
 
