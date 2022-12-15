@@ -4,12 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Table } from 'primeng/table'
 
 import { DHCPService } from '../backend/api/api'
-import { humanCount, getGrafanaUrl, extractKeyValsAndPrepareQueryParams, getGrafanaSubnetTooltip } from '../utils'
+import { humanCount, getGrafanaUrl, extractKeyValsAndPrepareQueryParams, getGrafanaSubnetTooltip, getErrorMessage } from '../utils'
 import { getTotalAddresses, getAssignedAddresses, parseSubnetsStatisticValues } from '../subnets'
 import { SettingService } from '../setting.service'
 import { Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { Subnet } from '../backend'
+import { MessageService } from 'primeng/api'
 
 /**
  * Component for presenting DHCP subnets.
@@ -44,7 +45,8 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private dhcpApi: DHCPService,
-        private settingSvc: SettingService
+        private settingSvc: SettingService,
+        private messageService: MessageService
     ) {}
 
     ngOnDestroy(): void {
@@ -66,7 +68,11 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
                     this.grafanaUrl = data['grafana_url']
                 },
                 (error) => {
-                    console.log(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot fetch server settings',
+                        detail: getErrorMessage(error),
+                    })
                 }
             )
         )
@@ -95,7 +101,41 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
                     this.loadSubnets(event)
                 },
                 (error) => {
-                    console.log(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process URL query parameters',
+                        detail: getErrorMessage(error),
+                    })
+                }
+            )
+        )
+
+        // Apply to the changes of the host id, e.g. from /dhcp/subnets/all to
+        // /dhcp/hosts/1. Those changes are triggered by switching between the
+        // tabs.
+        this.subscriptions.add(
+            this.route.paramMap.subscribe(
+                (params) => {
+                    // Get subnet id.
+                    const id = params.get('id')
+                    if (!id) {
+                        this.switchToTab(0)
+                        return
+                    }
+                    const numericId = parseInt(id, 10)
+                    if (!Number.isNaN(numericId)) {
+                        // The path has a numeric id indicating that we should
+                        // open a tab with selected subnet information or switch
+                        // to this tab if it has been already opened.
+                        this.openTab(numericId)
+                    }
+                },
+                (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process URL segment parameters',
+                        detail: getErrorMessage(error),
+                    })
                 }
             )
         )
@@ -136,7 +176,11 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
                 this.totalSubnets = data.total
             })
             .catch((error) => {
-                console.log(error)
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Cannot load subnets',
+                    detail: getErrorMessage(error),
+                })
             })
     }
 

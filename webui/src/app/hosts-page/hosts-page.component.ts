@@ -197,9 +197,12 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.updateQueryParams(params)
                     this.loadHosts()
                 },
-                (error) => {
-                    // ToDo: Fix silent error catching
-                    console.log(error)
+                (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process URL query parameters',
+                        detail: getErrorMessage(err),
+                    })
                 }
             )
         )
@@ -227,8 +230,12 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                         this.openHostTab(numericId)
                     }
                 },
-                (error) => {
-                    console.log(error)
+                (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process URL segment parameters',
+                        detail: getErrorMessage(err),
+                    })
                 }
             )
         )
