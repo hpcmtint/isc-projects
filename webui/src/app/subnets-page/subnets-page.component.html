@@ -12,7 +12,26 @@
     </div>
 </app-breadcrumbs>
 
-<div>
+<p-tabMenu [model]="tabs" [activeItem]="tabs[activeTabIndex]" class="mt-2">
+    <ng-template pTemplate="item" let-item let-i="index">
+        <div class="flex justify-content-space-between">
+            <div class="p-menuitem-icon" [ngClass]="item.icon" *ngIf="item.icon"></div>
+            <div class="p-menuitem-text">
+                <b>{{ item.label }}</b>
+            </div>
+            <div
+                *ngIf="i !== 0"
+                class="pi pi-times"
+                style="margin: -2px 0 0 8px"
+                (click)="closeTabByIndex(i, $event)"
+            ></div>
+        </div>
+    </ng-template>
+</p-tabMenu>
+
+<!-- Subnet list tab -->
+<div *ngIf="activeTabIndex === 0; else openedTabBlock">
+    <!-- Filters -->
     <div style="margin: 0 0 10px 5px; display: flex">
         <div>
             <i class="fa fa-search" style="margin: 4px 4px 0 0"></i>
@@ -52,7 +71,11 @@
         <div style="margin: 0 10px 0 40px; padding-top: 5px">Protocol:</div>
         <div>
             <p-dropdown
-                [options]="dhcpVersions"
+                [options]="[
+                    { label: 'any', value: null, id: 'any-menu' },
+                    { label: 'DHCPv4', value: '4', id: 'dhcpv4-menu' },
+                    { label: 'DHCPv6', value: '6', id: 'dhcpv6-menu' },
+                ]"
                 id="protocol-dropdown-menu"
                 [(ngModel)]="queryParams.dhcpVersion"
                 [style]="{ width: '10em' }"
@@ -61,6 +84,7 @@
         </div>
     </div>
 
+    <!-- Subnet list -->
     <div>
         <p-table
             #subnetsTable
@@ -169,3 +193,8 @@
         </p-table>
     </div>
 </div>
+
+<!-- Single subnet tab -->
+<ng-template #openedTabBlock>
+    <app-subnet-tab></app-subnet-tab>
+</ng-template>

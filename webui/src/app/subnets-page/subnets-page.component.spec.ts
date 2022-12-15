@@ -17,6 +17,7 @@ import { HelpTipComponent } from '../help-tip/help-tip.component'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { TabMenuModule } from 'primeng/tabmenu'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -58,6 +59,7 @@ describe('SubnetsPageComponent', () => {
                 BreadcrumbModule,
                 OverlayPanelModule,
                 NoopAnimationsModule,
+                TabMenuModule,
             ],
             declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent],
         })
@@ -144,7 +146,7 @@ describe('SubnetsPageComponent', () => {
         await fixture.whenStable()
 
         // Assert
-        const stats: { [key: string]: BigInt } = component.subnets[0].stats
+        const stats: { [key: string]: BigInt } = component.subnets[0].stats as any
         expect(stats['assigned-addresses']).toBe(
             BigInt('12345678901234567890123456789012345678901234567890123456789012345678901234567890')
         )

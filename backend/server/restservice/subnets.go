@@ -39,11 +39,15 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 			DaemonID:         lsn.Daemon.ID,
 			AppName:          lsn.Daemon.App.Name,
 			ID:               lsn.LocalSubnetID,
-			MachineAddress:   lsn.Daemon.App.Machine.Address,
-			MachineHostname:  lsn.Daemon.App.Machine.State.Hostname,
 			Stats:            lsn.Stats,
 			StatsCollectedAt: strfmt.DateTime(lsn.StatsCollectedAt),
 		}
+
+		if lsn.Daemon.App.Machine != nil {
+			localSubnet.MachineAddress = lsn.Daemon.App.Machine.Address
+			localSubnet.MachineHostname = lsn.Daemon.App.Machine.State.Hostname
+		}
+
 		subnet.LocalSubnets = append(subnet.LocalSubnets, localSubnet)
 	}
 	return subnet

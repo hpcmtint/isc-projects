@@ -319,12 +319,12 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.openedTabs.push(new HostTab(HostTabType.Host, data))
                     this.createMenuItem(this.getHostLabel(data), `/dhcp/hosts/${id}`)
                 },
-                (err) => {
-                    const msg = getErrorMessage(err)
+                (error) => {
+                    const msg = getErrorMessage(error)
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Cannot get host reservation',
-                        detail: 'Error getting host reservation with ID ' + id + ': ' + msg,
+                        detail: `Error getting host reservation with ID ${id}: ${msg}`,
                         life: 10000,
                     })
                 }
