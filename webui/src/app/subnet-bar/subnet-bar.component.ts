@@ -23,7 +23,7 @@ export class SubnetBarComponent {
     set subnet(subnet: Subnet) {
         this._subnet = subnet
 
-        const util: number = subnet.addrUtilization ? subnet.addrUtilization : 0
+        const util: number = subnet.addrUtilization ?? 0
 
         const style = {
             // In some cases the utilization may be incorrect - less than

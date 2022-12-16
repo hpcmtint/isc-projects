@@ -106,7 +106,7 @@ import { DhcpOptionSetViewComponent } from './dhcp-option-set-view/dhcp-option-s
 import { DhcpClientClassSetFormComponent } from './dhcp-client-class-set-form/dhcp-client-class-set-form.component'
 import { DhcpClientClassSetViewComponent } from './dhcp-client-class-set-view/dhcp-client-class-set-view.component'
 import { SubnetTabComponent } from './subnet-tab/subnet-tab.component'
-import { KeyValuePipe, PercentPipe } from '@angular/common'
+import { DatePipe, KeyValuePipe, PercentPipe } from '@angular/common'
 import { ReplaceAllPipe } from './replace-all.pipe'
 import { CapitalizeFirstPipe } from './capitalize-first.pipe'
 
@@ -224,7 +224,8 @@ export function cfgFactory() {
         DataViewModule,
         ToggleButtonModule,
         PercentPipe,
-        KeyValuePipe
+        KeyValuePipe,
+        DatePipe
     ],
     providers: [
         {
