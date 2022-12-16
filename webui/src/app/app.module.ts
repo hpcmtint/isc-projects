@@ -106,6 +106,7 @@ import { DhcpOptionSetViewComponent } from './dhcp-option-set-view/dhcp-option-s
 import { DhcpClientClassSetFormComponent } from './dhcp-client-class-set-form/dhcp-client-class-set-form.component'
 import { DhcpClientClassSetViewComponent } from './dhcp-client-class-set-view/dhcp-client-class-set-view.component'
 import { SubnetTabComponent } from './subnet-tab/subnet-tab.component'
+import { KeyValuePipe, PercentPipe } from '@angular/common'
 
 export function cfgFactory() {
     const params: ConfigurationParameters = {
@@ -218,6 +219,8 @@ export function cfgFactory() {
         ChipsModule,
         DataViewModule,
         ToggleButtonModule,
+        PercentPipe,
+        KeyValuePipe
     ],
     providers: [
         {

@@ -1,7 +1,7 @@
 <div class="grid p-5">
     <!-- General info -->
     <div class="col">
-        <p-fieldset legend="General">
+        <p-fieldset legend="General" styleClass="h-full">
             <table class="w-full">
                 <tr>
                     <td class="w-4">Prefix</td>
@@ -11,10 +11,10 @@
                     <td class="w-4">Client class</td>
                     <td>{{ subnet.clientClass }}</td>
                 </tr>
-                <tr *ngIf="subnet.sharedNetwork">
+                <tr>
                     <td class="w-4">Shared network</td>
                     <td>
-                        <app-entity-link entity="shared-network" [attrs]="{ name: subnet.sharedNetwork }"></app-entity-link>
+                        <app-entity-link entity="shared-network" [attrs]="{ name: subnet.sharedNetwork }" *ngIf="subnet.sharedNetwork"></app-entity-link>
                     </td>
                 </tr>
             </table>
@@ -23,7 +23,18 @@
 
     <!-- Metrics -->
     <div class="col">
-        
+        <p-fieldset legend="Statistics" styleClass="h-full">
+            <table class="w-full">
+                <tr>
+                    <td class="w-4">Utilization</td>
+                    <td>{{ subnet.addrUtilization ?? 0 | percent }}</td>
+                </tr>
+                <tr *ngFor="let stat of subnet.stats | keyvalue">
+                    <td class="w-4">{{ stat.key }}</td>
+                    <td>{{ stat.value }}</td>
+                </tr>
+            </table>
+        </p-fieldset>
     </div>
 </div>
 

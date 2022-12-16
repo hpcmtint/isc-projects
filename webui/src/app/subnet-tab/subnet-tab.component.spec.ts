@@ -1,3 +1,4 @@
+import { KeyValuePipe, PercentPipe } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FieldsetModule } from 'primeng/fieldset'
@@ -12,7 +13,7 @@ describe('SubnetTabComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SubnetTabComponent, EntityLinkComponent],
-            imports: [FieldsetModule, NoopAnimationsModule]
+            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe]
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)
