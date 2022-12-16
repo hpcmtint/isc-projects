@@ -30,7 +30,7 @@
                     <td>{{ subnet.addrUtilization ?? 0 | percent }}</td>
                 </tr>
                 <tr *ngFor="let stat of subnet.stats | keyvalue">
-                    <td class="w-4">{{ stat.key }}</td>
+                    <td class="w-4">{{ stat.key | replaceAll: '-':' ' | capitalizeFirst }}</td>
                     <td>{{ stat.value }}</td>
                 </tr>
             </table>

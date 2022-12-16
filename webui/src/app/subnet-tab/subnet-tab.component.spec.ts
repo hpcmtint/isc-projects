@@ -1,8 +1,10 @@
-import { KeyValuePipe, PercentPipe } from '@angular/common'
+import { KeyValuePipe, PercentPipe, TitleCasePipe, UpperCasePipe } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FieldsetModule } from 'primeng/fieldset'
+import { CapitalizeFirstPipe } from '../capitalize-first.pipe'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
+import { ReplaceAllPipe } from '../replace-all.pipe'
 
 import { SubnetTabComponent } from './subnet-tab.component'
 
@@ -12,7 +14,7 @@ describe('SubnetTabComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SubnetTabComponent, EntityLinkComponent],
+            declarations: [SubnetTabComponent, EntityLinkComponent, ReplaceAllPipe, CapitalizeFirstPipe],
             imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe]
         }).compileComponents()
 

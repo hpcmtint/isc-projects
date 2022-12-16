@@ -107,6 +107,8 @@ import { DhcpClientClassSetFormComponent } from './dhcp-client-class-set-form/dh
 import { DhcpClientClassSetViewComponent } from './dhcp-client-class-set-view/dhcp-client-class-set-view.component'
 import { SubnetTabComponent } from './subnet-tab/subnet-tab.component'
 import { KeyValuePipe, PercentPipe } from '@angular/common'
+import { ReplaceAllPipe } from './replace-all.pipe'
+import { CapitalizeFirstPipe } from './capitalize-first.pipe'
 
 export function cfgFactory() {
     const params: ConfigurationParameters = {
@@ -168,6 +170,8 @@ export function cfgFactory() {
         DhcpClientClassSetFormComponent,
         DhcpClientClassSetViewComponent,
         SubnetTabComponent,
+        ReplaceAllPipe,
+        CapitalizeFirstPipe,
     ],
     imports: [
         BrowserModule,
