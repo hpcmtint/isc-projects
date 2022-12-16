@@ -245,6 +245,7 @@
     type: object
     properties:
       id:
+        description: ID from the Kea configuration (not from DB), empty/zero if not set
         type: integer
       appId:
         type: integer
