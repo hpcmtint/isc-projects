@@ -58,15 +58,19 @@ func TestGetSubnets(t *testing.T) {
 				KeaDaemon: &dbmodel.KeaDaemon{
 					Config: dbmodel.NewKeaConfig(&map[string]interface{}{
 						"Dhcp4": &map[string]interface{}{
-							"subnet4": []map[string]interface{}{{
-								"id":     1,
-								"subnet": "192.168.0.0/24",
-								"pools": []map[string]interface{}{{
-									"pool": "192.168.0.1-192.168.0.100",
+							"subnet4": []map[string]interface{}{
+								{
+									"id":     1,
+									"subnet": "192.168.0.0/24",
+									"pools": []map[string]interface{}{{
+										"pool": "192.168.0.1-192.168.0.100",
+									}, {
+										"pool": "192.168.0.150-192.168.0.200",
+									}},
 								}, {
-									"pool": "192.168.0.150-192.168.0.200",
-								}},
-							}},
+									"subnet": "192.211.0.0/24",
+								},
+							},
 						},
 					}),
 				},
@@ -89,6 +93,8 @@ func TestGetSubnets(t *testing.T) {
 					UpperBound: "192.168.0.200",
 				},
 			},
+		}, {
+			Prefix: "192.211.0.0/24",
 		},
 	}
 
@@ -234,10 +240,12 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 5)
-	require.EqualValues(t, 5, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 6)
+	require.EqualValues(t, 6, okRsp.Payload.Total)
 	for _, sn := range okRsp.Payload.Items {
 		switch sn.LocalSubnets[0].ID {
+		case 0:
+			require.Len(t, sn.Pools, 0)
 		case 1:
 			require.Len(t, sn.Pools, 2)
 		case 2:
@@ -256,12 +264,14 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 1)
-	require.EqualValues(t, 1, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 2)
+	require.EqualValues(t, 2, okRsp.Payload.Total)
 	require.Len(t, okRsp.Payload.Items[0].LocalSubnets, 1)
 	require.Equal(t, a4.ID, okRsp.Payload.Items[0].LocalSubnets[0].AppID)
 	require.Equal(t, a4.Name, okRsp.Payload.Items[0].LocalSubnets[0].AppName)
 	require.EqualValues(t, 1, okRsp.Payload.Items[0].ID)
+	require.EqualValues(t, 2, okRsp.Payload.Items[1].ID)
+	require.Zero(t, okRsp.Payload.Items[1].LocalSubnets[0].ID)
 	require.EqualValues(t, dbmodel.SubnetStats(nil), okRsp.Payload.Items[0].Stats)
 	require.EqualValues(t, time.Time{}, okRsp.Payload.Items[0].StatsCollectedAt)
 
@@ -290,14 +300,16 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 2)
-	require.EqualValues(t, 2, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 3)
+	require.EqualValues(t, 3, okRsp.Payload.Total)
 	// checking if returned subnet-ids have expected values
-	require.True(t,
-		(okRsp.Payload.Items[0].LocalSubnets[0].ID == 1 && okRsp.Payload.Items[1].LocalSubnets[0].ID == 3) ||
-			(okRsp.Payload.Items[0].LocalSubnets[0].ID == 3 && okRsp.Payload.Items[1].LocalSubnets[0].ID == 1))
-	require.EqualValues(t, 24, okRsp.Payload.Items[1].Stats.(dbmodel.SubnetStats)["bar"])
-	require.EqualValues(t, time.Time{}.Add(2*time.Hour), okRsp.Payload.Items[1].StatsCollectedAt)
+	require.ElementsMatch(t, []int64{0, 1, 3}, []int64{
+		okRsp.Payload.Items[0].LocalSubnets[0].ID,
+		okRsp.Payload.Items[1].LocalSubnets[0].ID,
+		okRsp.Payload.Items[2].LocalSubnets[0].ID,
+	})
+	require.EqualValues(t, 24, okRsp.Payload.Items[2].Stats.(dbmodel.SubnetStats)["bar"])
+	require.EqualValues(t, time.Time{}.Add(2*time.Hour), okRsp.Payload.Items[2].StatsCollectedAt)
 
 	// get v6 subnets
 	dhcpVer = 6
