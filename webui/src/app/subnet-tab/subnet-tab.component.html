@@ -48,21 +48,14 @@
         <!-- Address/PD pools -->
         <div class="col">
             <p-fieldset legend="Address pools" styleClass="h-full">
-                <div
-                            *ngFor="let p of subnet.pools"
-                            style="
-                                display: inline-block;
-                                border-radius: 4px;
-                                background-color: #ddd;
-                                padding: 3px 4px 0 4px;
-                                margin: 0 4px 4px 0;
-                                min-height: 1.5rem;
-                            "
-                        >
-                            {{ p }}
-                        </div>
-                    </p-fieldset>
+                <div class="subnet__pools">
+                    <div *ngFor="let p of subnet.pools"
+                        class="subnet__pool">
+                        {{ p }}
+                    </div>
                 </div>
+            </p-fieldset>
+        </div>
 
         <!-- Prefix delegations -->
         <div class="col" *ngIf="isIPv6">
