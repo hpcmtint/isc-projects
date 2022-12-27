@@ -15,7 +15,11 @@
                     <tr>
                         <td class="w-4 white-space-nowrap">Shared network</td>
                         <td>
-                            <app-entity-link entity="shared-network" [attrs]="{ name: subnet.sharedNetwork }" *ngIf="subnet.sharedNetwork"></app-entity-link>
+                            <app-entity-link
+                                entity="shared-network"
+                                [attrs]="{ name: subnet.sharedNetwork }"
+                                *ngIf="subnet.sharedNetwork"
+                            ></app-entity-link>
                         </td>
                     </tr>
                 </table>
@@ -28,7 +32,8 @@
                 <table class="border-spacing-2">
                     <tr>
                         <td class="w-4 white-space-nowrap">Bar</td>
-                        <app-subnet-bar [subnet]="subnet"></app-subnet-bar></tr>
+                        <app-subnet-bar [subnet]="subnet"></app-subnet-bar>
+                    </tr>
                     <tr>
                         <td class="w-4 white-space-nowrap">Utilization</td>
                         <td>{{ subnet.addrUtilization ?? 0 | percent }}</td>
@@ -38,7 +43,15 @@
                         <td>{{ subnet.statsCollectedAt | date: 'short' }}</td>
                     </tr>
                     <tr *ngFor="let stat of subnet.stats | keyvalue">
-                        <td class="w-4 white-space-nowrap">{{ stat.key | replaceAll: '-':' ' | capitalizeFirst | replaceAll: 'nas':'NAs' | replaceAll: 'pds':'PDs' }} </td>
+                        <td class="w-4 white-space-nowrap">
+                            {{
+                                stat.key
+                                    | replaceAll: '-':' '
+                                    | capitalizeFirst
+                                    | replaceAll: 'nas':'NAs'
+                                    | replaceAll: 'pds':'PDs'
+                            }}
+                        </td>
                         <td>{{ stat.value }}</td>
                     </tr>
                 </table>
@@ -49,8 +62,7 @@
         <div class="col">
             <p-fieldset legend="Address pools" styleClass="h-full">
                 <div class="subnet__pools">
-                    <div *ngFor="let p of subnet.pools"
-                        class="subnet__pool">
+                    <div *ngFor="let p of subnet.pools" class="subnet__pool">
                         {{ p }}
                     </div>
                 </div>
@@ -61,16 +73,17 @@
         <div class="col" *ngIf="isIPv6">
             <p-fieldset legend="Prefix delegations" styleClass="h-full">
                 <div class="subnet__pools">
-                    <app-delegated-prefix-bar [prefix]="p" *ngFor="let p of subnet.prefixDelegationPools"></app-delegated-prefix-bar>
+                    <app-delegated-prefix-bar
+                        [prefix]="p"
+                        *ngFor="let p of subnet.prefixDelegationPools"
+                    ></app-delegated-prefix-bar>
                 </div>
             </p-fieldset>
         </div>
 
         <!-- Hosts -->
         <div class="col">
-            <p-fieldset legend="Related host reservations" styleClass="h-full">
-
-            </p-fieldset>
+            <p-fieldset legend="Related host reservations" styleClass="h-full"> </p-fieldset>
         </div>
 
         <!-- Local subnets -->
@@ -82,7 +95,13 @@
                         <th>Application</th>
                         <th>Statistics collected at</th>
                         <th *ngFor="let statKey of localSubnetStatisticKeys">
-                            {{ statKey | replaceAll: '-':' ' | capitalizeFirst | replaceAll: 'nas':'NAs' | replaceAll: 'pds':'PDs' }} 
+                            {{
+                                statKey
+                                    | replaceAll: '-':' '
+                                    | capitalizeFirst
+                                    | replaceAll: 'nas':'NAs'
+                                    | replaceAll: 'pds':'PDs'
+                            }}
                         </th>
                     </tr>
                     <tr *ngFor="let lsn of subnet.localSubnets">
@@ -97,5 +116,4 @@
             </p-fieldset>
         </div>
     </div>
-
 </div>

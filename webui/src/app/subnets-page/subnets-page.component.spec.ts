@@ -45,10 +45,10 @@ describe('SubnetsPageComponent', () => {
                     useValue: {
                         snapshot: { queryParamMap: new MockParamMap() },
                         queryParamMap: of(new MockParamMap()),
-                        paramMap: of(new MockParamMap())
+                        paramMap: of(new MockParamMap()),
                     },
                 },
-                RouterTestingModule
+                RouterTestingModule,
             ],
             imports: [
                 FormsModule,
@@ -62,7 +62,14 @@ describe('SubnetsPageComponent', () => {
                 NoopAnimationsModule,
                 TabMenuModule,
             ],
-            declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent, DelegatedPrefixBarComponent],
+            declarations: [
+                SubnetsPageComponent,
+                SubnetBarComponent,
+                BreadcrumbsComponent,
+                HelpTipComponent,
+                EntityLinkComponent,
+                DelegatedPrefixBarComponent,
+            ],
         })
         dhcpService = TestBed.inject(DHCPService)
     }))

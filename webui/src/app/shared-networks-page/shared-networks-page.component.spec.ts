@@ -38,7 +38,13 @@ describe('SharedNetworksPageComponent', () => {
                 RouterModule,
                 RouterTestingModule,
             ],
-            declarations: [SharedNetworksPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent],
+            declarations: [
+                SharedNetworksPageComponent,
+                SubnetBarComponent,
+                BreadcrumbsComponent,
+                HelpTipComponent,
+                EntityLinkComponent,
+            ],
             providers: [DHCPService],
         })
 

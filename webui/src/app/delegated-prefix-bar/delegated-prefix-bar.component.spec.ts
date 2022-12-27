@@ -1,56 +1,55 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { DelegatedPrefixBarComponent } from './delegated-prefix-bar.component';
+import { DelegatedPrefixBarComponent } from './delegated-prefix-bar.component'
 
 describe('DelegatedPrefixBarComponent', () => {
-  let component: DelegatedPrefixBarComponent;
-  let fixture: ComponentFixture<DelegatedPrefixBarComponent>;
+    let component: DelegatedPrefixBarComponent
+    let fixture: ComponentFixture<DelegatedPrefixBarComponent>
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [],
-      declarations: [ DelegatedPrefixBarComponent ]
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [],
+            declarations: [DelegatedPrefixBarComponent],
+        }).compileComponents()
+
+        fixture = TestBed.createComponent(DelegatedPrefixBarComponent)
+        component = fixture.componentInstance
+
+        component.prefix = {
+            prefix: 'fe80::/64',
+            delegatedLength: 80,
+        }
+
+        fixture.detectChanges()
     })
-    .compileComponents();
 
-    fixture = TestBed.createComponent(DelegatedPrefixBarComponent);
-    component = fixture.componentInstance;
+    it('should create', () => {
+        expect(component).toBeTruthy()
+    })
 
-    component.prefix = {
-      prefix: "fe80::/64",
-      delegatedLength: 80
-    }
+    it('should display prefix and length', () => {
+        expect(fixture.debugElement.nativeElement.textContent.trim()).toBe('fe80::/64 del.: 80')
+    })
 
-    fixture.detectChanges();
-  });
+    it('should shorten the excluded prefix', () => {
+        component.prefix.excludedPrefix = 'fe80:42::/96'
+        expect(component.excludedPrefixShorten).toBe('~:42::/96')
+    })
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should not shorten if the excluded prefix has no common part with a prefix', () => {
+        component.prefix.excludedPrefix = '3001::/96'
+        expect(component.excludedPrefixShorten).toBe('3001::/96')
+    })
 
-  it('should display prefix and length', () => {
-    expect(fixture.debugElement.nativeElement.textContent.trim()).toBe("fe80::/64 del.: 80")
-  })
+    it('should display an excluded prefix', () => {
+        component.prefix.excludedPrefix = 'fe80:42::/96'
+        fixture.detectChanges()
+        expect(fixture.debugElement.nativeElement.textContent.trim()).toBe('fe80::/64 del.: 80 ex.: ~:42::/96')
+    })
 
-  it('should shorten the excluded prefix', () => {
-    component.prefix.excludedPrefix = "fe80:42::/96"
-    expect(component.excludedPrefixShorten).toBe("~:42::/96")
-  })
-
-  it ('should not shorten if the excluded prefix has no common part with a prefix', () => {
-    component.prefix.excludedPrefix = "3001::/96"
-    expect(component.excludedPrefixShorten).toBe("3001::/96")
-  })
-
-  it ('should display an excluded prefix', () => {
-    component.prefix.excludedPrefix = "fe80:42::/96"
-    fixture.detectChanges()
-    expect(fixture.debugElement.nativeElement.textContent.trim()).toBe("fe80::/64 del.: 80 ex.: ~:42::/96")
-  })
-
-  it ('should detect an excluded prefix', () => {
-    expect(component.hasExcluded).toBeFalse()
-    component.prefix.excludedPrefix = "fe80:42::/96"
-    expect(component.hasExcluded).toBeTrue()
-  })
-});
+    it('should detect an excluded prefix', () => {
+        expect(component.hasExcluded).toBeFalse()
+        component.prefix.excludedPrefix = 'fe80:42::/96'
+        expect(component.hasExcluded).toBeTrue()
+    })
+})

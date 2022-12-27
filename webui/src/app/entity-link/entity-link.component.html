@@ -40,9 +40,7 @@
     <!-- user -->
     <ng-container *ngSwitchCase="'user'">
         {{ showEntityName ? 'user' : '' }}
-        <a id="user-link" routerLink="/users/{{ attrs.id }}">
-            [{{ attrs.id }}] {{ attrs.login ?? attrs.email }}
-        </a>
+        <a id="user-link" routerLink="/users/{{ attrs.id }}"> [{{ attrs.id }}] {{ attrs.login ?? attrs.email }} </a>
     </ng-container>
 
     <!-- host reservation -->

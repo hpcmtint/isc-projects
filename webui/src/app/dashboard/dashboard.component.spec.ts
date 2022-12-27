@@ -40,7 +40,13 @@ describe('DashboardComponent', () => {
                 HttpClientTestingModule,
                 TableModule,
             ],
-            declarations: [DashboardComponent, EventsPanelComponent, HelpTipComponent, SubnetBarComponent, EntityLinkComponent],
+            declarations: [
+                DashboardComponent,
+                EventsPanelComponent,
+                HelpTipComponent,
+                SubnetBarComponent,
+                EntityLinkComponent,
+            ],
             providers: [
                 ServicesService,
                 LocationStrategy,

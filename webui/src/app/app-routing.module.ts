@@ -83,7 +83,7 @@ const routes: Routes = [
     {
         path: 'dhcp/subnets',
         pathMatch: 'full',
-        redirectTo: 'dhcp/subnets/'
+        redirectTo: 'dhcp/subnets/',
     },
     {
         path: 'dhcp/subnets/:id',

@@ -4,7 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Table } from 'primeng/table'
 
 import { DHCPService } from '../backend/api/api'
-import { humanCount, getGrafanaUrl, extractKeyValsAndPrepareQueryParams, getGrafanaSubnetTooltip, getErrorMessage } from '../utils'
+import {
+    humanCount,
+    getGrafanaUrl,
+    extractKeyValsAndPrepareQueryParams,
+    getGrafanaSubnetTooltip,
+    getErrorMessage,
+} from '../utils'
 import { getTotalAddresses, getAssignedAddresses, parseSubnetsStatisticValues } from '../subnets'
 import { SettingService } from '../setting.service'
 import { concat, of, Subscription } from 'rxjs'
@@ -44,14 +50,14 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
      * Array of tab menu items with subnet information.
      *
      * The first tab is always present and displays the subnet list.
-     * 
+     *
      * Note: we cannot use the URL with no segment for the list tab. It causes
      * the first tab is always marked as active. The Tab Menu has a built-in
      * feature to highlight items based on the current route. It seems that it
      * matches by a prefix instead of an exact value (the "/foo/bar" URL
      * matches the menu item with the "/foo" URL).
      */
-    tabs: MenuItem[] = [{ label: "Subnets", routerLink: "/dhcp/subnets/all" }]
+    tabs: MenuItem[] = [{ label: 'Subnets', routerLink: '/dhcp/subnets/all' }]
 
     /**
      * Selected tab menu index.
@@ -297,7 +303,7 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
      * @param subnetId Subnet ID or a NaN for subnet list.
      */
     openTabBySubnetId(subnetId: number) {
-        const tabIndex = this.openedSubnets.map(t => t.id).indexOf(subnetId)
+        const tabIndex = this.openedSubnets.map((t) => t.id).indexOf(subnetId)
 
         if (tabIndex < 0) {
             this._createTab(subnetId).then(() => {
@@ -313,7 +319,7 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
      * @param index Tab index.
      * @param event Event related to closing.
      */
-    closeTabByIndex(index: number, event?: Event, ) {
+    closeTabByIndex(index: number, event?: Event) {
         if (index == 0) {
             return
         }
@@ -336,30 +342,32 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
      * @param subnetId Subnet Id.
      */
     private _createTab(subnetId: number): Promise<void> {
-        return concat(
-            // Existing entry or undefined.
-            of(this.subnets.filter(s => s.id == subnetId)[0])
-                // Drop an undefined value if the entry was not found.
-                .pipe(filter(s => !!s)),
-            // Fetch data from API.
-            this.dhcpApi.getSubnet(subnetId)
+        return (
+            concat(
+                // Existing entry or undefined.
+                of(this.subnets.filter((s) => s.id == subnetId)[0])
+                    // Drop an undefined value if the entry was not found.
+                    .pipe(filter((s) => !!s)),
+                // Fetch data from API.
+                this.dhcpApi.getSubnet(subnetId)
+            )
+                // Take 1 item (return existing entry if exist, otherwise fetch the API).
+                .pipe(take(1))
+                // Execute and use.
+                .toPromise()
+                .then((data) => {
+                    this._appendTab(data)
+                })
+                .catch((error) => {
+                    const msg = getErrorMessage(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot get subnet',
+                        detail: `Error getting subnet with ID ${subnetId}: ${msg}`,
+                        life: 10000,
+                    })
+                })
         )
-        // Take 1 item (return existing entry if exist, otherwise fetch the API).
-        .pipe(take(1))
-        // Execute and use.
-        .toPromise()
-        .then(data => {
-            this._appendTab(data)
-        })
-        .catch(error => {
-            const msg = getErrorMessage(error)
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Cannot get subnet',
-                detail: `Error getting subnet with ID ${subnetId}: ${msg}`,
-                life: 10000,
-            })
-        })
     }
 
     /**
@@ -370,7 +378,7 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
         this.openedSubnets.push(subnet)
         this.tabs.push({
             label: subnet.subnet,
-            routerLink: `/dhcp/subnets/${subnet.id}`
+            routerLink: `/dhcp/subnets/${subnet.id}`,
         })
     }
 
@@ -384,6 +392,4 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
         }
         this.activeTabIndex = index
     }
-
-
 }

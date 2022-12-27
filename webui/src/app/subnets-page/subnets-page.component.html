@@ -74,7 +74,7 @@
                 [options]="[
                     { label: 'any', value: null, id: 'any-menu' },
                     { label: 'DHCPv4', value: '4', id: 'dhcpv4-menu' },
-                    { label: 'DHCPv6', value: '6', id: 'dhcpv6-menu' },
+                    { label: 'DHCPv6', value: '6', id: 'dhcpv6-menu' }
                 ]"
                 id="protocol-dropdown-menu"
                 [(ngModel)]="queryParams.dhcpVersion"
@@ -171,7 +171,12 @@
                         <app-entity-link entity="shared-network" [attrs]="{ name: sn.sharedNetwork }"></app-entity-link>
                     </td>
                     <td>
-                        <app-entity-link entity="app-local-subnet" [attrs]="lsn" *ngFor="let lsn of sn.localSubnets" class="block"></app-entity-link>
+                        <app-entity-link
+                            entity="app-local-subnet"
+                            [attrs]="lsn"
+                            *ngFor="let lsn of sn.localSubnets"
+                            class="block"
+                        ></app-entity-link>
                     </td>
                     <td *ngIf="grafanaUrl">
                         <a

@@ -15,14 +15,14 @@ describe('SubnetTabComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SubnetTabComponent, EntityLinkComponent, ReplaceAllPipe, CapitalizeFirstPipe],
-            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe]
+            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe],
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)
         component = fixture.componentInstance
         component.subnet = {
             id: 42,
-            subnet: "42.42.42.42"
+            subnet: '42.42.42.42',
         }
         fixture.detectChanges()
     })
