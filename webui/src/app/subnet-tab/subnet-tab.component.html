@@ -17,7 +17,7 @@
                         <td>
                             <app-entity-link
                                 entity="shared-network"
-                                [attrs]="{ name: subnet.sharedNetwork }"
+                                [attrs]="{ text: subnet.sharedNetwork, dhcpVersion: subnet.subnet.includes('.') ? 4 : 6 }"
                                 *ngIf="subnet.sharedNetwork"
                             ></app-entity-link>
                         </td>

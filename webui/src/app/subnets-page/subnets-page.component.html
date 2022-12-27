@@ -168,7 +168,7 @@
                         </div>
                     </td>
                     <td>
-                        <app-entity-link entity="shared-network" [attrs]="{ name: sn.sharedNetwork }"></app-entity-link>
+                        <app-entity-link entity="shared-network" [attrs]="{ text: sn.sharedNetwork, dhcpVersion: sn.subnet.includes('.') ? 4 : 6 }"></app-entity-link>
                     </td>
                     <td>
                         <app-entity-link

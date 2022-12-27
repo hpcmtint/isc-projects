@@ -163,4 +163,24 @@ describe('EntityLinkComponent', () => {
         native = fixture.nativeElement
         expect(native.textContent).toContain('subnet')
     })
+
+    it('should construct shared network link from query parameters', () => {
+        component.entity = 'shared-network'
+        component.attrs = { text: 'foo', dhcpVersion: 4 }
+        component.showEntityName = false
+        fixture.detectChanges()
+        const link = fixture.debugElement.query(By.css('#shared-network-link'))
+        expect(link.attributes.href).toEqual('/dhcp/shared-networks?text=foo&dhcpVersion=4')
+        expect(link.nativeElement.innerText).toEqual('foo')
+
+        // Test entity name is not displayed.
+        let native = fixture.nativeElement
+        expect(native.textContent).not.toContain('subnet')
+
+        // Display entity name.
+        component.showEntityName = true
+        fixture.detectChanges()
+        native = fixture.nativeElement
+        expect(native.textContent).toContain('shared network')
+    })
 })
