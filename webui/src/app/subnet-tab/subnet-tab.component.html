@@ -60,7 +60,9 @@
         <!-- Prefix delegations -->
         <div class="col" *ngIf="isIPv6">
             <p-fieldset legend="Prefix delegations" styleClass="h-full">
-
+                <div class="subnet__pools">
+                    <app-delegated-prefix-bar [prefix]="p" *ngFor="let p of subnet.prefixDelegationPools"></app-delegated-prefix-bar>
+                </div>
             </p-fieldset>
         </div>
 

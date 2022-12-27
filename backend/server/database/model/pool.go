@@ -68,10 +68,10 @@ func NewPrefixPool(prefix string, delegatedLen int, excludedPrefix string) (*Pre
 		excludedIP, excludedNet, err := net.ParseCIDR(excludedPrefix)
 		if err != nil {
 			return nil, errors.Errorf("unable to parse the excluded prefix %s", excludedPrefix)
+		}
 
-			if excludedIP.To4() != nil {
-				return nil, errors.Errorf("specified prefix %s is not an IPv6 prefix", excludedPrefix)
-			}
+		if excludedIP.To4() != nil {
+			return nil, errors.Errorf("specified prefix %s is not an IPv6 prefix", excludedPrefix)
 		}
 
 		pool.ExcludedPrefix = excludedNet.String()

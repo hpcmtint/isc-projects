@@ -496,7 +496,7 @@ func TestGetSubnetsByPageNoSubnets(t *testing.T) {
 	require.Len(t, subnets, 0)
 }
 
-// Check that basic functionality of shared newtorks works, returns proper data and can be filtered.
+// Check that basic functionality of shared networks works, returns proper data and can be filtered.
 func TestGetSharedNetworksByPageBasic(t *testing.T) {
 	db, _, teardown := dbtest.SetupDatabaseTestCase(t)
 	defer teardown()

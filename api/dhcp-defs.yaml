@@ -263,6 +263,16 @@
         type: string
         format: date-time
 
+  DelegatedPrefix:
+    type: object
+    properties:
+      prefix:
+        type: string
+      delegatedLength:
+        type: integer
+      excludedPrefix:
+        type: string
+
   Subnet:
     type: object
     properties:
@@ -290,6 +300,10 @@
         type: array
         items:
           $ref: '#/definitions/LocalSubnet'
+      prefixDelegationPools:
+        type: array
+        items:
+          $ref: '#/definitions/DelegatedPrefix'
 
   Subnets:
     type: object

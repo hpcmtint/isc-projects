@@ -108,7 +108,8 @@ import { DhcpClientClassSetViewComponent } from './dhcp-client-class-set-view/dh
 import { SubnetTabComponent } from './subnet-tab/subnet-tab.component'
 import { DatePipe, KeyValuePipe, PercentPipe } from '@angular/common'
 import { ReplaceAllPipe } from './replace-all.pipe'
-import { CapitalizeFirstPipe } from './capitalize-first.pipe'
+import { CapitalizeFirstPipe } from './capitalize-first.pipe';
+import { DelegatedPrefixBarComponent } from './delegated-prefix-bar/delegated-prefix-bar.component'
 
 export function cfgFactory() {
     const params: ConfigurationParameters = {
@@ -172,6 +173,7 @@ export function cfgFactory() {
         SubnetTabComponent,
         ReplaceAllPipe,
         CapitalizeFirstPipe,
+        DelegatedPrefixBarComponent,
     ],
     imports: [
         BrowserModule,

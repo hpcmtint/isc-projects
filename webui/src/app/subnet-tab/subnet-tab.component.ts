@@ -22,7 +22,7 @@ export class SubnetTabComponent implements OnInit {
         return Array.from(
             // Make a set of statistic object keys to remove duplicates.
             new Set(
-                this.subnet.localSubnets
+                (this.subnet.localSubnets ?? [])
                     // Take into account only the entries containing the statistics.
                     .filter(l => l.stats)
                     // Extract all keys from all statistic objects.

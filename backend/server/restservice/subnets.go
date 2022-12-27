@@ -29,6 +29,17 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 		subnet.Pools = append(subnet.Pools, pool)
 	}
 
+	for _, prefixPoolDetails := range sn.PrefixPools {
+		subnet.PrefixDelegationPools = append(
+			subnet.PrefixDelegationPools,
+			&models.DelegatedPrefix{
+				Prefix:          prefixPoolDetails.Prefix,
+				DelegatedLength: int64(prefixPoolDetails.DelegatedLen),
+				ExcludedPrefix:  prefixPoolDetails.ExcludedPrefix,
+			},
+		)
+	}
+
 	if sn.SharedNetwork != nil {
 		subnet.SharedNetwork = sn.SharedNetwork.Name
 	}

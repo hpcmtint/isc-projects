@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown'
 import { TableModule } from 'primeng/table'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { TooltipModule } from 'primeng/tooltip'
-import { RouterModule, ActivatedRoute, Router, convertToParamMap } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import { DHCPService, SettingsService, UsersService } from '../backend'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { of } from 'rxjs'
@@ -20,6 +20,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TabMenuModule } from 'primeng/tabmenu'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { RouterTestingModule } from '@angular/router/testing'
+import { DelegatedPrefixBarComponent } from '../delegated-prefix-bar/delegated-prefix-bar.component'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -61,7 +62,7 @@ describe('SubnetsPageComponent', () => {
                 NoopAnimationsModule,
                 TabMenuModule,
             ],
-            declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent],
+            declarations: [SubnetsPageComponent, SubnetBarComponent, BreadcrumbsComponent, HelpTipComponent, EntityLinkComponent, DelegatedPrefixBarComponent],
         })
         dhcpService = TestBed.inject(DHCPService)
     }))

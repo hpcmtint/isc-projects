@@ -163,6 +163,9 @@
                         >
                             {{ p }}
                         </div>
+                        <div *ngFor="let p of sn.prefixDelegationPools">
+                            <app-delegated-prefix-bar [prefix]="p"></app-delegated-prefix-bar>
+                        </div>
                     </td>
                     <td>
                         <app-entity-link entity="shared-network" [attrs]="{ name: sn.sharedNetwork }"></app-entity-link>
