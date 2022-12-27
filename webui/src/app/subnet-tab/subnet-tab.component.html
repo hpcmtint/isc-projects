@@ -61,8 +61,8 @@
         <!-- Address/PD pools -->
         <div class="col">
             <p-fieldset legend="Address pools" styleClass="h-full">
-                <div class="subnet__pools">
-                    <div *ngFor="let p of subnet.pools" class="subnet__pool">
+                <div class="subnet__entries">
+                    <div *ngFor="let p of subnet.pools" class="subnet__entry">
                         {{ p }}
                     </div>
                 </div>
@@ -72,7 +72,7 @@
         <!-- Prefix delegations -->
         <div class="col" *ngIf="isIPv6">
             <p-fieldset legend="Prefix delegations" styleClass="h-full">
-                <div class="subnet__pools">
+                <div class="subnet__entries">
                     <app-delegated-prefix-bar
                         [prefix]="p"
                         *ngFor="let p of subnet.prefixDelegationPools"
@@ -83,7 +83,13 @@
 
         <!-- Hosts -->
         <div class="col">
-            <p-fieldset legend="Related host reservations" styleClass="h-full"> </p-fieldset>
+            <p-fieldset legend="Related host reservations" styleClass="h-full">
+                <div class="subnet__entries">
+                    <div *ngFor="let h of subnet.hosts" class="subnet__entry">
+                        <app-entity-link entity="host" [attrs]="h"></app-entity-link>
+                    </div>
+                </div>
+            </p-fieldset>
         </div>
 
         <!-- Local subnets -->

@@ -250,6 +250,7 @@ func GetSubnet(dbi dbops.DBI, subnetID int64) (*Subnet, error) {
 		Relation("PrefixPools", func(q *orm.Query) (*orm.Query, error) {
 			return q.Order("prefix_pool.id ASC"), nil
 		}).
+		Relation("Hosts.HostIdentifiers").
 		Relation("SharedNetwork").
 		Relation("LocalSubnets.Daemon.App.AccessPoints").
 		Where("subnet.id = ?", subnetID).
@@ -414,7 +415,8 @@ func GetSubnetsByPage(dbi dbops.DBI, offset, limit, appID, family int64, filterT
 		}).
 		Relation("SharedNetwork").
 		Relation("LocalSubnets.Daemon.App.AccessPoints").
-		Relation("LocalSubnets.Daemon.App.Machine")
+		Relation("LocalSubnets.Daemon.App.Machine").
+		Relation("Hosts.HostIdentifiers")
 
 	// Let's be liberal and allow other values than 0 too. The only special
 	// ones are 4 and 6.

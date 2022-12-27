@@ -231,6 +231,11 @@ namespace :gen do
         desc 'Generate Swagger API files'
         task :swagger => [swagger_server_dir]
     end
+
+    namespace :ui do
+        desc 'Generate Swagger API files'
+        task :swagger => [open_api_generator_webui_dir]
+    end
 end
 
 namespace :prepare do

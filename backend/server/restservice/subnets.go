@@ -61,6 +61,24 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 
 		subnet.LocalSubnets = append(subnet.LocalSubnets, localSubnet)
 	}
+
+	for _, host := range sn.Hosts {
+		var identifiers []*models.HostIdentifier
+		for _, identifier := range host.HostIdentifiers {
+			identifiers = append(identifiers, &models.HostIdentifier{
+				IDHexValue: identifier.ToHex(":"),
+				IDType:     identifier.Type,
+			})
+		}
+
+		subnet.Hosts = append(subnet.Hosts, &models.Host{
+			ID:              host.ID,
+			Hostname:        host.Hostname,
+			SubnetID:        host.SubnetID,
+			HostIdentifiers: identifiers,
+		})
+	}
+
 	return subnet
 }
 

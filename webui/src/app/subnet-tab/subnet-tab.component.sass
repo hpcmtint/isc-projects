@@ -1,4 +1,4 @@
-.subnet__pools
+.subnet__entries
     // Use grid layout to align items in rows and columns and ensure that
     // every pool has the same width.
     display: grid
@@ -8,9 +8,11 @@
     row-gap: 0.5rem
     // Define spacing between columns.
     column-gap: 0.5rem
+    // Resize all items to a child with maximum width.
+    width: max-content
 
-.subnet__pool
-    // Display the pool in a single line.
+.subnet__entry
+    // Display the entry in a single line.
     white-space: nowrap
     // Draw a rounded rectangle around the value.
     border-radius: 4px

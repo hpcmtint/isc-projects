@@ -304,6 +304,10 @@
         type: array
         items:
           $ref: '#/definitions/DelegatedPrefix'
+      hosts:
+        type: array
+        items:
+          $ref: '#/definitions/Host'
 
   Subnets:
     type: object

@@ -46,7 +46,14 @@
     <!-- host reservation -->
     <ng-container *ngSwitchCase="'host'">
         {{ showEntityName ? 'host' : '' }}
-        <a id="host-link" routerLink="/dhcp/hosts/{{ attrs.id }}">{{ attrs.label }}</a>
+        <a id="host-link" routerLink="/dhcp/hosts/{{ attrs.id }}" *ngIf="attrs.label">{{ attrs.label }}</a>
+        <app-identifier
+            id="host-link"
+            [label]="i.idType"
+            [hexValue]="i.idHexValue"
+            link="/dhcp/hosts/{{ attrs.id }}"
+            *ngFor="let i of attrs.hostIdentifiers">
+        </app-identifier>
     </ng-container>
 
     <!-- shared network -->
