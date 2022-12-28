@@ -20,7 +20,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { TooltipModule } from 'primeng/tooltip'
 import { TableModule } from 'primeng/table'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
-import { HumanCountPipe } from '../human-count.pipe'
+import { HumanCountPipe } from '../pipes/human-count.pipe'
 
 describe('DashboardComponent', () => {
     let component: DashboardComponent

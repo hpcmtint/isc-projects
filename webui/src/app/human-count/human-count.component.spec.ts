@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { HumanCountComponent } from './human-count.component'
-import { HumanCountPipe } from '../human-count.pipe'
+import { HumanCountPipe } from '../pipes/human-count.pipe'
 import { TooltipModule } from 'primeng/tooltip'
-import { NumberPipe } from '../number.pipe'
+import { NumberPipe } from '../pipes/number.pipe'
 
 describe('HumanCountComponent', () => {
     let component: HumanCountComponent

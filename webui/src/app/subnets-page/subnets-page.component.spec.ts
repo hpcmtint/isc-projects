@@ -22,7 +22,7 @@ import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { DelegatedPrefixBarComponent } from '../delegated-prefix-bar/delegated-prefix-bar.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
-import { NumberPipe } from '../number.pipe'
+import { NumberPipe } from '../pipes/number.pipe'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -72,7 +72,7 @@ describe('SubnetsPageComponent', () => {
                 EntityLinkComponent,
                 DelegatedPrefixBarComponent,
                 HumanCountComponent,
-                NumberPipe
+                NumberPipe,
             ],
         })
         dhcpService = TestBed.inject(DHCPService)
