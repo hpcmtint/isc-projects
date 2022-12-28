@@ -15,13 +15,13 @@ describe('NumberPipePipe', () => {
     it('formats the numbers', () => {
         const pipe = new NumberPipe()
         expect(pipe.transform(42, 'en-US')).toBe('42')
-        expect(pipe.transform(123456, 'en-US')).toBe("123'456")
+        expect(pipe.transform(123456, 'en-US')).toBe("123,456")
     })
 
     it('converts the numeric strings', () => {
         const pipe = new NumberPipe()
         expect(pipe.transform('42', 'en-US')).toBe('42')
-        expect(pipe.transform('123456', 'en-US')).toBe("123'456")
+        expect(pipe.transform('123456', 'en-US')).toBe("123,456")
     })
 
     it('returns null for non-numeric strings', () => {

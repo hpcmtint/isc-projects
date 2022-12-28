@@ -51,12 +51,12 @@ describe('HumanCountComponent', () => {
 
     it('should recognize an invalid value', () => {
         component.value = 42
-        expect(component.hasValidValue).toBeFalse()
+        expect(component.hasInvalidValue).toBeFalse()
         component.value = BigInt(42)
-        expect(component.hasValidValue).toBeFalse()
+        expect(component.hasInvalidValue).toBeFalse()
         component.value = null
-        expect(component.hasValidValue).toBeFalse()
+        expect(component.hasInvalidValue).toBeFalse()
         component.value = 'foo'
-        expect(component.hasValidValue).toBeTrue()
+        expect(component.hasInvalidValue).toBeTrue()
     })
 })

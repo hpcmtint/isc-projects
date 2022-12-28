@@ -8,6 +8,7 @@ import { ReplaceAllPipe } from '../replace-all.pipe'
 
 import { SubnetTabComponent } from './subnet-tab.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
+import { NumberPipe } from '../number.pipe'
 
 describe('SubnetTabComponent', () => {
     let component: SubnetTabComponent
@@ -15,8 +16,8 @@ describe('SubnetTabComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SubnetTabComponent, EntityLinkComponent, ReplaceAllPipe, CapitalizeFirstPipe],
-            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe, HumanCountComponent],
+            declarations: [SubnetTabComponent, EntityLinkComponent, ReplaceAllPipe, CapitalizeFirstPipe, HumanCountComponent, NumberPipe],
+            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe],
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)

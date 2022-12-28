@@ -19,6 +19,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
+import { HumanCountPipe } from '../human-count.pipe'
+import { NumberPipe } from '../number.pipe'
 
 describe('SharedNetworksPageComponent', () => {
     let component: SharedNetworksPageComponent
@@ -46,6 +48,8 @@ describe('SharedNetworksPageComponent', () => {
                 HelpTipComponent,
                 EntityLinkComponent,
                 HumanCountComponent,
+                HumanCountPipe,
+                NumberPipe
             ],
             providers: [DHCPService],
         })
