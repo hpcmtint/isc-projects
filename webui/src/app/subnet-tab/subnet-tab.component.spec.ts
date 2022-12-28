@@ -41,4 +41,38 @@ describe('SubnetTabComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy()
     })
+
+    it('should extract unique statistic keys', () => {
+        component.subnet.localSubnets = [
+            {
+                stats: {
+                    'foo': 1,
+                    'bar': 2,
+                }
+            },
+            {
+                stats: {
+                    'foo': 3,
+                    'ada': 4,
+                }
+            },
+            {
+                stats: {
+                    'zoo': 5
+                }
+            }
+        ]
+
+        expect(component.localSubnetStatisticKeys).toEqual(['ada', 'bar', 'foo', 'zoo'])
+    })
+
+    it('should return an empty list of the static keys if local subnets are missing', () => {
+        expect(component.localSubnetStatisticKeys).toEqual([])
+    })
+
+    it('should detect IPv6 subnet', () => {
+        expect(component.isIPv6).toBeFalse()
+        component.subnet.subnet = "fe80::/32"
+        expect(component.isIPv6).toBeTrue()
+    })
 })
