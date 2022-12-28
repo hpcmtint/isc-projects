@@ -251,6 +251,8 @@
         type: integer
       daemonId:
         type: integer
+      daemonName:
+        type: string
       appName:
         type: string
       machineAddress:

@@ -11,6 +11,18 @@
         </a>
     </ng-container>
 
+    <!-- daemon-local-subnet -->
+    <ng-container *ngSwitchCase="'daemon-local-subnet'">
+        {{ showEntityName ? 'daemon' : '' }}
+        <a
+            id="daemon-link"
+            routerLink="/apps/kea/{{ attrs.appId }}"
+            [queryParams]="{ daemon: attrs.daemonName }"
+        >
+            {{ attrs.appName }}/{{ attrs.daemonName }}
+        </a>
+    </ng-container>
+
     <!-- app -->
     <ng-container *ngSwitchCase="'app'">
         {{ showEntityName ? 'app' : '' }}

@@ -84,6 +84,7 @@
                             </td>
                             <td *ngIf="grafanaUrl">
                                 <a
+                                    *ngIf="sn.localSubnets?.[0]"
                                     [href]="
                                         getGrafanaUrl(
                                             'dhcp4',

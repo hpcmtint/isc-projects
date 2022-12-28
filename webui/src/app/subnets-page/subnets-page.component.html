@@ -107,7 +107,7 @@
                     <th colspan="3" style="width: 16rem">Addresses</th>
                     <th rowspan="2">Pools</th>
                     <th rowspan="2" style="width: 6rem">Shared Network</th>
-                    <th rowspan="2" style="width: 14rem">App Name</th>
+                    <th rowspan="2" style="width: 14rem">App Daemon Name</th>
                     <th rowspan="2" style="width: 3rem" *ngIf="grafanaUrl" pTooltip="Link to Grafana charts">
                         <i class="pi pi-chart-line" style="font-size: 1.6em"></i>
                     </th>
@@ -172,7 +172,7 @@
                     </td>
                     <td>
                         <app-entity-link
-                            entity="app-local-subnet"
+                            entity="daemon-local-subnet"
                             [attrs]="lsn"
                             *ngFor="let lsn of sn.localSubnets"
                             class="block"
@@ -183,6 +183,7 @@
                             [href]="getGrafanaUrl('dhcp4', sn.localSubnets[0].id, sn.localSubnets[0].machineHostname)"
                             [title]="getGrafanaTooltip(sn.localSubnets[0].id, sn.localSubnets[0].machineHostname)"
                             target="blank"
+                            *ngIf="sn.localSubnets?.[0]"
                         >
                             <i class="pi pi-chart-line" style="font-size: 1.6em"></i>
                         </a>
@@ -199,5 +200,5 @@
 
 <!-- Single subnet tab -->
 <ng-template #openedTabBlock>
-    <app-subnet-tab [subnet]="openedSubnets[activeTabIndex]"></app-subnet-tab>
+    <app-subnet-tab [subnet]="openedSubnets[activeTabIndex]" [grafanaUrl]="grafanaUrl"></app-subnet-tab>
 </ng-template>

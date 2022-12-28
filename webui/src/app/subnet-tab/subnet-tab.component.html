@@ -10,7 +10,7 @@
                     </tr>
                     <tr>
                         <td class="w-4 white-space-nowrap">Client class</td>
-                        <td>{{ subnet.clientClass }}</td>
+                        <td>{{ subnet.clientClass ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td class="w-4 white-space-nowrap">Shared network</td>
@@ -20,6 +20,7 @@
                                 [attrs]="{ text: subnet.sharedNetwork, dhcpVersion: subnet.subnet.includes('.') ? 4 : 6 }"
                                 *ngIf="subnet.sharedNetwork"
                             ></app-entity-link>
+                            <span *ngIf="!subnet.sharedNetwork">-</span>
                         </td>
                     </tr>
                 </table>
@@ -61,7 +62,7 @@
         <!-- Address/PD pools -->
         <div class="col">
             <p-fieldset legend="Address pools" styleClass="h-full">
-                <div class="subnet__entries">
+                <div class="subnet__entries" *ngIf="subnet.pools; else emptySection">
                     <div *ngFor="let p of subnet.pools" class="subnet__entry">
                         {{ p }}
                     </div>
@@ -72,7 +73,7 @@
         <!-- Prefix delegations -->
         <div class="col" *ngIf="isIPv6">
             <p-fieldset legend="Prefix delegations" styleClass="h-full">
-                <div class="subnet__entries">
+                <div class="subnet__entries" *ngIf="subnet.prefixDelegationPools; else emptySection">
                     <app-delegated-prefix-bar
                         [prefix]="p"
                         *ngFor="let p of subnet.prefixDelegationPools"
@@ -84,7 +85,7 @@
         <!-- Hosts -->
         <div class="col">
             <p-fieldset legend="Related host reservations" styleClass="h-full">
-                <div class="subnet__entries">
+                <div class="subnet__entries" *ngIf="subnet.hosts; else emptySection">
                     <div *ngFor="let h of subnet.hosts" class="subnet__entry">
                         <app-entity-link entity="host" [attrs]="h"></app-entity-link>
                     </div>
@@ -98,7 +99,7 @@
                 <table class="w-full border-spacing-3">
                     <tr>
                         <th>Config subnet ID</th>
-                        <th>Application</th>
+                        <th>Application daemon</th>
                         <th>Statistics collected at</th>
                         <th *ngFor="let statKey of localSubnetStatisticKeys">
                             {{
@@ -109,17 +110,37 @@
                                     | replaceAll: 'pds':'PDs'
                             }}
                         </th>
+                        <th *ngIf="grafanaUrl">Grafana link</th>
                     </tr>
                     <tr *ngFor="let lsn of subnet.localSubnets">
                         <td class="text-center">{{ lsn.id }}</td>
-                        <td><app-entity-link entity="app-local-subnet" [attrs]="lsn"></app-entity-link></td>
+                        <td><app-entity-link entity="daemon-local-subnet" [attrs]="lsn"></app-entity-link></td>
                         <td>{{ lsn.statsCollectedAt | date: 'short' }}</td>
                         <td class="text-right" *ngFor="let statKey of localSubnetStatisticKeys">
                             {{ lsn.stats[statKey] }}
                         </td>
+                        <td class="text-center" *ngIf="grafanaUrl">
+                            <a
+                                [href]="getGrafanaUrl(lsn)"
+                                [title]="getGrafanaTooltip(lsn)"
+                                target="blank">
+                                <i class="pi pi-chart-line subnet__grafana-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Empty placeholder -->
+                    <tr *ngIf="!subnet.localSubnets">
+                        <td colspan="100%" class="text-center">No data</td>
                     </tr>
                 </table>
             </p-fieldset>
         </div>
     </div>
 </div>
+
+<!-- Empty placeholder -->
+<ng-template #emptySection>
+    <div class="text-center">
+        No data
+    </div>
+</ng-template>

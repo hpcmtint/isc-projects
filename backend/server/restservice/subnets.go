@@ -48,6 +48,7 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 		localSubnet := &models.LocalSubnet{
 			AppID:            lsn.Daemon.App.ID,
 			DaemonID:         lsn.Daemon.ID,
+			DaemonName:       lsn.Daemon.Name,
 			AppName:          lsn.Daemon.App.Name,
 			ID:               lsn.LocalSubnetID,
 			Stats:            lsn.Stats,
