@@ -293,6 +293,8 @@
         type: string
       addrUtilization:
         type: number
+      pdUtilization:
+        type: number
       stats:
         type: object
       statsCollectedAt:
@@ -336,6 +338,8 @@
         items:
           $ref: '#/definitions/Subnet'
       addrUtilization:
+        type: number
+      pdUtilization:
         type: number
       stats:
         type: object

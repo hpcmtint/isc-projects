@@ -20,6 +20,7 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 		Subnet:           sn.Prefix,
 		ClientClass:      sn.ClientClass,
 		AddrUtilization:  float64(sn.AddrUtilization) / 10,
+		PdUtilization:    float64(sn.PdUtilization) / 10,
 		Stats:            sn.Stats,
 		StatsCollectedAt: strfmt.DateTime(sn.StatsCollectedAt),
 	}
@@ -198,6 +199,7 @@ func (r *RestAPI) getSharedNetworks(offset, limit, appID, family int64, filterTe
 			Name:             net.Name,
 			Subnets:          subnets,
 			AddrUtilization:  float64(net.AddrUtilization) / 10,
+			PdUtilization:    float64(net.PdUtilization) / 10,
 			Stats:            net.Stats,
 			StatsCollectedAt: strfmt.DateTime(net.StatsCollectedAt),
 		}
