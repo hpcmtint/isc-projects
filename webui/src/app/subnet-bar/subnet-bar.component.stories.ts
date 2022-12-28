@@ -20,16 +20,25 @@ const Template: Story<SubnetBarComponent> = (args: SubnetBarComponent) => ({
     props: args,
 })
 
-export const IPv4NoStats = Template.bind({})
-IPv4NoStats.args = {
+export const ipv4NoStats = Template.bind({})
+ipv4NoStats.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16"
     } as Subnet
 }
 
-export const IPv4Stats = Template.bind({})
-IPv4Stats.args = {
+export const ipv4NoStatsUtilization = Template.bind({})
+ipv4NoStatsUtilization.args = {
+    subnet: {
+        id: 42,
+        subnet: "42.42.0.0/16",
+        addrUtilization: 86
+    } as Subnet
+}
+
+export const ipv4Stats = Template.bind({})
+ipv4Stats.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16",
@@ -42,8 +51,8 @@ IPv4Stats.args = {
     } as Subnet
 }
 
-export const IPv4UtilizationLow = Template.bind({})
-IPv4UtilizationLow.args = {
+export const ipv4UtilizationLow = Template.bind({})
+ipv4UtilizationLow.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16",
@@ -57,8 +66,8 @@ IPv4UtilizationLow.args = {
     } as Subnet
 }
 
-export const IPv4UtilizationMedium = Template.bind({})
-IPv4UtilizationMedium.args = {
+export const ipv4UtilizationMedium = Template.bind({})
+ipv4UtilizationMedium.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16",
@@ -72,8 +81,8 @@ IPv4UtilizationMedium.args = {
     } as Subnet
 }
 
-export const IPv4UtilizationHigh = Template.bind({})
-IPv4UtilizationHigh.args = {
+export const ipv4UtilizationHigh = Template.bind({})
+ipv4UtilizationHigh.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16",
@@ -87,8 +96,8 @@ IPv4UtilizationHigh.args = {
     } as Subnet
 }
 
-export const IPv4UtilizationExceed = Template.bind({})
-IPv4UtilizationExceed.args = {
+export const ipv4UtilizationExceed = Template.bind({})
+ipv4UtilizationExceed.args = {
     subnet: {
         id: 42,
         subnet: "42.42.0.0/16",
@@ -102,16 +111,25 @@ IPv4UtilizationExceed.args = {
     } as Subnet
 }
 
-export const IPv6NoStats = Template.bind({})
-IPv6NoStats.args = {
+export const ipv6NoStats = Template.bind({})
+ipv6NoStats.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64"
     } as Subnet
 }
 
-export const IPv6Stats = Template.bind({})
-IPv6Stats.args = {
+export const ipv6NoStatsUtilization = Template.bind({})
+ipv6NoStatsUtilization.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        addrUtilization: 85
+    } as Subnet
+}
+
+export const ipv6Stats = Template.bind({})
+ipv6Stats.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64",
@@ -126,8 +144,8 @@ IPv6Stats.args = {
     } as Subnet
 }
 
-export const IPv6UtilizationAddressLow = Template.bind({})
-IPv6UtilizationAddressLow.args = {
+export const ipv6UtilizationAddressLow = Template.bind({})
+ipv6UtilizationAddressLow.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64",
@@ -143,8 +161,8 @@ IPv6UtilizationAddressLow.args = {
     } as Subnet
 }
 
-export const IPv6UtilizationAddressMedium = Template.bind({})
-IPv6UtilizationAddressMedium.args = {
+export const ipv6UtilizationAddressMedium = Template.bind({})
+ipv6UtilizationAddressMedium.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64",
@@ -160,8 +178,8 @@ IPv6UtilizationAddressMedium.args = {
     } as Subnet
 }
 
-export const IPv6UtilizationAddressHigh = Template.bind({})
-IPv6UtilizationAddressHigh.args = {
+export const ipv6UtilizationAddressHigh = Template.bind({})
+ipv6UtilizationAddressHigh.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64",
@@ -177,8 +195,8 @@ IPv6UtilizationAddressHigh.args = {
     } as Subnet
 }
 
-export const IPv6UtilizationAddressExceed = Template.bind({})
-IPv6UtilizationAddressExceed.args = {
+export const ipv6UtilizationAddressExceed = Template.bind({})
+ipv6UtilizationAddressExceed.args = {
     subnet: {
         id: 42,
         subnet: "3001:1::/64",
@@ -190,6 +208,110 @@ IPv6UtilizationAddressExceed.args = {
             'assigned-pds': 250
         },
         addrUtilization: 110,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationDelegatedPrefixLow = Template.bind({})
+ipv6UtilizationDelegatedPrefixLow.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 20,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 80
+        },
+        pdUtilization: 40,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationDelegatedPrefixMedium = Template.bind({})
+ipv6UtilizationDelegatedPrefixMedium.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 85,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 162
+        },
+        pdUtilization: 81,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationDelegatedPrefixHigh = Template.bind({})
+ipv6UtilizationDelegatedPrefixHigh.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 95,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 182
+        },
+        pdUtilization: 91,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationDelegatedPrefixExceed = Template.bind({})
+ipv6UtilizationDelegatedPrefixExceed.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 110,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 250
+        },
+        pdUtilization: 125,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationAddressMediumDelegatedPrefixHigh = Template.bind({})
+ipv6UtilizationAddressMediumDelegatedPrefixHigh.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 85,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 190
+        },
+        addrUtilization: 85,
+        pdUtilization: 95,
+        statsCollectedAt: '2022-12-28T14:59:00'
+    } as Subnet
+}
+
+export const ipv6UtilizationAddressMediumDelegatedPrefixMedium = Template.bind({})
+ipv6UtilizationAddressMediumDelegatedPrefixMedium.args = {
+    subnet: {
+        id: 42,
+        subnet: "3001:1::/64",
+        stats: {
+            'total-nas': 100,
+            'assigned-nas': 85,
+            'declined-nas': 0,
+            'total-pds': 200,
+            'assigned-pds': 170
+        },
+        addrUtilization: 85,
+        pdUtilization: 85,
         statsCollectedAt: '2022-12-28T14:59:00'
     } as Subnet
 }

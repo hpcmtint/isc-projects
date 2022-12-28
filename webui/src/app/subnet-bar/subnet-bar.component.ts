@@ -14,7 +14,6 @@ import { clamp, datetimeToLocal } from '../utils'
 })
 export class SubnetBarComponent {
     _subnet: Subnet
-    style: any
     tooltip = ''
 
     constructor() {}
@@ -23,31 +22,10 @@ export class SubnetBarComponent {
     set subnet(subnet: Subnet) {
         this._subnet = subnet
 
-        const util: number = subnet.addrUtilization ?? 0
-
-        const style = {
-            // In some cases the utilization may be incorrect - less than
-            // zero or greater than 100%. We need to truncate the value
-            // to avoid a subnet bar overlapping other elements.
-            width: clamp(util, 0, 100) + '%',
-        }
-
-        if (util > 100) {
-            style['background-color'] = '#7C9FDE' // blue-ish
-        } else if (util > 90) {
-            style['background-color'] = '#faa' // red-ish
-        } else if (util > 80) {
-            style['background-color'] = '#ffcf76' // orange-ish
-        } else {
-            style['background-color'] = '#abffa8' // green-ish
-        }
-
-        this.style = style
-
         if (this._subnet.stats) {
             const stats = this._subnet.stats
             const lines = []
-            if (util > 100) {
+            if (this.addrUtilization > 100) {
                 lines.push('Warning! Utilization is greater than 100%. Data is unreliable.')
                 lines.push(
                     'This problem is caused by a Kea limitation - addresses/NAs/PDs in out-of-pool host reservations are reported as assigned but excluded from the total counters.'
@@ -57,14 +35,19 @@ export class SubnetBarComponent {
                 )
                 lines.push('')
             }
+
             if (this._subnet.subnet.includes('.')) {
                 // DHCPv4 stats
+                lines.push(`Utilization: ${this.addrUtilization}%`)
                 lines.push('Total: ' + stats['total-addresses'].toLocaleString('en-US'))
                 lines.push('Assigned: ' + stats['assigned-addresses'].toLocaleString('en-US'))
                 lines.push('Declined: ' + stats['declined-addresses'].toLocaleString('en-US'))
             } else {
                 // DHCPv6 stats
                 // IPv6 addresses
+                lines.push(`Utilization NAs: ${this.addrUtilization}%`)
+                lines.push(`Utilization PDs: ${this.pdUtilization}%`)
+
                 if (stats['total-nas'] !== undefined) {
                     let total = stats['total-nas']
                     if (total === -1) {
@@ -94,11 +77,40 @@ export class SubnetBarComponent {
             this.tooltip = lines.join('<br>')
         } else {
             this.tooltip = 'No stats yet'
-            style['background-color'] = '#ccc' // grey
         }
     }
 
     get subnet() {
         return this._subnet
+    }
+
+    get addrUtilization() {
+        return this.subnet.addrUtilization ?? 0
+    }
+
+    get pdUtilization() {
+        return this.subnet.pdUtilization ?? 0
+    }
+
+    get isIPv6() {
+        return this.subnet.subnet.includes(':')
+    }
+
+    get addrUtilizationStyle() {
+        return {
+            // In some cases the utilization may be incorrect - less than
+            // zero or greater than 100%. We need to truncate the value
+            // to avoid a subnet bar overlapping other elements.
+            width: clamp(this.addrUtilization, 0, 100) + '%',
+        }
+    }
+
+    get pdUtilizationStyle() {
+        return {
+            // In some cases the utilization may be incorrect - less than
+            // zero or greater than 100%. We need to truncate the value
+            // to avoid a subnet bar overlapping other elements.
+            width: clamp(this.pdUtilization, 0, 100) + '%',
+        }
     }
 }
