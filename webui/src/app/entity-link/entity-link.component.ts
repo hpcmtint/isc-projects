@@ -18,7 +18,16 @@ export class EntityLinkComponent {
     /**
      * Entity name, one of: machine, app, daemon, subnet, host, etc.
      */
-    @Input() entity: 'machine' | 'app' | 'daemon' | 'subnet' | 'host' | 'user' | 'shared-network' | 'app-local-subnet' | 'daemon-local-subnet'
+    @Input() entity:
+        | 'machine'
+        | 'app'
+        | 'daemon'
+        | 'subnet'
+        | 'host'
+        | 'user'
+        | 'shared-network'
+        | 'app-local-subnet'
+        | 'daemon-local-subnet'
 
     /**
      * Attributes that describe given entity e.g. id, name, etc.

@@ -21,6 +21,7 @@ import { TabMenuModule } from 'primeng/tabmenu'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { DelegatedPrefixBarComponent } from '../delegated-prefix-bar/delegated-prefix-bar.component'
+import { HumanCountComponent } from '../human-count/human-count.component'
 
 class MockParamMap {
     get(name: string): string | null {
@@ -69,6 +70,7 @@ describe('SubnetsPageComponent', () => {
                 HelpTipComponent,
                 EntityLinkComponent,
                 DelegatedPrefixBarComponent,
+                HumanCountComponent,
             ],
         })
         dhcpService = TestBed.inject(DHCPService)

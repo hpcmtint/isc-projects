@@ -127,14 +127,10 @@
                         <app-subnet-bar [subnet]="sn"></app-subnet-bar>
                     </td>
                     <td>
-                        <span pTooltip="{{ tooltipCount(getTotalAddresses(sn)) }}">{{
-                            humanCount(getTotalAddresses(sn))
-                        }}</span>
+                        <app-human-count [value]="getTotalAddresses(sn)"></app-human-count>
                     </td>
                     <td>
-                        <span pTooltip="{{ tooltipCount(getAssignedAddresses(sn)) }}">{{
-                            humanCount(getAssignedAddresses(sn))
-                        }}</span>
+                        <app-human-count [value]="getAssignedAddresses(sn)"></app-human-count>
                     </td>
                     <td>
                         {{ sn.addrUtilization ? sn.addrUtilization : '0' }} %
@@ -168,7 +164,10 @@
                         </div>
                     </td>
                     <td>
-                        <app-entity-link entity="shared-network" [attrs]="{ text: sn.sharedNetwork, dhcpVersion: sn.subnet.includes('.') ? 4 : 6 }"></app-entity-link>
+                        <app-entity-link
+                            entity="shared-network"
+                            [attrs]="{ text: sn.sharedNetwork, dhcpVersion: sn.subnet.includes('.') ? 4 : 6 }"
+                        ></app-entity-link>
                     </td>
                     <td>
                         <app-entity-link

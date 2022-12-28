@@ -75,34 +75,6 @@ export function durationToString(duration, short = false) {
 }
 
 /**
- * Present count in human readable way ie. big numbers get unit, e.g. 102 M instead of 102342543.
- */
-export function humanCount(count: string | bigint | number) {
-    if (count == null || (typeof count !== 'number' && typeof count !== 'bigint') || Number.isNaN(count)) {
-        return count + '' // Casting to string safe for null and undefined
-    }
-
-    const units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
-    let u = -1
-    while (count >= 1000 && u < units.length - 1) {
-        if (typeof count === 'number') {
-            count /= 1000
-        } else {
-            count /= BigInt(1000)
-        }
-        ++u
-    }
-
-    let countStr = ''
-    if (typeof count === 'number') {
-        countStr = count.toFixed(1)
-    } else {
-        countStr = count.toString()
-    }
-    return countStr + (u >= 0 ? units[u] : '')
-}
-
-/**
  * Build URL to Grafana dashboard
  */
 export function getGrafanaUrl(grafanaBaseUrl, name, subnet, instance) {

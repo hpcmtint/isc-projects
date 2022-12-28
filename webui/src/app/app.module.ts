@@ -110,6 +110,9 @@ import { DatePipe, KeyValuePipe, PercentPipe } from '@angular/common'
 import { ReplaceAllPipe } from './replace-all.pipe'
 import { CapitalizeFirstPipe } from './capitalize-first.pipe'
 import { DelegatedPrefixBarComponent } from './delegated-prefix-bar/delegated-prefix-bar.component'
+import { HumanCountPipe } from './human-count.pipe'
+import { HumanCountComponent } from './human-count/human-count.component'
+import { NumberPipe } from './number.pipe'
 
 export function cfgFactory() {
     const params: ConfigurationParameters = {
@@ -174,6 +177,9 @@ export function cfgFactory() {
         ReplaceAllPipe,
         CapitalizeFirstPipe,
         DelegatedPrefixBarComponent,
+        HumanCountPipe,
+        HumanCountComponent,
+        NumberPipe,
     ],
     imports: [
         BrowserModule,

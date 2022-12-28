@@ -17,7 +17,10 @@
                         <td>
                             <app-entity-link
                                 entity="shared-network"
-                                [attrs]="{ text: subnet.sharedNetwork, dhcpVersion: subnet.subnet.includes('.') ? 4 : 6 }"
+                                [attrs]="{
+                                    text: subnet.sharedNetwork,
+                                    dhcpVersion: subnet.subnet.includes('.') ? 4 : 6
+                                }"
                                 *ngIf="subnet.sharedNetwork"
                             ></app-entity-link>
                             <span *ngIf="!subnet.sharedNetwork">-</span>
@@ -53,7 +56,9 @@
                                     | replaceAll: 'pds':'PDs'
                             }}
                         </td>
-                        <td>{{ stat.value }}</td>
+                        <td>
+                            <app-human-count [value]="stat.value"></app-human-count>
+                        </td>
                     </tr>
                 </table>
             </p-fieldset>
@@ -117,13 +122,10 @@
                         <td><app-entity-link entity="daemon-local-subnet" [attrs]="lsn"></app-entity-link></td>
                         <td>{{ lsn.statsCollectedAt | date: 'short' }}</td>
                         <td class="text-right" *ngFor="let statKey of localSubnetStatisticKeys">
-                            {{ lsn.stats[statKey] }}
+                            <app-human-count [value]="lsn.stats[statKey]"></app-human-count>
                         </td>
                         <td class="text-center" *ngIf="grafanaUrl">
-                            <a
-                                [href]="getGrafanaUrl(lsn)"
-                                [title]="getGrafanaTooltip(lsn)"
-                                target="blank">
+                            <a [href]="getGrafanaUrl(lsn)" [title]="getGrafanaTooltip(lsn)" target="blank">
                                 <i class="pi pi-chart-line subnet__grafana-icon"></i>
                             </a>
                         </td>
@@ -140,7 +142,5 @@
 
 <!-- Empty placeholder -->
 <ng-template #emptySection>
-    <div class="text-center">
-        No data
-    </div>
+    <div class="text-center">No data</div>
 </ng-template>

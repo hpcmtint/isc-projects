@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown'
 import { TableModule } from 'primeng/table'
 import { TooltipModule } from 'primeng/tooltip'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
-import { Router, ActivatedRoute, RouterModule } from '@angular/router'
+import { RouterModule } from '@angular/router'
 import { DHCPService } from '../backend'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { of } from 'rxjs'
@@ -18,6 +18,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
+import { HumanCountComponent } from '../human-count/human-count.component'
 
 describe('SharedNetworksPageComponent', () => {
     let component: SharedNetworksPageComponent
@@ -44,6 +45,7 @@ describe('SharedNetworksPageComponent', () => {
                 BreadcrumbsComponent,
                 HelpTipComponent,
                 EntityLinkComponent,
+                HumanCountComponent,
             ],
             providers: [DHCPService],
         })

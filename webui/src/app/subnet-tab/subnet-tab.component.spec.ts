@@ -7,6 +7,7 @@ import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { ReplaceAllPipe } from '../replace-all.pipe'
 
 import { SubnetTabComponent } from './subnet-tab.component'
+import { HumanCountComponent } from '../human-count/human-count.component'
 
 describe('SubnetTabComponent', () => {
     let component: SubnetTabComponent
@@ -15,7 +16,7 @@ describe('SubnetTabComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SubnetTabComponent, EntityLinkComponent, ReplaceAllPipe, CapitalizeFirstPipe],
-            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe],
+            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe, HumanCountComponent],
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)

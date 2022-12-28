@@ -4,13 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Table } from 'primeng/table'
 
 import { DHCPService } from '../backend/api/api'
-import {
-    humanCount,
-    getGrafanaUrl,
-    extractKeyValsAndPrepareQueryParams,
-    getGrafanaSubnetTooltip,
-    getErrorMessage,
-} from '../utils'
+import { getGrafanaUrl, extractKeyValsAndPrepareQueryParams, getGrafanaSubnetTooltip, getErrorMessage } from '../utils'
 import { getTotalAddresses, getAssignedAddresses, parseSubnetsStatisticValues } from '../subnets'
 import { SettingService } from '../setting.service'
 import { concat, of, Subscription } from 'rxjs'
@@ -235,17 +229,6 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
                 queryParamsHandling: 'merge',
             })
         }
-    }
-
-    /**
-     * Prepare count for presenting in a column that it is easy to grasp by humans.
-     */
-    humanCount(count) {
-        if (count < 1000001) {
-            return count.toLocaleString('en-US')
-        }
-
-        return humanCount(count)
     }
 
     /**

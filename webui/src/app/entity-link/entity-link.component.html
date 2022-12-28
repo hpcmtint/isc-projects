@@ -14,11 +14,7 @@
     <!-- daemon-local-subnet -->
     <ng-container *ngSwitchCase="'daemon-local-subnet'">
         {{ showEntityName ? 'daemon' : '' }}
-        <a
-            id="daemon-link"
-            routerLink="/apps/kea/{{ attrs.appId }}"
-            [queryParams]="{ daemon: attrs.daemonName }"
-        >
+        <a id="daemon-link" routerLink="/apps/kea/{{ attrs.appId }}" [queryParams]="{ daemon: attrs.daemonName }">
             {{ attrs.appName }}/{{ attrs.daemonName }}
         </a>
     </ng-container>
@@ -64,7 +60,8 @@
             [label]="i.idType"
             [hexValue]="i.idHexValue"
             link="/dhcp/hosts/{{ attrs.id }}"
-            *ngFor="let i of attrs.hostIdentifiers">
+            *ngFor="let i of attrs.hostIdentifiers"
+        >
         </app-identifier>
     </ng-container>
 

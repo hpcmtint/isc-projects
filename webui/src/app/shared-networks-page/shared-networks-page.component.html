@@ -86,14 +86,10 @@
                         {{ net.name }}
                     </td>
                     <td>
-                        <span pTooltip="{{ tooltipCount(getTotalAddresses(net)) }}">{{
-                            humanCount(getTotalAddresses(net))
-                        }}</span>
+                        <app-human-count [value]="getTotalAddresses(net)"></app-human-count>
                     </td>
                     <td>
-                        <span pTooltip="{{ tooltipCount(getAssignedAddresses(net)) }}">{{
-                            humanCount(getAssignedAddresses(net))
-                        }}</span>
+                        <app-human-count [value]="getAssignedAddresses(net)"></app-human-count>
                     </td>
                     <td>
                         {{ net.addrUtilization ? net.addrUtilization : '0' }} %

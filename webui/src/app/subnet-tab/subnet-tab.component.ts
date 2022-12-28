@@ -17,8 +17,6 @@ export class SubnetTabComponent {
      * Subnet data.
      */
     @Input() subnet: Subnet
-   
-    constructor() {}
 
     // Return a sorted list of the local subnet statistic keys.
     get localSubnetStatisticKeys(): string[] {
