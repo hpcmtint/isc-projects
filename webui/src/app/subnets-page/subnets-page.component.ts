@@ -273,6 +273,26 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Get total number of delegated prefixes in a subnet.
+     */
+    getTotalDelegatedPrefixes(subnet: Subnet) {
+        if (subnet.subnet.includes('.')) {
+            return null
+        }
+        return subnet.stats?.['total-pds'] ?? '?'
+    }
+
+    /**
+     * Get assigned number of delegated prefixes in a subnet.
+     */
+    getAssignedDelegatedPrefixes(subnet: Subnet) {
+        if (subnet.subnet.includes('.')) {
+            return null
+        }
+        return subnet.stats?.['assigned-pds'] ?? '?'
+    }
+
+    /**
      * Build URL to Grafana dashboard
      */
     getGrafanaUrl(name, subnet, instance) {

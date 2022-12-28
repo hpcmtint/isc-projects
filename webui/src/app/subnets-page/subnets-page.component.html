@@ -105,6 +105,7 @@
                     <th rowspan="2" style="width: 5rem">Config subnet ID</th>
                     <th rowspan="2" style="width: 11rem">Subnet</th>
                     <th colspan="3" style="width: 16rem">Addresses</th>
+                    <th colspan="3" style="width: 16rem">Prefixes</th>
                     <th rowspan="2">Pools</th>
                     <th rowspan="2" style="width: 6rem">Shared Network</th>
                     <th rowspan="2" style="width: 14rem">App Daemon Name</th>
@@ -113,6 +114,9 @@
                     </th>
                 </tr>
                 <tr>
+                    <th>Total</th>
+                    <th style="padding: 0.571rem 0.5rem">Assigned</th>
+                    <th>Used %</th>
                     <th>Total</th>
                     <th style="padding: 0.571rem 0.5rem">Assigned</th>
                     <th>Used %</th>
@@ -146,6 +150,26 @@
                         ></i>
                     </td>
                     <td>
+                        <app-human-count [value]="getTotalDelegatedPrefixes(sn)"></app-human-count>
+                    </td>
+                    <td>
+                        <app-human-count [value]="getAssignedDelegatedPrefixes(sn)"></app-human-count>
+                    </td>
+                    <td *ngIf="sn.subnet.includes(':')">
+                        {{ sn.pdUtilization ? sn.pdUtilization : '0' }} %
+                        <i
+                            *ngIf="sn.pdUtilization > 80 && sn.pdUtilization <= 90"
+                            class="pi pi-exclamation-triangle"
+                            style="font-size: 1.5em; vertical-align: text-top; float: right; color: orange"
+                        ></i>
+                        <i
+                            *ngIf="sn.pdUtilization > 90"
+                            class="pi pi-exclamation-circle"
+                            style="font-size: 1.5em; vertical-align: text-top; float: right; color: red"
+                        ></i>
+                    </td>
+                    <td *ngIf="sn.subnet.includes('.')">-</td>
+                    <td>
                         <div
                             *ngFor="let p of sn.pools"
                             style="
@@ -174,7 +198,7 @@
                             entity="daemon-local-subnet"
                             [attrs]="lsn"
                             *ngFor="let lsn of sn.localSubnets"
-                            class="block"
+                            class="block white-space-nowrap"
                         ></app-entity-link>
                     </td>
                     <td *ngIf="grafanaUrl">

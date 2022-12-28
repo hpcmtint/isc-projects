@@ -39,8 +39,12 @@
                         <app-subnet-bar [subnet]="subnet"></app-subnet-bar>
                     </tr>
                     <tr>
-                        <td class="w-4 white-space-nowrap">Utilization</td>
-                        <td>{{ subnet.addrUtilization ?? 0 | percent }}</td>
+                        <td class="w-4 white-space-nowrap">{{ isIPv6 ? 'NA' : 'Address' }} Utilization</td>
+                        <td>{{ subnet.addrUtilization ?? 0 }}%</td>
+                    </tr>
+                    <tr *ngIf="isIPv6">
+                        <td class="w-4 white-space-nowrap">PD Utilization</td>
+                        <td>{{ subnet.pdUtilization ?? 0 }}%</td>
                     </tr>
                     <tr>
                         <td class="w-4 white-space-nowrap">Collected at</td>

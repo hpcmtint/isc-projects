@@ -159,6 +159,20 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Get total of delegated prefixes in the network by summing up all subnets.
+     */
+    getTotalDelegatedPrefixes(network: SharedNetwork) {
+        return network.stats?.['total-pds']
+    }
+
+    /**
+     * Get assigned of delegated prefixes in the network by summing up all subnets.
+     */
+    getAssignedDelegatedPrefixes(network: SharedNetwork) {
+        return network.stats?.['assigned-pds']
+    }
+
+    /**
      * Prepare count for presenting in tooltip by adding ',' separator to big numbers, eg. 1,243,342.
      */
     tooltipCount(count) {
