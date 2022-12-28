@@ -2,18 +2,18 @@
     <div class="grid pb-5">
         <!-- General info -->
         <div class="col flex-grow-0">
-            <p-fieldset legend="General" styleClass="h-full">
+            <p-fieldset legend="General" styleClass="h-full white-space-nowrap">
                 <table class="border-spacing-2">
                     <tr>
-                        <td class="w-4 pr-1 white-space-nowrap">Prefix</td>
+                        <td class="w-4 pr-1">Prefix</td>
                         <td>{{ subnet.subnet }}</td>
                     </tr>
                     <tr>
-                        <td class="w-4 white-space-nowrap">Client class</td>
+                        <td class="w-4">Client class</td>
                         <td>{{ subnet.clientClass ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <td class="w-4 white-space-nowrap">Shared network</td>
+                        <td class="w-4">Shared network</td>
                         <td>
                             <app-entity-link
                                 entity="shared-network"

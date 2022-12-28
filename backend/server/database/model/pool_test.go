@@ -60,7 +60,6 @@ func TestNewPrefixPool(t *testing.T) {
 	pool, err = NewPrefixPool("2001:db8:1::/64", 96, "2001:db8:1:42::/80")
 	require.NoError(t, err)
 	require.EqualValues(t, "2001:db8:1:42::/80", pool.ExcludedPrefix)
-
 }
 
 func TestAddDeleteAddressPool(t *testing.T) {

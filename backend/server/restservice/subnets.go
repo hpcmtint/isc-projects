@@ -144,7 +144,6 @@ func (r *RestAPI) GetSubnets(ctx context.Context, params dhcp.GetSubnetsParams) 
 // Get the DHCP subnet by ID.
 func (r *RestAPI) GetSubnet(ctx context.Context, params dhcp.GetSubnetParams) middleware.Responder {
 	subnet, err := dbmodel.GetSubnet(r.DB, params.ID)
-
 	if err != nil {
 		// Error while communicating with the database.
 		msg := fmt.Sprintf("Problem fetching subnet with ID %d from db", params.ID)

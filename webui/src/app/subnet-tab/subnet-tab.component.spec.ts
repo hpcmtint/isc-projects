@@ -24,7 +24,7 @@ describe('SubnetTabComponent', () => {
                 CapitalizeFirstPipe,
                 HumanCountComponent,
                 NumberPipe,
-                SubnetBarComponent
+                SubnetBarComponent,
             ],
             imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe],
         }).compileComponents()
