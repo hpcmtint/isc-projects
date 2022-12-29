@@ -1,34 +1,20 @@
-<div
-    class="utilization"
-    [ngClass]="{ 'utilization--ipv6': isIPv6 }"
-    pTooltip="{{ tooltip }}"
-    [escape]="false">
-    <app-entity-link
-        entity="subnet"
-        [attrs]="subnet"
-        class="utilization__label"></app-entity-link>
+<div class="utilization" [ngClass]="{ 'utilization--ipv6': isIPv6 }" pTooltip="{{ tooltip }}" [escape]="false">
+    <!-- Subnet prefix -->
+    <app-entity-link entity="subnet" [attrs]="subnet" class="utilization__label"></app-entity-link>
+    <!-- Address/NA utilization bar -->
     <div class="utilization__bar-wrapper">
         <span class="utilization__kind" *ngIf="isIPv6">NAs</span>
         <div
-            class="utilization__bar" [ngStyle]="addrUtilizationStyle"
-            [ngClass]="{
-                'utilization__bar--low': addrUtilization <= 80,
-                'utilization__bar--medium': addrUtilization > 80 && addrUtilization <= 90,
-                'utilization__bar--high': addrUtilization > 90 && addrUtilization <= 100,
-                'utilization__bar--exceed': addrUtilization > 100,
-                'utilization__bar--missing': !subnet.stats
-            }"></div>
+            class="utilization__bar {{ getUtilizationBarModificatorClass(addrUtilization) }}"
+            [ngStyle]="addrUtilizationStyle"
+        ></div>
     </div>
+    <!-- Delegated prefix utilization bar -->
     <div class="utilization__bar-wrapper" *ngIf="isIPv6">
         <span class="utilization__kind">PDs</span>
         <div
-            class="utilization__bar" [ngStyle]="pdUtilizationStyle"
-            [ngClass]="{
-                'utilization__bar--low': pdUtilization <= 80,
-                'utilization__bar--medium': pdUtilization > 80 && pdUtilization <= 90,
-                'utilization__bar--high': pdUtilization > 90 && pdUtilization <= 100,
-                'utilization__bar--exceed': pdUtilization > 100,
-                'utilization__bar--missing': !subnet.stats
-            }"></div>
+            class="utilization__bar {{ getUtilizationBarModificatorClass(pdUtilization) }}"
+            [ngStyle]="pdUtilizationStyle"
+        ></div>
     </div>
 </div>

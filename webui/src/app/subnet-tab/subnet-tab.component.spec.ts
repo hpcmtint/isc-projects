@@ -46,21 +46,21 @@ describe('SubnetTabComponent', () => {
         component.subnet.localSubnets = [
             {
                 stats: {
-                    'foo': 1,
-                    'bar': 2,
-                }
+                    foo: 1,
+                    bar: 2,
+                },
             },
             {
                 stats: {
-                    'foo': 3,
-                    'ada': 4,
-                }
+                    foo: 3,
+                    ada: 4,
+                },
             },
             {
                 stats: {
-                    'zoo': 5
-                }
-            }
+                    zoo: 5,
+                },
+            },
         ]
 
         expect(component.localSubnetStatisticKeys).toEqual(['ada', 'bar', 'foo', 'zoo'])
@@ -72,7 +72,7 @@ describe('SubnetTabComponent', () => {
 
     it('should detect IPv6 subnet', () => {
         expect(component.isIPv6).toBeFalse()
-        component.subnet.subnet = "fe80::/32"
+        component.subnet.subnet = 'fe80::/32'
         expect(component.isIPv6).toBeTrue()
     })
 })

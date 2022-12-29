@@ -13,11 +13,21 @@ import { clamp, datetimeToLocal } from '../utils'
     styleUrls: ['./subnet-bar.component.sass'],
 })
 export class SubnetBarComponent {
+    /**
+     * Internal subnet instance.
+     */
     _subnet: Subnet
+
+    /**
+     * Tooltip content.
+     */
     tooltip = ''
 
     constructor() {}
 
+    /**
+     * Sets the subnet. It generates also the tooltip content.
+     */
     @Input()
     set subnet(subnet: Subnet) {
         this._subnet = subnet
@@ -80,22 +90,35 @@ export class SubnetBarComponent {
         }
     }
 
+    /**
+     * Returns the subnet.
+     */
     get subnet() {
         return this._subnet
     }
 
+    /**
+     * Returns the address utilization. It guaranties that the number will be
+     * returned.
+     */
     get addrUtilization() {
         return this.subnet.addrUtilization ?? 0
     }
 
+    /**
+     * Returns the delegated prefix utilization. It guaranties that the number
+     * will be returned.
+     */
     get pdUtilization() {
         return this.subnet.pdUtilization ?? 0
     }
 
+    // Returns true if the subnet is IPv6.
     get isIPv6() {
         return this.subnet.subnet.includes(':')
     }
 
+    // Returns a style for the address utilization bar.
     get addrUtilizationStyle() {
         return {
             // In some cases the utilization may be incorrect - less than
@@ -105,6 +128,7 @@ export class SubnetBarComponent {
         }
     }
 
+    // Returns a style for the delegated prefix utilization bar.
     get pdUtilizationStyle() {
         return {
             // In some cases the utilization may be incorrect - less than
@@ -112,5 +136,22 @@ export class SubnetBarComponent {
             // to avoid a subnet bar overlapping other elements.
             width: clamp(this.pdUtilization, 0, 100) + '%',
         }
+    }
+
+    // Returns a proper CSS modificator class for a given utilization value.
+    getUtilizationBarModificatorClass(value: number): string {
+        if (!this.subnet.stats) {
+            return 'utilization__bar--missing'
+        }
+        if (value <= 80) {
+            return 'utilization__bar--low'
+        }
+        if (value <= 90) {
+            return 'utilization__bar--medium'
+        }
+        if (value <= 100) {
+            return 'utilization__bar--high'
+        }
+        return 'utilization__bar--exceed'
     }
 }
