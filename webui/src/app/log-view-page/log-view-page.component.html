@@ -26,11 +26,13 @@
                     <app-entity-link
                         id="app-link"
                         entity="app"
+                        showEntityName="true"
                         [attrs]="{ id: appId, type: appType, name: appName, version: '' }"
                     ></app-entity-link>
                     on the
                     <app-entity-link
                         entity="machine"
+                        showEntityName="true"
                         [attrs]="{ id: data.machine.id, address: data.machine.address }"
                     ></app-entity-link>
                 </ng-container>

@@ -17,6 +17,7 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
 import { HumanCountPipe } from '../pipes/human-count.pipe'
 import { NumberPipe } from '../pipes/number.pipe'
@@ -45,6 +46,7 @@ describe('SharedNetworksPageComponent', () => {
                 SubnetBarComponent,
                 BreadcrumbsComponent,
                 HelpTipComponent,
+                EntityLinkComponent,
                 HumanCountComponent,
                 HumanCountPipe,
                 NumberPipe,

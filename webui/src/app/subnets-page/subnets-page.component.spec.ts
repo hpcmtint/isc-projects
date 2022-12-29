@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown'
 import { TableModule } from 'primeng/table'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { TooltipModule } from 'primeng/tooltip'
-import { RouterModule, ActivatedRoute, Router, convertToParamMap } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import { DHCPService, SettingsService, Subnet, UsersService } from '../backend'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { of } from 'rxjs'
@@ -17,6 +17,9 @@ import { HelpTipComponent } from '../help-tip/help-tip.component'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { TabMenuModule } from 'primeng/tabmenu'
+import { EntityLinkComponent } from '../entity-link/entity-link.component'
+import { RouterTestingModule } from '@angular/router/testing'
 import { DelegatedPrefixBarComponent } from '../delegated-prefix-bar/delegated-prefix-bar.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
 import { NumberPipe } from '../pipes/number.pipe'
@@ -44,29 +47,29 @@ describe('SubnetsPageComponent', () => {
                     useValue: {
                         snapshot: { queryParamMap: new MockParamMap() },
                         queryParamMap: of(new MockParamMap()),
+                        paramMap: of(new MockParamMap()),
                     },
                 },
-                {
-                    provide: Router,
-                    useValue: {},
-                },
+                RouterTestingModule,
             ],
             imports: [
                 FormsModule,
                 DropdownModule,
                 TableModule,
                 TooltipModule,
-                RouterModule,
+                RouterTestingModule,
                 HttpClientTestingModule,
                 BreadcrumbModule,
                 OverlayPanelModule,
                 NoopAnimationsModule,
+                TabMenuModule,
             ],
             declarations: [
                 SubnetsPageComponent,
                 SubnetBarComponent,
                 BreadcrumbsComponent,
                 HelpTipComponent,
+                EntityLinkComponent,
                 DelegatedPrefixBarComponent,
                 HumanCountComponent,
                 NumberPipe,

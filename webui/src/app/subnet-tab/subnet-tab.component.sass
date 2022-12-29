@@ -1,0 +1,30 @@
+.subnet__entries
+    // Use grid layout to align items in rows and columns and ensure that
+    // every pool has the same width.
+    display: grid
+    // Define two columns.
+    grid-template-columns: auto auto
+    // Define spacing between rows.
+    row-gap: 0.5rem
+    // Define spacing between columns.
+    column-gap: 0.5rem
+    // Resize all items to a child with maximum width.
+    width: max-content
+
+.subnet__entry
+    // Display the entry in a single line.
+    white-space: nowrap
+    // Draw a rounded rectangle around the value.
+    border-radius: 4px
+    // Use a gray, solid background.
+    background-color: #ddd
+    // Padding arround the content.
+    padding: .25rem
+    // Use flex to adjust content.
+    display: flex
+    // Align identifiers with and without the hex button.
+    align-items: center
+
+.subnet__grafana-icon
+    // Size of the icon.
+    font-size: 1.6em

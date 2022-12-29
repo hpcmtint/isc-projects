@@ -1,0 +1,150 @@
+<div class="m-5">
+    <div class="grid pb-5">
+        <!-- General info -->
+        <div class="col flex-grow-0">
+            <p-fieldset legend="General" styleClass="h-full white-space-nowrap">
+                <table class="border-spacing-2">
+                    <tr>
+                        <td class="w-4 pr-1">Prefix</td>
+                        <td>{{ subnet.subnet }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-4">Client class</td>
+                        <td>{{ subnet.clientClass ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-4">Shared network</td>
+                        <td>
+                            <app-entity-link
+                                entity="shared-network"
+                                [attrs]="{
+                                    text: subnet.sharedNetwork,
+                                    dhcpVersion: subnet.subnet.includes('.') ? 4 : 6
+                                }"
+                                *ngIf="subnet.sharedNetwork"
+                            ></app-entity-link>
+                            <span *ngIf="!subnet.sharedNetwork">-</span>
+                        </td>
+                    </tr>
+                </table>
+            </p-fieldset>
+        </div>
+
+        <!-- Metrics -->
+        <div class="col flex-grow-0">
+            <p-fieldset legend="Statistics" styleClass="h-full">
+                <table class="border-spacing-2">
+                    <tr>
+                        <td class="w-4 white-space-nowrap">Bar</td>
+                        <app-subnet-bar [subnet]="subnet"></app-subnet-bar>
+                    </tr>
+                    <tr>
+                        <td class="w-4 white-space-nowrap">{{ isIPv6 ? 'NA' : 'Address' }} Utilization</td>
+                        <td>{{ subnet.addrUtilization ?? 0 }}%</td>
+                    </tr>
+                    <tr *ngIf="isIPv6">
+                        <td class="w-4 white-space-nowrap">PD Utilization</td>
+                        <td>{{ subnet.pdUtilization ?? 0 }}%</td>
+                    </tr>
+                    <tr>
+                        <td class="w-4 white-space-nowrap">Collected at</td>
+                        <td>{{ subnet.statsCollectedAt | date: 'short' }}</td>
+                    </tr>
+                    <tr *ngFor="let stat of subnet.stats | keyvalue">
+                        <td class="w-4 white-space-nowrap">
+                            {{
+                                stat.key
+                                    | replaceAll: '-':' '
+                                    | capitalizeFirst
+                                    | replaceAll: 'nas':'NAs'
+                                    | replaceAll: 'pds':'PDs'
+                            }}
+                        </td>
+                        <td>
+                            <app-human-count [value]="stat.value"></app-human-count>
+                        </td>
+                    </tr>
+                </table>
+            </p-fieldset>
+        </div>
+
+        <!-- Address/PD pools -->
+        <div class="col flex-grow-0">
+            <p-fieldset legend="Address pools" styleClass="h-full white-space-nowrap">
+                <div class="subnet__entries" *ngIf="subnet.pools; else emptySection">
+                    <div *ngFor="let p of subnet.pools" class="subnet__entry">
+                        {{ p }}
+                    </div>
+                </div>
+            </p-fieldset>
+        </div>
+
+        <!-- Prefix delegations -->
+        <div class="col flex-grow-0" *ngIf="isIPv6">
+            <p-fieldset legend="Prefix delegations" styleClass="h-full white-space-nowrap">
+                <div class="subnet__entries" *ngIf="subnet.prefixDelegationPools; else emptySection">
+                    <app-delegated-prefix-bar
+                        [prefix]="p"
+                        *ngFor="let p of subnet.prefixDelegationPools"
+                    ></app-delegated-prefix-bar>
+                </div>
+            </p-fieldset>
+        </div>
+
+        <!-- Hosts -->
+        <div class="col flex-grow-0">
+            <p-fieldset legend="Related host reservations" styleClass="h-full white-space-nowrap">
+                <div class="subnet__entries" *ngIf="subnet.hosts; else emptySection">
+                    <div *ngFor="let h of subnet.hosts" class="subnet__entry">
+                        <app-entity-link entity="host" [attrs]="h"></app-entity-link>
+                    </div>
+                </div>
+            </p-fieldset>
+        </div>
+
+        <!-- Local subnets -->
+        <div class="col">
+            <p-fieldset legend="Daemon subnets" styleClass="h-full">
+                <table class="w-full border-spacing-3">
+                    <tr>
+                        <th>Config subnet ID</th>
+                        <th>Application daemon</th>
+                        <th>Statistics collected at</th>
+                        <th *ngFor="let statKey of localSubnetStatisticKeys">
+                            {{
+                                statKey
+                                    | replaceAll: '-':' '
+                                    | capitalizeFirst
+                                    | replaceAll: 'nas':'NAs'
+                                    | replaceAll: 'pds':'PDs'
+                            }}
+                        </th>
+                        <th *ngIf="grafanaUrl">Grafana link</th>
+                    </tr>
+                    <tr *ngFor="let lsn of subnet.localSubnets">
+                        <td class="text-center">{{ lsn.id }}</td>
+                        <td><app-entity-link entity="daemon-local-subnet" [attrs]="lsn"></app-entity-link></td>
+                        <td>{{ lsn.statsCollectedAt | date: 'short' }}</td>
+                        <td class="text-right" *ngFor="let statKey of localSubnetStatisticKeys">
+                            <app-human-count [value]="lsn.stats[statKey]"></app-human-count>
+                        </td>
+                        <td class="text-center" *ngIf="grafanaUrl">
+                            <a [href]="getGrafanaUrl(lsn)" [title]="getGrafanaTooltip(lsn)" target="blank">
+                                <i class="pi pi-chart-line subnet__grafana-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Empty placeholder -->
+                    <tr *ngIf="!subnet.localSubnets">
+                        <td colspan="100%" class="text-center">No data</td>
+                    </tr>
+                </table>
+            </p-fieldset>
+        </div>
+    </div>
+</div>
+
+<!-- Empty placeholder -->
+<ng-template #emptySection>
+    <div class="text-center">No data</div>
+</ng-template>

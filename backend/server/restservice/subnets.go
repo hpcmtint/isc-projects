@@ -2,6 +2,7 @@ package restservice
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -50,15 +51,38 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 		localSubnet := &models.LocalSubnet{
 			AppID:            lsn.Daemon.App.ID,
 			DaemonID:         lsn.Daemon.ID,
+			DaemonName:       lsn.Daemon.Name,
 			AppName:          lsn.Daemon.App.Name,
 			ID:               lsn.LocalSubnetID,
-			MachineAddress:   lsn.Daemon.App.Machine.Address,
-			MachineHostname:  lsn.Daemon.App.Machine.State.Hostname,
 			Stats:            lsn.Stats,
 			StatsCollectedAt: strfmt.DateTime(lsn.StatsCollectedAt),
 		}
+
+		if lsn.Daemon.App.Machine != nil {
+			localSubnet.MachineAddress = lsn.Daemon.App.Machine.Address
+			localSubnet.MachineHostname = lsn.Daemon.App.Machine.State.Hostname
+		}
+
 		subnet.LocalSubnets = append(subnet.LocalSubnets, localSubnet)
 	}
+
+	for _, host := range sn.Hosts {
+		var identifiers []*models.HostIdentifier
+		for _, identifier := range host.HostIdentifiers {
+			identifiers = append(identifiers, &models.HostIdentifier{
+				IDHexValue: identifier.ToHex(":"),
+				IDType:     identifier.Type,
+			})
+		}
+
+		subnet.Hosts = append(subnet.Hosts, &models.Host{
+			ID:              host.ID,
+			Hostname:        host.Hostname,
+			SubnetID:        host.SubnetID,
+			HostIdentifiers: identifiers,
+		})
+	}
+
 	return subnet
 }
 
@@ -117,6 +141,32 @@ func (r *RestAPI) GetSubnets(ctx context.Context, params dhcp.GetSubnetsParams) 
 		return rsp
 	}
 	rsp := dhcp.NewGetSubnetsOK().WithPayload(subnets)
+	return rsp
+}
+
+// Get the DHCP subnet by ID.
+func (r *RestAPI) GetSubnet(ctx context.Context, params dhcp.GetSubnetParams) middleware.Responder {
+	subnet, err := dbmodel.GetSubnet(r.DB, params.ID)
+	if err != nil {
+		// Error while communicating with the database.
+		msg := fmt.Sprintf("Problem fetching subnet with ID %d from db", params.ID)
+		log.Error(err)
+		rsp := dhcp.NewGetSubnetDefault(http.StatusInternalServerError).WithPayload(&models.APIError{
+			Message: &msg,
+		})
+		return rsp
+	}
+	if subnet == nil {
+		// Host not found.
+		msg := fmt.Sprintf("Cannot find subnet with ID %d", params.ID)
+		rsp := dhcp.NewGetSubnetDefault(http.StatusNotFound).WithPayload(&models.APIError{
+			Message: &msg,
+		})
+		return rsp
+	}
+
+	apiSubnet := subnetToRestAPI(subnet)
+	rsp := dhcp.NewGetSubnetOK().WithPayload(apiSubnet)
 	return rsp
 }
 

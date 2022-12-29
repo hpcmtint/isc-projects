@@ -173,6 +173,13 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Prepare count for presenting in tooltip by adding ',' separator to big numbers, eg. 1,243,342.
+     */
+    tooltipCount(count) {
+        return count.toLocaleString('en-US')
+    }
+
+    /**
      * Returns a list of applications maintaining a given shared network.
      * The list doesn't contain duplicates.
      *

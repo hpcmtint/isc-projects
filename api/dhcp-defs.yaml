@@ -245,11 +245,14 @@
     type: object
     properties:
       id:
+        description: ID from the Kea configuration (not from DB), empty/zero if not set
         type: integer
       appId:
         type: integer
       daemonId:
         type: integer
+      daemonName:
+        type: string
       appName:
         type: string
       machineAddress:
@@ -287,6 +290,7 @@
         items:
           type: string
       sharedNetwork:
+        description: 'Shared network name'
         type: string
       clientClass:
         type: string
@@ -307,6 +311,10 @@
         type: array
         items:
           $ref: '#/definitions/DelegatedPrefix'
+      hosts:
+        type: array
+        items:
+          $ref: '#/definitions/Host'
 
   Subnets:
     type: object
