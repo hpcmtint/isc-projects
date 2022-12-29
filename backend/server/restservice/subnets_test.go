@@ -2,6 +2,7 @@ package restservice
 
 import (
 	"context"
+	"net/http"
 	"testing"
 	"time"
 
@@ -556,4 +557,123 @@ func TestGetSharedNetworks(t *testing.T) {
 	require.Equal(t, a4.Name, okRsp.Payload.Items[1].Subnets[0].LocalSubnets[0].AppName)
 	require.Nil(t, okRsp.Payload.Items[1].Subnets[0].LocalSubnets[0].Stats)
 	require.ElementsMatch(t, []string{"mouse", "frog"}, []string{okRsp.Payload.Items[0].Name, okRsp.Payload.Items[1].Name})
+}
+
+// Test that the HTTP 404 status is returned if the subnet with a
+// given ID is missing.
+func TestGetSubnetForMissingID(t *testing.T) {
+	// Arrange
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	defer teardown()
+
+	settings := RestAPISettings{}
+	fa := agentcommtest.NewFakeAgents(nil, nil)
+	fec := &storktest.FakeEventCenter{}
+	fd := &storktest.FakeDispatcher{}
+	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
+	ctx := context.Background()
+
+	// Act
+	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: 42})
+
+	// Assert
+	require.IsType(t, &dhcp.GetSubnetDefault{}, rsp)
+	defaultRsp := rsp.(*dhcp.GetSubnetDefault)
+	require.Equal(t, http.StatusNotFound, getStatusCode(*defaultRsp))
+}
+
+// Test that the HTTP 500 status is returned if the database is not operational.
+func TestGetSubnetForClosedDatabase(t *testing.T) {
+	// Arrange
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	settings := RestAPISettings{}
+	fa := agentcommtest.NewFakeAgents(nil, nil)
+	fec := &storktest.FakeEventCenter{}
+	fd := &storktest.FakeDispatcher{}
+	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
+	ctx := context.Background()
+
+	// Act
+	teardown()
+	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: 42})
+
+	// Assert
+	require.IsType(t, &dhcp.GetSubnetDefault{}, rsp)
+	defaultRsp := rsp.(*dhcp.GetSubnetDefault)
+	require.Equal(t, http.StatusInternalServerError, getStatusCode(*defaultRsp))
+}
+
+// Test that the subnet is returned properly.
+func TestGetSubnet(t *testing.T) {
+	// Arrange
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	defer teardown()
+
+	settings := RestAPISettings{}
+	fa := agentcommtest.NewFakeAgents(nil, nil)
+	fec := &storktest.FakeEventCenter{}
+	fd := &storktest.FakeDispatcher{}
+	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
+	ctx := context.Background()
+
+	m := &dbmodel.Machine{
+		Address:   "localhost",
+		AgentPort: 8080,
+	}
+	_ = dbmodel.AddMachine(db, m)
+
+	a6 := &dbmodel.App{
+		ID:           0,
+		MachineID:    m.ID,
+		Type:         dbmodel.AppTypeKea,
+		Name:         "test-app6",
+		Active:       true,
+		AccessPoints: []*dbmodel.AccessPoint{},
+		Daemons: []*dbmodel.Daemon{
+			{
+				KeaDaemon: &dbmodel.KeaDaemon{
+					Config: dbmodel.NewKeaConfig(&map[string]interface{}{
+						"Dhcp6": &map[string]interface{}{
+							"subnet6": []map[string]interface{}{{
+								"id":     2,
+								"subnet": "2001:db8:1::/64",
+								"pools":  []map[string]interface{}{},
+							}},
+						},
+					}),
+				},
+			},
+		},
+	}
+	_, _ = dbmodel.AddApp(db, a6)
+
+	appSubnets := []dbmodel.Subnet{
+		{
+			Prefix:      "2001:db8:1::/64",
+			ClientClass: "my-class",
+			AddressPools: []dbmodel.AddressPool{
+				{
+					LowerBound: "2001:db8:1::1",
+					UpperBound: "2001:db8:1::100",
+				},
+			},
+			PrefixPools: []dbmodel.PrefixPool{
+				{
+					Prefix:       "2001:db8:1:2::/80",
+					DelegatedLen: 96,
+				},
+			},
+		},
+	}
+	dbSubnets, _ := dbmodel.CommitNetworksIntoDB(db, []dbmodel.SharedNetwork{}, appSubnets, a6.Daemons[0])
+
+	// Act
+	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: dbSubnets[0].ID})
+
+	// Assert
+	require.IsType(t, &dhcp.GetSubnetOK{}, rsp)
+	okRsp := rsp.(*dhcp.GetSubnetOK)
+	require.EqualValues(t, "my-class", okRsp.Payload.ClientClass)
+	require.Len(t, okRsp.Payload.Pools, 1)
+	require.Len(t, okRsp.Payload.PrefixDelegationPools, 1)
 }
