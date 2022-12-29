@@ -10,6 +10,8 @@ import { SubnetTabComponent } from './subnet-tab.component'
 import { HumanCountComponent } from '../human-count/human-count.component'
 import { NumberPipe } from '../pipes/number.pipe'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
+import { RouterTestingModule } from '@angular/router/testing'
+import { TooltipModule } from 'primeng/tooltip'
 
 describe('SubnetTabComponent', () => {
     let component: SubnetTabComponent
@@ -26,7 +28,15 @@ describe('SubnetTabComponent', () => {
                 NumberPipe,
                 SubnetBarComponent,
             ],
-            imports: [FieldsetModule, NoopAnimationsModule, PercentPipe, KeyValuePipe, DatePipe],
+            imports: [
+                FieldsetModule,
+                NoopAnimationsModule,
+                PercentPipe,
+                KeyValuePipe,
+                DatePipe,
+                RouterTestingModule,
+                TooltipModule,
+            ],
         }).compileComponents()
 
         fixture = TestBed.createComponent(SubnetTabComponent)

@@ -60,7 +60,7 @@ describe('SubnetBarComponent', () => {
                 'declined-nas': 1,
             },
             addrUtilization: 5,
-            pdUtilization: 6
+            pdUtilization: 6,
         }
 
         component.subnet = subnet6
@@ -170,5 +170,75 @@ describe('SubnetBarComponent', () => {
 
         fixture.detectChanges()
         expect(component.tooltip).toContain('Data is unreliable')
+    })
+
+    it('returns the address utilization as a number', () => {
+        component.subnet.addrUtilization = 42
+        expect(component.addrUtilization).toBe(42)
+        component.subnet.addrUtilization = null
+        expect(component.addrUtilization).toBe(0)
+    })
+
+    it('returns the delegated prefix utilization as a number', () => {
+        component.subnet.pdUtilization = 42
+        expect(component.pdUtilization).toBe(42)
+        component.subnet.pdUtilization = null
+        expect(component.pdUtilization).toBe(0)
+    })
+
+    it('should detect IPv6 subnets', () => {
+        component.subnet.subnet = 'fe80::/64'
+        expect(component.isIPv6).toBeTrue()
+        component.subnet.subnet = '10.0.0.0/8'
+        expect(component.isIPv6).toBeFalse()
+    })
+
+    it('should prepare a proper address utilization bar style', () => {
+        component.subnet.addrUtilization = 30
+        expect(component.addrUtilizationStyle.width).toBe('30%')
+        component.subnet.addrUtilization = -10
+        expect(component.addrUtilizationStyle.width).toBe('0%')
+        component.subnet.addrUtilization = 110
+        expect(component.addrUtilizationStyle.width).toBe('100%')
+    })
+
+    it('should prepare a proper delegated prefix utilization bar style', () => {
+        component.subnet.pdUtilization = 60
+        expect(component.pdUtilizationStyle.width).toBe('60%')
+        component.subnet.pdUtilization = -20
+        expect(component.pdUtilizationStyle.width).toBe('0%')
+        component.subnet.pdUtilization = 120
+        expect(component.pdUtilizationStyle.width).toBe('100%')
+    })
+
+    it('should return a proper utilization bar modificator', () => {
+        expect(component.getUtilizationBarModificatorClass(30)).toBe('utilization__bar--missing')
+        expect(component.getUtilizationBarModificatorClass(85)).toBe('utilization__bar--missing')
+        expect(component.getUtilizationBarModificatorClass(95)).toBe('utilization__bar--missing')
+        expect(component.getUtilizationBarModificatorClass(195)).toBe('utilization__bar--missing')
+
+        component.subnet.stats = {}
+
+        expect(component.getUtilizationBarModificatorClass(30)).toBe('utilization__bar--low')
+        expect(component.getUtilizationBarModificatorClass(80)).toBe('utilization__bar--low')
+        expect(component.getUtilizationBarModificatorClass(81)).toBe('utilization__bar--medium')
+        expect(component.getUtilizationBarModificatorClass(90)).toBe('utilization__bar--medium')
+        expect(component.getUtilizationBarModificatorClass(91)).toBe('utilization__bar--high')
+        expect(component.getUtilizationBarModificatorClass(100)).toBe('utilization__bar--high')
+        expect(component.getUtilizationBarModificatorClass(101)).toBe('utilization__bar--exceed')
+    })
+
+    it('should display single bar for IPv4', () => {
+        component.subnet.subnet = '10.0.0.0/8'
+        fixture.detectChanges()
+        const elements = fixture.debugElement.queryAll(By.css('.utilization__bar'))
+        expect(elements.length).toBe(1)
+    })
+
+    it('should display double bar for IPv6', () => {
+        component.subnet.subnet = 'fe80::/64'
+        fixture.detectChanges()
+        const elements = fixture.debugElement.queryAll(By.css('.utilization__bar'))
+        expect(elements.length).toBe(2)
     })
 })
