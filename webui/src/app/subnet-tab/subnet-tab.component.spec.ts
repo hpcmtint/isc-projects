@@ -12,6 +12,9 @@ import { NumberPipe } from '../pipes/number.pipe'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TooltipModule } from 'primeng/tooltip'
+import { IdentifierComponent } from '../identifier/identifier.component'
+import { ToggleButtonModule } from 'primeng/togglebutton'
+import { FormsModule } from '@angular/forms'
 
 describe('SubnetTabComponent', () => {
     let component: SubnetTabComponent
@@ -27,6 +30,7 @@ describe('SubnetTabComponent', () => {
                 HumanCountComponent,
                 NumberPipe,
                 SubnetBarComponent,
+                IdentifierComponent
             ],
             imports: [
                 FieldsetModule,
@@ -36,6 +40,8 @@ describe('SubnetTabComponent', () => {
                 DatePipe,
                 RouterTestingModule,
                 TooltipModule,
+                ToggleButtonModule,
+                FormsModule,
             ],
         }).compileComponents()
 
