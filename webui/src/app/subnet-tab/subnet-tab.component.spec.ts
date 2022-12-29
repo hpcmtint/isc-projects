@@ -30,7 +30,7 @@ describe('SubnetTabComponent', () => {
                 HumanCountComponent,
                 NumberPipe,
                 SubnetBarComponent,
-                IdentifierComponent
+                IdentifierComponent,
             ],
             imports: [
                 FieldsetModule,
