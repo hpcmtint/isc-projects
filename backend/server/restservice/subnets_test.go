@@ -2,7 +2,6 @@ package restservice
 
 import (
 	"context"
-	"net/http"
 	"testing"
 	"time"
 
@@ -59,19 +58,15 @@ func TestGetSubnets(t *testing.T) {
 				KeaDaemon: &dbmodel.KeaDaemon{
 					Config: dbmodel.NewKeaConfig(&map[string]interface{}{
 						"Dhcp4": &map[string]interface{}{
-							"subnet4": []map[string]interface{}{
-								{
-									"id":     1,
-									"subnet": "192.168.0.0/24",
-									"pools": []map[string]interface{}{{
-										"pool": "192.168.0.1-192.168.0.100",
-									}, {
-										"pool": "192.168.0.150-192.168.0.200",
-									}},
+							"subnet4": []map[string]interface{}{{
+								"id":     1,
+								"subnet": "192.168.0.0/24",
+								"pools": []map[string]interface{}{{
+									"pool": "192.168.0.1-192.168.0.100",
 								}, {
-									"subnet": "192.211.0.0/24",
-								},
-							},
+									"pool": "192.168.0.150-192.168.0.200",
+								}},
+							}},
 						},
 					}),
 				},
@@ -94,8 +89,6 @@ func TestGetSubnets(t *testing.T) {
 					UpperBound: "192.168.0.200",
 				},
 			},
-		}, {
-			Prefix: "192.211.0.0/24",
 		},
 	}
 
@@ -244,12 +237,10 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 6)
-	require.EqualValues(t, 6, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 5)
+	require.EqualValues(t, 5, okRsp.Payload.Total)
 	for _, sn := range okRsp.Payload.Items {
 		switch sn.LocalSubnets[0].ID {
-		case 0:
-			require.Len(t, sn.Pools, 0)
 		case 1:
 			require.Len(t, sn.Pools, 2)
 		case 2:
@@ -268,14 +259,12 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 2)
-	require.EqualValues(t, 2, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 1)
+	require.EqualValues(t, 1, okRsp.Payload.Total)
 	require.Len(t, okRsp.Payload.Items[0].LocalSubnets, 1)
 	require.Equal(t, a4.ID, okRsp.Payload.Items[0].LocalSubnets[0].AppID)
 	require.Equal(t, a4.Name, okRsp.Payload.Items[0].LocalSubnets[0].AppName)
 	require.EqualValues(t, 1, okRsp.Payload.Items[0].ID)
-	require.EqualValues(t, 2, okRsp.Payload.Items[1].ID)
-	require.Zero(t, okRsp.Payload.Items[1].LocalSubnets[0].ID)
 	require.EqualValues(t, dbmodel.SubnetStats(nil), okRsp.Payload.Items[0].Stats)
 	require.EqualValues(t, time.Time{}, okRsp.Payload.Items[0].StatsCollectedAt)
 
@@ -304,17 +293,14 @@ func TestGetSubnets(t *testing.T) {
 	rsp = rapi.GetSubnets(ctx, params)
 	require.IsType(t, &dhcp.GetSubnetsOK{}, rsp)
 	okRsp = rsp.(*dhcp.GetSubnetsOK)
-	require.Len(t, okRsp.Payload.Items, 3)
-	require.EqualValues(t, 3, okRsp.Payload.Total)
+	require.Len(t, okRsp.Payload.Items, 2)
+	require.EqualValues(t, 2, okRsp.Payload.Total)
 	// checking if returned subnet-ids have expected values
-	require.ElementsMatch(t, []int64{0, 1, 3}, []int64{
-		okRsp.Payload.Items[0].LocalSubnets[0].ID,
-		okRsp.Payload.Items[1].LocalSubnets[0].ID,
-		okRsp.Payload.Items[2].LocalSubnets[0].ID,
-	})
-	require.EqualValues(t, 24, okRsp.Payload.Items[2].Stats.(dbmodel.SubnetStats)["bar"])
-	require.EqualValues(t, time.Time{}.Add(2*time.Hour), okRsp.Payload.Items[2].StatsCollectedAt)
-	require.EqualValues(t, 42, okRsp.Payload.Items[2].AddrUtilization)
+	require.True(t,
+		(okRsp.Payload.Items[0].LocalSubnets[0].ID == 1 && okRsp.Payload.Items[1].LocalSubnets[0].ID == 3) ||
+			(okRsp.Payload.Items[0].LocalSubnets[0].ID == 3 && okRsp.Payload.Items[1].LocalSubnets[0].ID == 1))
+	require.EqualValues(t, 24, okRsp.Payload.Items[1].Stats.(dbmodel.SubnetStats)["bar"])
+	require.EqualValues(t, time.Time{}.Add(2*time.Hour), okRsp.Payload.Items[1].StatsCollectedAt)
 
 	// get v6 subnets
 	dhcpVer = 6
@@ -557,123 +543,4 @@ func TestGetSharedNetworks(t *testing.T) {
 	require.Equal(t, a4.Name, okRsp.Payload.Items[1].Subnets[0].LocalSubnets[0].AppName)
 	require.Nil(t, okRsp.Payload.Items[1].Subnets[0].LocalSubnets[0].Stats)
 	require.ElementsMatch(t, []string{"mouse", "frog"}, []string{okRsp.Payload.Items[0].Name, okRsp.Payload.Items[1].Name})
-}
-
-// Test that the HTTP 404 status is returned if the subnet with a
-// given ID is missing.
-func TestGetSubnetForMissingID(t *testing.T) {
-	// Arrange
-	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
-	defer teardown()
-
-	settings := RestAPISettings{}
-	fa := agentcommtest.NewFakeAgents(nil, nil)
-	fec := &storktest.FakeEventCenter{}
-	fd := &storktest.FakeDispatcher{}
-	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
-	ctx := context.Background()
-
-	// Act
-	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: 42})
-
-	// Assert
-	require.IsType(t, &dhcp.GetSubnetDefault{}, rsp)
-	defaultRsp := rsp.(*dhcp.GetSubnetDefault)
-	require.Equal(t, http.StatusNotFound, getStatusCode(*defaultRsp))
-}
-
-// Test that the HTTP 500 status is returned if the database is not operational.
-func TestGetSubnetForClosedDatabase(t *testing.T) {
-	// Arrange
-	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
-	settings := RestAPISettings{}
-	fa := agentcommtest.NewFakeAgents(nil, nil)
-	fec := &storktest.FakeEventCenter{}
-	fd := &storktest.FakeDispatcher{}
-	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
-	ctx := context.Background()
-
-	// Act
-	teardown()
-	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: 42})
-
-	// Assert
-	require.IsType(t, &dhcp.GetSubnetDefault{}, rsp)
-	defaultRsp := rsp.(*dhcp.GetSubnetDefault)
-	require.Equal(t, http.StatusInternalServerError, getStatusCode(*defaultRsp))
-}
-
-// Test that the subnet is returned properly.
-func TestGetSubnet(t *testing.T) {
-	// Arrange
-	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
-	defer teardown()
-
-	settings := RestAPISettings{}
-	fa := agentcommtest.NewFakeAgents(nil, nil)
-	fec := &storktest.FakeEventCenter{}
-	fd := &storktest.FakeDispatcher{}
-	rapi, _ := NewRestAPI(&settings, dbSettings, db, fa, fec, nil, fd, nil)
-	ctx := context.Background()
-
-	m := &dbmodel.Machine{
-		Address:   "localhost",
-		AgentPort: 8080,
-	}
-	_ = dbmodel.AddMachine(db, m)
-
-	a6 := &dbmodel.App{
-		ID:           0,
-		MachineID:    m.ID,
-		Type:         dbmodel.AppTypeKea,
-		Name:         "test-app6",
-		Active:       true,
-		AccessPoints: []*dbmodel.AccessPoint{},
-		Daemons: []*dbmodel.Daemon{
-			{
-				KeaDaemon: &dbmodel.KeaDaemon{
-					Config: dbmodel.NewKeaConfig(&map[string]interface{}{
-						"Dhcp6": &map[string]interface{}{
-							"subnet6": []map[string]interface{}{{
-								"id":     2,
-								"subnet": "2001:db8:1::/64",
-								"pools":  []map[string]interface{}{},
-							}},
-						},
-					}),
-				},
-			},
-		},
-	}
-	_, _ = dbmodel.AddApp(db, a6)
-
-	appSubnets := []dbmodel.Subnet{
-		{
-			Prefix:      "2001:db8:1::/64",
-			ClientClass: "my-class",
-			AddressPools: []dbmodel.AddressPool{
-				{
-					LowerBound: "2001:db8:1::1",
-					UpperBound: "2001:db8:1::100",
-				},
-			},
-			PrefixPools: []dbmodel.PrefixPool{
-				{
-					Prefix:       "2001:db8:1:2::/80",
-					DelegatedLen: 96,
-				},
-			},
-		},
-	}
-	dbSubnets, _ := dbmodel.CommitNetworksIntoDB(db, []dbmodel.SharedNetwork{}, appSubnets, a6.Daemons[0])
-
-	// Act
-	rsp := rapi.GetSubnet(ctx, dhcp.GetSubnetParams{ID: dbSubnets[0].ID})
-
-	// Assert
-	require.IsType(t, &dhcp.GetSubnetOK{}, rsp)
-	okRsp := rsp.(*dhcp.GetSubnetOK)
-	require.EqualValues(t, "my-class", okRsp.Payload.ClientClass)
-	require.Len(t, okRsp.Payload.Pools, 1)
-	require.Len(t, okRsp.Payload.PrefixDelegationPools, 1)
 }

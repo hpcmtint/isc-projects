@@ -3,8 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { SubnetBarComponent } from './subnet-bar.component'
 import { TooltipModule } from 'primeng/tooltip'
 import { By } from '@angular/platform-browser'
-import { DebugElement } from '@angular/core'
-import { EntityLinkComponent } from '../entity-link/entity-link.component'
 import { RouterTestingModule } from '@angular/router/testing'
 
 describe('SubnetBarComponent', () => {
@@ -14,7 +12,7 @@ describe('SubnetBarComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [TooltipModule, RouterTestingModule],
-            declarations: [SubnetBarComponent, EntityLinkComponent],
+            declarations: [SubnetBarComponent],
         }).compileComponents()
     }))
 

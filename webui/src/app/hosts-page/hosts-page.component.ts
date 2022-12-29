@@ -197,12 +197,9 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.updateQueryParams(params)
                     this.loadHosts()
                 },
-                (err) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Cannot process URL query parameters',
-                        detail: getErrorMessage(err),
-                    })
+                (error) => {
+                    // ToDo: Fix silent error catching
+                    console.log(error)
                 }
             )
         )
@@ -230,12 +227,8 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                         this.openHostTab(numericId)
                     }
                 },
-                (err) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Cannot process URL segment parameters',
-                        detail: getErrorMessage(err),
-                    })
+                (error) => {
+                    console.log(error)
                 }
             )
         )
@@ -319,12 +312,12 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.openedTabs.push(new HostTab(HostTabType.Host, data))
                     this.createMenuItem(this.getHostLabel(data), `/dhcp/hosts/${id}`)
                 },
-                (error) => {
-                    const msg = getErrorMessage(error)
+                (err) => {
+                    const msg = getErrorMessage(err)
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Cannot get host reservation',
-                        detail: `Error getting host reservation with ID ${id}: ${msg}`,
+                        detail: 'Error getting host reservation with ID ' + id + ': ' + msg,
                         life: 10000,
                     })
                 }

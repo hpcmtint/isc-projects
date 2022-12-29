@@ -121,6 +121,7 @@ describe('KeaAppTabComponent', () => {
                 OverlayPanelModule,
                 ButtonModule,
                 InplaceModule,
+                FormsModule,
                 ToggleButtonModule,
                 DataViewModule,
             ],

@@ -103,14 +103,10 @@ import { ConfigCheckerPreferencePageComponent } from './config-checker-preferenc
 import { DhcpOptionSetViewComponent } from './dhcp-option-set-view/dhcp-option-set-view.component'
 import { DhcpClientClassSetFormComponent } from './dhcp-client-class-set-form/dhcp-client-class-set-form.component'
 import { DhcpClientClassSetViewComponent } from './dhcp-client-class-set-view/dhcp-client-class-set-view.component'
-import { SubnetTabComponent } from './subnet-tab/subnet-tab.component'
-import { DatePipe, KeyValuePipe, PercentPipe } from '@angular/common'
 import { DelegatedPrefixBarComponent } from './delegated-prefix-bar/delegated-prefix-bar.component'
 import { HumanCountComponent } from './human-count/human-count.component'
 import { NumberPipe } from './pipes/number.pipe'
 import { HumanCountPipe } from './pipes/human-count.pipe'
-import { ReplaceAllPipe } from './pipes/replace-all.pipe'
-import { CapitalizeFirstPipe } from './pipes/capitalize-first.pipe'
 import { LocaltimePipe } from './pipes/localtime.pipe'
 
 export function cfgFactory() {
@@ -172,9 +168,6 @@ export function cfgFactory() {
         ConfigCheckerPreferencePageComponent,
         DhcpClientClassSetFormComponent,
         DhcpClientClassSetViewComponent,
-        SubnetTabComponent,
-        ReplaceAllPipe,
-        CapitalizeFirstPipe,
         DelegatedPrefixBarComponent,
         HumanCountPipe,
         HumanCountComponent,
@@ -230,9 +223,6 @@ export function cfgFactory() {
         ChipsModule,
         DataViewModule,
         ToggleButtonModule,
-        PercentPipe,
-        KeyValuePipe,
-        DatePipe,
     ],
     providers: [
         {

@@ -172,13 +172,6 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
         return network.stats?.['assigned-pds']
     }
 
-    /**
-     * Prepare count for presenting in tooltip by adding ',' separator to big numbers, eg. 1,243,342.
-     */
-    tooltipCount(count) {
-        return count.toLocaleString('en-US')
-    }
-
     getApps(net: SharedNetwork) {
         const apps = []
         const appIds = {}

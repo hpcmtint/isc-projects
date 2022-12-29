@@ -11,24 +11,10 @@
         </a>
     </ng-container>
 
-    <!-- daemon-local-subnet -->
-    <ng-container *ngSwitchCase="'daemon-local-subnet'">
-        {{ showEntityName ? 'daemon' : '' }}
-        <a id="daemon-link" routerLink="/apps/kea/{{ attrs.appId }}" [queryParams]="{ daemon: attrs.daemonName }">
-            {{ attrs.appName }}/{{ attrs.daemonName }}
-        </a>
-    </ng-container>
-
     <!-- app -->
     <ng-container *ngSwitchCase="'app'">
         {{ showEntityName ? 'app' : '' }}
         <a id="app-link" routerLink="/apps/{{ attrs.type }}/{{ attrs.id }}">{{ attrs.name }}</a>
-    </ng-container>
-
-    <!-- app-local-subnet -->
-    <ng-container *ngSwitchCase="'app-local-subnet'">
-        {{ showEntityName ? 'app' : '' }}
-        <a id="app-link" routerLink="/apps/kea/{{ attrs.appId }}">{{ attrs.appName }}</a>
     </ng-container>
 
     <!-- machine -->
@@ -39,37 +25,21 @@
 
     <!-- subnet -->
     <ng-container *ngSwitchCase="'subnet'">
-        {{ showEntityName ? 'subnet ' : '' }}
-        <a id="subnet-link" routerLink="/dhcp/subnets/{{ attrs.id }}">
-            {{ attrs.subnet }}
-        </a>
+        {{ showEntityName ? 'subnet ' : '' }}[{{ attrs.id }}] {{ attrs.prefix }}
     </ng-container>
 
     <!-- user -->
     <ng-container *ngSwitchCase="'user'">
         {{ showEntityName ? 'user' : '' }}
-        <a id="user-link" routerLink="/users/{{ attrs.id }}"> [{{ attrs.id }}] {{ attrs.login ?? attrs.email }} </a>
+        <a id="user-link" routerLink="/users/{{ attrs.id }}">
+            [{{ attrs.id }}] {{ attrs.login ? attrs.login : attrs.email }}
+        </a>
     </ng-container>
 
     <!-- host reservation -->
     <ng-container *ngSwitchCase="'host'">
         {{ showEntityName ? 'host' : '' }}
-        <a id="host-link" routerLink="/dhcp/hosts/{{ attrs.id }}" *ngIf="attrs.label">{{ attrs.label }}</a>
-        <app-identifier
-            id="host-link"
-            [label]="i.idType"
-            [hexValue]="i.idHexValue"
-            link="/dhcp/hosts/{{ attrs.id }}"
-            *ngFor="let i of attrs.hostIdentifiers"
-        >
-        </app-identifier>
-    </ng-container>
-
-    <!-- shared network -->
-    <ng-container *ngSwitchCase="'shared-network'">
-        {{ showEntityName ? 'shared network' : '' }}
-        <!-- Shared networks don't have a dedicated page yet. -->
-        <a id="shared-network-link" routerLink="/dhcp/shared-networks" [queryParams]="attrs">{{ attrs.text }}</a>
+        <a id="host-link" routerLink="/dhcp/hosts/{{ attrs.id }}">{{ attrs.label }}</a>
     </ng-container>
 
     <!-- unsupported -->

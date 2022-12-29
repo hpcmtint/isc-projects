@@ -310,29 +310,6 @@
           schema:
             $ref: "#/definitions/ApiError"
 
-  /subnets/{id}:
-    get:
-      summary: Get subnet by ID.
-      description: Get subnet by the database specific ID.
-      operationId: getSubnet
-      tags:
-        - DHCP
-      parameters:
-        - in: path
-          name: id
-          type: integer
-          required: true
-          description: Subnet ID.
-      responses:
-        200:
-          description: A subnet
-          schema:
-            $ref: "#/definitions/Subnet"
-        default:
-          description: generic error response
-          schema:
-            $ref: "#/definitions/ApiError"
-
   /shared-networks:
     get:
       summary: Get list of DHCP shared networks.

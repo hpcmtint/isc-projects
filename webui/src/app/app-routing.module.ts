@@ -82,11 +82,6 @@ const routes: Routes = [
     },
     {
         path: 'dhcp/subnets',
-        pathMatch: 'full',
-        redirectTo: 'dhcp/subnets/',
-    },
-    {
-        path: 'dhcp/subnets/:id',
         component: SubnetsPageComponent,
         canActivate: [AuthGuard],
     },

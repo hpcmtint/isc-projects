@@ -135,7 +135,7 @@
                         ></app-subnet-bar>
                     </td>
                     <td>
-                        <app-entity-link entity="app" [attrs]="app" *ngFor="let app of getApps(net)"></app-entity-link>
+                        <a *ngFor="let app of getApps(net)" routerLink="/apps/kea/{{ app.id }}">{{ app.name }}</a>
                     </td>
                 </tr>
             </ng-template>

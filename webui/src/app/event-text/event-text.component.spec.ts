@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { RouterTestingModule } from '@angular/router/testing'
-import { EntityLinkComponent } from '../entity-link/entity-link.component'
 
 import { EventTextComponent } from './event-text.component'
 
@@ -10,8 +8,7 @@ describe('EventTextComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [EventTextComponent, EntityLinkComponent],
+            declarations: [EventTextComponent],
         }).compileComponents()
     }))
 
