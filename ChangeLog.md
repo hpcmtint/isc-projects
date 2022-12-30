@@ -1,3 +1,9 @@
+* 263 [func] slawek
+
+    Extended the UI to display the delegated prefix pools and their
+    utilizations.
+    (Gitlab #186)
+
 * 262 [bug] slawek
 
     Removed duplicated statuses of daemons on the machine page when the
@@ -13,9 +19,9 @@ Stork 1.8.0 released on 2022-12-07.
 
 * 260 [build] slawek
 
-     Improved the system dependencies detection. The build system searches now
-     in PATH instead of relying on fixed paths.
-     (Gitlab #821)
+    Improved the system dependencies detection. The build system searches now
+    in PATH instead of relying on fixed paths.
+    (Gitlab #821)
 
 * 259 [func] slawek
 
