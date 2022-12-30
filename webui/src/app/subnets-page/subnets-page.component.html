@@ -163,7 +163,10 @@
                         >
                             {{ p }}
                         </div>
-                        <app-delegated-prefix-bar [prefix]="p" *ngFor="let p of sn.prefixDelegationPools"></app-delegated-prefix-bar>
+                        <app-delegated-prefix-bar
+                            [prefix]="p"
+                            *ngFor="let p of sn.prefixDelegationPools"
+                        ></app-delegated-prefix-bar>
                     </td>
                     <td>
                         {{ sn.sharedNetwork }}
