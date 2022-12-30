@@ -188,15 +188,12 @@ describe('SubnetsPageComponent', () => {
     })
 
     it('should detect IPv6 subnets', () => {
-        const subnets: Subnet[] = [
-            { subnet: '10.0.0.0/8' },
-            { subnet: '192.168.0.0/16' },
-        ]
+        const subnets: Subnet[] = [{ subnet: '10.0.0.0/8' }, { subnet: '192.168.0.0/16' }]
 
         component.subnets = subnets
         expect(component.isAnyIPv6SubnetVisible).toBeFalse()
 
-        subnets.push({ subnet: 'fe80::/64'})
+        subnets.push({ subnet: 'fe80::/64' })
         expect(component.isAnyIPv6SubnetVisible).toBeTrue()
     })
 })

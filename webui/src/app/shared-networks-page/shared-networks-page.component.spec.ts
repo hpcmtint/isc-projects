@@ -173,20 +173,15 @@ describe('SharedNetworksPageComponent', () => {
     it('should detect IPv6 subnets', () => {
         const networks: SharedNetwork[] = [
             {
-                subnets: [
-                    { subnet: '10.0.0.0/8' },
-                    { subnet: '192.168.0.0/16'}
-                ]
-            }
+                subnets: [{ subnet: '10.0.0.0/8' }, { subnet: '192.168.0.0/16' }],
+            },
         ]
 
         component.networks = networks
         expect(component.isAnyIPv6SubnetVisible).toBeFalse()
 
         networks.push({
-            subnets: [
-                { subnet: 'fe80::/64' }
-            ]
+            subnets: [{ subnet: 'fe80::/64' }],
         })
         expect(component.isAnyIPv6SubnetVisible).toBeTrue()
     })
