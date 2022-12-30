@@ -35,7 +35,7 @@ export class SubnetBarComponent {
         if (this._subnet.stats) {
             const stats = this._subnet.stats
             const lines = []
-            if (this.addrUtilization > 100) {
+            if (this.addrUtilization > 100 || this.pdUtilization > 100) {
                 lines.push('Warning! Utilization is greater than 100%. Data is unreliable.')
                 lines.push(
                     'This problem is caused by a Kea limitation - addresses/NAs/PDs in out-of-pool host reservations are reported as assigned but excluded from the total counters.'
