@@ -95,7 +95,7 @@ export function humanCount(count: string | bigint | number) {
 
     let countStr = ''
     if (typeof count === 'number') {
-        countStr = count.toFixed(1)
+        countStr = count.toFixed(u >= 0 ? 1 : 0)
     } else {
         countStr = count.toString()
     }

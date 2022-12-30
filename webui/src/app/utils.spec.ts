@@ -37,6 +37,7 @@ describe('utils', () => {
         const int = 12345678
         const float = 1234567890
         const bigInt = BigInt('1234567890000000000000000000000000')
+        const smallInt = 1
         const str = 'foo'
         const nan = Number.NaN
         const boolean = true as any
@@ -46,6 +47,7 @@ describe('utils', () => {
         const strInt = humanCount(int)
         const strFloat = humanCount(float)
         const strBigInt = humanCount(bigInt)
+        const strSmallInt = humanCount(smallInt)
         const strStr = humanCount(str)
         const nanStr = humanCount(nan)
         const boolStr = humanCount(boolean)
@@ -55,6 +57,7 @@ describe('utils', () => {
         expect(strInt).toBe('12.3M')
         expect(strFloat).toBe('1.2G')
         expect(strBigInt).toBe('1234567890Y')
+        expect(strSmallInt).toBe('1')
         expect(strStr).toBe('foo')
         expect(nanStr).toBe('NaN')
         expect(boolStr).toBe('true')
