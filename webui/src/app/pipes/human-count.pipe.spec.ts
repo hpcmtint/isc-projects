@@ -37,4 +37,21 @@ describe('HumanCountPipe', () => {
         expect(boolStr).toBe('true')
         expect(nullStr).toBe('null')
     })
+
+    it('should convert strings to numbers', () => {
+        // Arrange
+        const pipe = new HumanCountPipe()
+        const humanCount = pipe.transform
+
+        const int = '12345678'
+        const bigInt = '1234567890000000000000000000000000'
+
+        // Act
+        const strInt = humanCount(int)
+        const strBigInt = humanCount(bigInt)
+
+        // Assert
+        expect(strInt).toBe('12M')
+        expect(strBigInt).toBe('1234567890Y')
+    })
 })
