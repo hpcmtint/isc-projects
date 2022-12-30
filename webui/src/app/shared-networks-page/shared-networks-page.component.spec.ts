@@ -8,7 +8,7 @@ import { TableModule } from 'primeng/table'
 import { TooltipModule } from 'primeng/tooltip'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { RouterModule } from '@angular/router'
-import { DHCPService } from '../backend'
+import { DHCPService, SharedNetwork } from '../backend'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { of } from 'rxjs'
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component'
@@ -138,7 +138,7 @@ describe('SharedNetworksPageComponent', () => {
         await fixture.whenStable()
 
         // Assert
-        const stats: { [key: string]: BigInt } = component.networks[0].stats
+        const stats: { [key: string]: BigInt } = component.networks[0].stats as any
         expect(stats['assigned-addresses']).toBe(
             BigInt('12345678901234567890123456789012345678901234567890123456789012345678901234567890')
         )
@@ -168,5 +168,26 @@ describe('SharedNetworksPageComponent', () => {
         expect(breadcrumbsComponent.items).toHaveSize(2)
         expect(breadcrumbsComponent.items[0].label).toEqual('DHCP')
         expect(breadcrumbsComponent.items[1].label).toEqual('Shared Networks')
+    })
+
+    it('should detect IPv6 subnets', () => {
+        const networks: SharedNetwork[] = [
+            {
+                subnets: [
+                    { subnet: '10.0.0.0/8' },
+                    { subnet: '192.168.0.0/16'}
+                ]
+            }
+        ]
+
+        component.networks = networks
+        expect(component.isAnyIPv6SubnetVisible).toBeFalse()
+
+        networks.push({
+            subnets: [
+                { subnet: 'fe80::/64' }
+            ]
+        })
+        expect(component.isAnyIPv6SubnetVisible).toBeTrue()
     })
 })

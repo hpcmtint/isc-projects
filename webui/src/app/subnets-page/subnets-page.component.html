@@ -85,7 +85,7 @@
                     <th rowspan="2" style="width: 5rem">Subnet ID</th>
                     <th rowspan="2" style="width: 11rem">Subnet</th>
                     <th colspan="3" style="width: 16rem">Addresses</th>
-                    <th colspan="3" style="width: 16rem">Prefixes</th>
+                    <th colspan="3" style="width: 16rem" *ngIf="isAnyIPv6SubnetVisible">Prefixes</th>
                     <th rowspan="2">Pools</th>
                     <th rowspan="2" style="width: 6rem">Shared Network</th>
                     <th rowspan="2" style="width: 14rem">App Daemon Name</th>
@@ -97,9 +97,9 @@
                     <th>Total</th>
                     <th style="padding: 0.571rem 0.5rem">Assigned</th>
                     <th>Used %</th>
-                    <th>Total</th>
-                    <th style="padding: 0.571rem 0.5rem">Assigned</th>
-                    <th>Used %</th>
+                    <th *ngIf="isAnyIPv6SubnetVisible">Total</th>
+                    <th *ngIf="isAnyIPv6SubnetVisible" style="padding: 0.571rem 0.5rem">Assigned</th>
+                    <th *ngIf="isAnyIPv6SubnetVisible">Used %</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-sn>
@@ -129,13 +129,13 @@
                             style="font-size: 1.5em; vertical-align: text-top; float: right; color: red"
                         ></i>
                     </td>
-                    <td>
+                    <td *ngIf="isAnyIPv6SubnetVisible">
                         <app-human-count [value]="getTotalDelegatedPrefixes(sn)"></app-human-count>
                     </td>
-                    <td>
+                    <td *ngIf="isAnyIPv6SubnetVisible">
                         <app-human-count [value]="getAssignedDelegatedPrefixes(sn)"></app-human-count>
                     </td>
-                    <td *ngIf="sn.subnet.includes(':')">
+                    <td *ngIf="isAnyIPv6SubnetVisible && sn.subnet.includes(':')">
                         {{ sn.pdUtilization ? sn.pdUtilization : '0' }} %
                         <i
                             *ngIf="sn.pdUtilization > 80 && sn.pdUtilization <= 90"
@@ -148,7 +148,7 @@
                             style="font-size: 1.5em; vertical-align: text-top; float: right; color: red"
                         ></i>
                     </td>
-                    <td *ngIf="sn.subnet.includes('.')">-</td>
+                    <td *ngIf="isAnyIPv6SubnetVisible && sn.subnet.includes('.')">-</td>
                     <td>
                         <div
                             *ngFor="let p of sn.pools"

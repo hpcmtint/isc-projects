@@ -25,7 +25,7 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
     @ViewChild('networksTable') networksTable: Table
 
     // networks
-    networks: any[]
+    networks: SharedNetwork[]
     totalNetworks = 0
 
     // filters
@@ -186,5 +186,9 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
         }
 
         return apps
+    }
+
+    get isAnyIPv6SubnetVisible(): boolean {
+        return this.networks.some((n) => n.subnets.some((s) => s.subnet.includes(':')))
     }
 }

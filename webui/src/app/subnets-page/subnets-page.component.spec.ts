@@ -8,7 +8,7 @@ import { TableModule } from 'primeng/table'
 import { SubnetBarComponent } from '../subnet-bar/subnet-bar.component'
 import { TooltipModule } from 'primeng/tooltip'
 import { RouterModule, ActivatedRoute, Router, convertToParamMap } from '@angular/router'
-import { DHCPService, SettingsService, UsersService } from '../backend'
+import { DHCPService, SettingsService, Subnet, UsersService } from '../backend'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { of } from 'rxjs'
 import { MessageService } from 'primeng/api'
@@ -185,5 +185,18 @@ describe('SubnetsPageComponent', () => {
         expect(breadcrumbsComponent.items).toHaveSize(2)
         expect(breadcrumbsComponent.items[0].label).toEqual('DHCP')
         expect(breadcrumbsComponent.items[1].label).toEqual('Subnets')
+    })
+
+    it('should detect IPv6 subnets', () => {
+        const subnets: Subnet[] = [
+            { subnet: '10.0.0.0/8' },
+            { subnet: '192.168.0.0/16' },
+        ]
+
+        component.subnets = subnets
+        expect(component.isAnyIPv6SubnetVisible).toBeFalse()
+
+        subnets.push({ subnet: 'fe80::/64'})
+        expect(component.isAnyIPv6SubnetVisible).toBeTrue()
     })
 })
