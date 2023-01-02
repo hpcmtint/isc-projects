@@ -16,102 +16,81 @@ func getStdDHCPv6OptionDefs() []dhcpOptionDefinition {
 			Name:        "s46-cont-mape",
 			OptionType:  "empty",
 			Space:       "dhcp6",
-		},
-		{
+		}, {
 			Code:        95,
 			Encapsulate: "s46-cont-mapt-options",
 			Name:        "s46-cont-mapt",
 			OptionType:  "empty",
 			Space:       "dhcp6",
-		},
-		{
+		}, {
 			Code:        96,
 			Encapsulate: "s46-cont-lw-options",
 			Name:        "s46-cont-lw",
 			OptionType:  "empty",
 			Space:       "dhcp6",
-		},
-		{
+		}, {
 			Code:        90,
 			Encapsulate: "",
 			Name:        "s46-br",
 			OptionType:  "ipv6-address",
 			Space:       "s46-cont-mape-options",
-		},
-		{
+		}, {
 			Code:        89,
 			Encapsulate: "s46-rule-options",
 			Name:        "s46-rule",
 			OptionType:  "record",
+			Space:       "s46-cont-mape-options",
 			RecordTypes: []DHCPOptionType{
-				"uint8",
-				"uint8",
-				"uint8",
-				"ipv4-address",
-				"ipv6-prefix",
+				"uint8", "uint8", "uint8", "ipv4-address", "ipv6-prefix",
 			},
-			Space: "s46-cont-mape-options",
-		},
-		{
+		}, {
 			Code:        89,
 			Encapsulate: "s46-rule-options",
 			Name:        "s46-rule",
 			OptionType:  "record",
+			Space:       "s46-cont-mapt-options",
 			RecordTypes: []DHCPOptionType{
-				"uint8",
-				"uint8",
-				"uint8",
-				"ipv4-address",
-				"ipv6-prefix",
+				"uint8", "uint8", "uint8", "ipv4-address", "ipv6-prefix",
 			},
-			Space: "s46-cont-mapt-options",
-		},
-		{
+		}, {
 			Code:        91,
 			Encapsulate: "",
 			Name:        "s46-dmr",
 			OptionType:  "ipv6-prefix",
 			Space:       "s46-cont-mapt-options",
-		},
-		{
+		}, {
 			Code:        90,
 			Encapsulate: "",
 			Name:        "s46-br",
 			OptionType:  "ipv6-address",
 			Space:       "s46-cont-lw-options",
-		},
-		{
+		}, {
 			Code:        92,
 			Encapsulate: "s46-v4v6bind-options",
 			Name:        "s46-v4v6bind",
 			OptionType:  "record",
+			Space:       "s46-cont-lw-options",
 			RecordTypes: []DHCPOptionType{
-				"ipv4-address",
-				"ipv6-prefix",
+				"ipv4-address", "ipv6-prefix",
 			},
-			Space: "s46-cont-lw-options",
-		},
-		{
+		}, {
 			Code:        93,
 			Encapsulate: "",
 			Name:        "s46-portparams",
 			OptionType:  "record",
+			Space:       "s46-rule-options",
 			RecordTypes: []DHCPOptionType{
-				"uint8",
-				"psid",
+				"uint8", "psid",
 			},
-			Space: "s46-rule-options",
-		},
-		{
+		}, {
 			Code:        93,
 			Encapsulate: "",
 			Name:        "s46-portparams",
 			OptionType:  "record",
+			Space:       "s46-v4v6bind-options",
 			RecordTypes: []DHCPOptionType{
-				"uint8",
-				"psid",
+				"uint8", "psid",
 			},
-			Space: "s46-v4v6bind-options",
 		},
 	}
 }

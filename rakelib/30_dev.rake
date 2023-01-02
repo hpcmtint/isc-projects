@@ -513,26 +513,34 @@ namespace :gen do
                 sh NPM, "install", "--package-lock-only"
             end
         end
+
+        desc 'Generate standard DHCP option definitions for UI'
+        task :std_option_defs => [CODE_GEN_BINARY_FILE] do
+            puts 'Regenerating standard option definitions in Go files.'
+            sh CODE_GEN_BINARY_FILE, "std-option-defs",
+                "--input", "./codegen/std_dhcpv6_option_def.json",
+                "--output", "webui/src/app/std-dhcpv6-option-defs.ts",
+                "--template", "webui/src/app/std-dhcpv6-option-defs.ts.tmpl"
+    
+            puts 'Formatting the generated files.'
+            ENV["SCOPE"] = "src/app/std*option-defs.ts"
+            Rake::Task["fmt:ui"].invoke()
+        end
     end
-    desc 'Generate standard DHCP option definitions'
-    task :std_option_defs => [CODE_GEN_BINARY_FILE] do
-        puts 'Regenerating standard option definitions in Go files.'
-        sh CODE_GEN_BINARY_FILE, "--language", "golang", "std-option-defs", "--input", "./codegen/std_dhcpv6_option_def.json",
-            "--output", "backend/appcfg/kea/stdoptiondef6.go", "--template", "backend/appcfg/kea/stdoptiondef6.go.template",
-            "--top-level-type", "dhcpOptionDefinition", "--field-type", "record-types:DHCPOptionType",
-            "--field-name", "type:OptionType"
 
-        puts 'Formatting the generated files.'
-        ENV["SCOPE"] = "./appcfg/..."
-        Rake::Task["fmt:backend"].invoke()
-
-        puts 'Regenerating standard option definitions in Typescript files.'
-        sh CODE_GEN_BINARY_FILE, "--language", "typescript", "std-option-defs", "--input", "./codegen/std_dhcpv6_option_def.json",
-            "--output", "webui/src/app/std-dhcpv6-option-defs.ts", "--template", "webui/src/app/std-dhcpv6-option-defs.ts.template"
-
-        puts 'Formatting the generated files.'
-        ENV["SCOPE"] = "src/app/std*option-defs.ts"
-        Rake::Task["fmt:ui"].invoke()
+    namespace :backend do
+        desc 'Generate standard DHCP option definitions for backend'
+        task :std_option_defs => [CODE_GEN_BINARY_FILE] do
+            puts 'Regenerating standard option definitions in Go files.'
+            sh CODE_GEN_BINARY_FILE, "std-option-defs",
+                "--input", "./codegen/std_dhcpv6_option_def.json",
+                "--output", "backend/appcfg/kea/stdoptiondef6.go",
+                "--template", "backend/appcfg/kea/stdoptiondef6.go.tmpl"
+    
+            puts 'Formatting the generated files.'
+            ENV["SCOPE"] = "./appcfg/..."
+            Rake::Task["fmt:backend"].invoke()
+        end
     end
 end
 
