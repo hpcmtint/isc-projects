@@ -1,10 +1,7 @@
 <div class="delegated-prefix">
-    <span class="delegated-prefix__base">{{ prefix.prefix }}</span>
-    <span class="delegated-prefix__length">
-        <abbr title="delegated length"> del.</abbr>: {{ prefix.delegatedLength }}
-    </span>
-    <span class="delegated-prefix__excluded" *ngIf="hasExcluded">
-        <abbr title="excluded prefix">ex.</abbr>:
-        <abbr [title]="prefix.excludedPrefix">{{ excludedPrefixShorten }}</abbr>
-    </span>
+    <span>{{ prefix.prefix }}</span>
+    <abbr class="ml-1 delegated-prefix__label" title="delegated length">del.:</abbr>
+    <span class="ml-1">{{ prefix.delegatedLength }}</span>
+    <abbr class="ml-1 delegated-prefix__label" title="excluded prefix" *ngIf="hasExcluded">ex.:</abbr>
+    <abbr class="ml-1" [title]="prefix.excludedPrefix" *ngIf="hasExcluded">{{ excludedPrefixShorten }}</abbr>
 </div>
