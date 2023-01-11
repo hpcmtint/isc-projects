@@ -10,7 +10,7 @@ func init() {
 		return err
 	}, func(db migrations.DB) error {
 		_, err := db.Exec(`
-			ALTER TABLE prefix_pool DROP column excluded_prefix;
+			ALTER TABLE prefix_pool DROP COLUMN excluded_prefix;
 		`)
 		return err
 	})

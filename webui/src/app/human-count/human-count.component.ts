@@ -67,9 +67,6 @@ export class HumanCountComponent {
      * Indicates if the value is a valid number.
      */
     get hasValidValue(): boolean {
-        if (!this.hasValue) {
-            return false
-        }
-        return !this.hasInvalidValue
+        return this.hasValue && !this.hasInvalidValue
     }
 }
