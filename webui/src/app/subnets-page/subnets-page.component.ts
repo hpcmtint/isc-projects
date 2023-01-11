@@ -239,6 +239,9 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
         return getGrafanaUrl(this.grafanaUrl, name, subnet, instance)
     }
 
+    /**
+     * Returns true if the subnet list presents at least one IPv6 subnet.
+     */
     get isAnyIPv6SubnetVisible(): boolean {
         return this.subnets.some((s) => s.subnet.includes(':'))
     }
