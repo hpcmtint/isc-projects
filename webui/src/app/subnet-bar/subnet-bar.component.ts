@@ -113,12 +113,16 @@ export class SubnetBarComponent {
         return this.subnet.pdUtilization ?? 0
     }
 
-    // Returns true if the subnet is IPv6.
+    /**
+     * Returns true if the subnet is IPv6.
+     */
     get isIPv6() {
         return this.subnet.subnet.includes(':')
     }
 
-    // Returns a style for the address utilization bar.
+    /**
+     * Returns a style for the address utilization bar.
+     */
     get addrUtilizationStyle() {
         return {
             // In some cases the utilization may be incorrect - less than
@@ -128,7 +132,9 @@ export class SubnetBarComponent {
         }
     }
 
-    // Returns a style for the delegated prefix utilization bar.
+    /**
+     * Returns a style for the delegated prefix utilization bar.
+     */
     get pdUtilizationStyle() {
         return {
             // In some cases the utilization may be incorrect - less than
@@ -138,7 +144,9 @@ export class SubnetBarComponent {
         }
     }
 
-    // Returns a proper CSS modificator class for a given utilization value.
+    /**
+     * Returns a proper CSS modificator class for a given utilization value.
+     */
     getUtilizationBarModificatorClass(value: number): string {
         if (!this.subnet.stats) {
             return 'utilization__bar--missing'
