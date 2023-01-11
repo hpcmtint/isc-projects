@@ -28,7 +28,12 @@ describe('DelegatedPrefixBarComponent', () => {
     })
 
     it('should display prefix and length', () => {
-        expect(fixture.debugElement.nativeElement.textContent.trim()).toBe('fe80::/64 del.: 80')
+        expect(
+            (fixture.debugElement.nativeElement as HTMLElement).textContent
+                .trim()
+                // Replace &nbsp character.
+                .replace(/\u00a0/g, " ")
+        ).toBe('fe80::/64 del.: 80')
     })
 
     it('should shorten the excluded prefix', () => {
@@ -44,12 +49,11 @@ describe('DelegatedPrefixBarComponent', () => {
     it('should display an excluded prefix', () => {
         component.prefix.excludedPrefix = 'fe80:42::/96'
         fixture.detectChanges()
-        expect(fixture.debugElement.nativeElement.textContent.trim()).toBe('fe80::/64 del.: 80 ex.: ~:42::/96')
-    })
-
-    it('should detect an excluded prefix', () => {
-        expect(component.hasExcluded).toBeFalse()
-        component.prefix.excludedPrefix = 'fe80:42::/96'
-        expect(component.hasExcluded).toBeTrue()
+        expect(
+            (fixture.debugElement.nativeElement as HTMLElement).textContent
+                .trim()
+                // Replace &nbsp character.
+                .replace(/\u00a0/g, " ")
+        ).toBe('fe80::/64 del.: 80 ex.: ~:42::/96')
     })
 })

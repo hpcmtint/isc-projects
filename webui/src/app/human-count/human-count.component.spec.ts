@@ -26,7 +26,7 @@ describe('HumanCountComponent', () => {
 
     it('should convert the string value', () => {
         component.value = '42'
-        expect(component.value).toBe(BigInt(42))
+        expect(component.value as any).toBe(BigInt(42))
     })
 
     it('should recognize a value', () => {
