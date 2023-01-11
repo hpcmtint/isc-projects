@@ -21,11 +21,4 @@ export class DelegatedPrefixBarComponent {
     get excludedPrefixShorten(): string {
         return formatShortExcludedPrefix(this.prefix.prefix, this.prefix.excludedPrefix)
     }
-
-    /**
-     * Returns true if the excluded prefix is not empty.
-     */
-    get hasExcluded() {
-        return !!this.prefix.excludedPrefix
-    }
 }

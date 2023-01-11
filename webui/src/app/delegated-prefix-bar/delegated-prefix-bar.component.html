@@ -6,7 +6,7 @@
     <abbr class="delegated-prefix__label" title="delegated length">del.:</abbr>
     <span>&nbsp;</span>
     <span>{{ prefix.delegatedLength }}</span>
-    <ng-container *ngIf="hasExcluded">
+    <ng-container *ngIf="!!this.prefix.excludedPrefix">
         <span>&nbsp;</span>
         <abbr class="delegated-prefix__label" title="excluded prefix">ex.:</abbr>
         <span>&nbsp;</span>
