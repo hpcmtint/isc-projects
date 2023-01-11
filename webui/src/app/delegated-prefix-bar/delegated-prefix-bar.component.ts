@@ -33,7 +33,7 @@ export class DelegatedPrefixBarComponent {
         let [baseNetwork, _] = this.prefix.prefix.split('/')
         let [excludedNetwork, excludedLen] = this.prefix.excludedPrefix.split('/')
 
-        // Trim the leading double colon.
+        // Trim the trailing double colon.
         if (baseNetwork.endsWith('::')) {
             baseNetwork = baseNetwork.slice(0, baseNetwork.length - 1)
         }
