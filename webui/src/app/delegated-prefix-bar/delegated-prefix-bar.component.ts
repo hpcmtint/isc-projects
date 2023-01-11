@@ -17,13 +17,6 @@ export class DelegatedPrefixBarComponent {
 
     /**
      * Returns the short representation of the excluded prefix.
-     * The common octet pairs with the main prefix are replaced by ~.
-     *
-     * E.g.: for the 'fe80::/64' main prefix and the 'fe80:42::/80' excluded
-     * prefix the shorten form is: '~:42::/80'.
-     *
-     * It isn't any well-known convention, just a simple idea to limit the
-     * length of the bar.
      */
     get excludedPrefixShorten(): string {
         return formatShortExcludedPrefix(this.prefix.prefix, this.prefix.excludedPrefix)
