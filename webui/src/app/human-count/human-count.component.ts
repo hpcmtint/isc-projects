@@ -31,17 +31,23 @@ export class HumanCountComponent {
         this._value = value
     }
 
-    // Returns a value.
+    /**
+     * Returns a value.
+     */
     get value(): any {
         return this._value
     }
 
-    // Indicates if the value is set.
+    /**
+     * Indicates if the value is set.
+     */
     get hasValue(): boolean {
         return this.value != null
     }
 
-    // Indicates if the value is set but it isn't a valid number.
+    /**
+     * Indicates if the value is set but it isn't a valid number.
+     */
     get hasInvalidValue(): boolean {
         if (!this.hasValue) {
             return false
@@ -54,7 +60,9 @@ export class HumanCountComponent {
         return type !== 'bigint'
     }
 
-    // Indicates if the value is a valid number.
+    /**
+     * Indicates if the value is a valid number.
+     */
     get hasValidValue(): boolean {
         if (!this.hasValue) {
             return false
