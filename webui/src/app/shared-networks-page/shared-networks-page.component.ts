@@ -145,28 +145,28 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get total of addresses in the network by summing up all subnets.
+     * Get total of addresses in the network.
      */
     getTotalAddresses(network: SharedNetwork) {
         return getTotalAddresses(network)
     }
 
     /**
-     * Get assigned of addresses in the network by summing up all subnets.
+     * Get assigned of addresses in the network.
      */
     getAssignedAddresses(network: SharedNetwork) {
         return getAssignedAddresses(network)
     }
 
     /**
-     * Get total of delegated prefixes in the network by summing up all subnets.
+     * Get total of delegated prefixes in the network.
      */
     getTotalDelegatedPrefixes(network: SharedNetwork) {
         return network.stats?.['total-pds']
     }
 
     /**
-     * Get assigned of delegated prefixes in the network by summing up all subnets.
+     * Get assigned of delegated prefixes in the network.
      */
     getAssignedDelegatedPrefixes(network: SharedNetwork) {
         return network.stats?.['assigned-pds']
