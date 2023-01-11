@@ -172,6 +172,13 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
         return network.stats?.['assigned-pds']
     }
 
+    /**
+     * Returns a list of applications maintaining a given shared network.
+     * The list doesn't contain duplicates.
+     * 
+     * @param net Shared network
+     * @returns List of the applications (only ID and app name)
+     */
     getApps(net: SharedNetwork) {
         const apps = []
         const appIds = {}
@@ -188,6 +195,10 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
         return apps
     }
 
+    /**
+     * Returns true if the subnet list presents at least one shared network
+     * owning an IPv6 subnet.
+     */
     get isAnyIPv6SubnetVisible(): boolean {
         return this.networks.some((n) => n.subnets.some((s) => s.subnet.includes(':')))
     }
