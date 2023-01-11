@@ -4,6 +4,7 @@ import { DelegatedPrefix } from '../backend'
 /**
  * Displays the delegated prefix in a bar form.
  * Supports the delegated prefix with an excluded part.
+ * See: [RFC 6603](https://www.rfc-editor.org/rfc/rfc6603.html).
  */
 @Component({
     selector: 'app-delegated-prefix-bar',
