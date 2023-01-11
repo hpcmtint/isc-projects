@@ -30,11 +30,13 @@ func subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 	}
 
 	for _, prefixPoolDetails := range sn.PrefixPools {
+		prefix := prefixPoolDetails.Prefix
+		delegatedLength := int64(prefixPoolDetails.DelegatedLen)
 		subnet.PrefixDelegationPools = append(
 			subnet.PrefixDelegationPools,
 			&models.DelegatedPrefix{
-				Prefix:          prefixPoolDetails.Prefix,
-				DelegatedLength: int64(prefixPoolDetails.DelegatedLen),
+				Prefix:          &prefix,
+				DelegatedLength: &delegatedLength,
 				ExcludedPrefix:  prefixPoolDetails.ExcludedPrefix,
 			},
 		)

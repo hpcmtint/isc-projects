@@ -264,6 +264,9 @@
 
   DelegatedPrefix:
     type: object
+    required:
+      - prefix
+      - delegatedLength
     properties:
       prefix:
         type: string
