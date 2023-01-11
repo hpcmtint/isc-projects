@@ -1,4 +1,4 @@
-import { clamp, stringToHex, getErrorMessage, humanCount } from './utils'
+import { clamp, stringToHex, getErrorMessage, humanCount, formatShortExcludedPrefix } from './utils'
 
 describe('utils', () => {
     it('clamps should return return proper number', () => {
@@ -174,5 +174,23 @@ describe('utils', () => {
             const actualMessage = getErrorMessage(error)
             expect(actualMessage).toBe(expectedMessage, error)
         }
+    })
+
+    it('should shorten the excluded prefix if has common part with a prefix', () => {
+        const excludedPrefix = 'fe80:42::/96'
+        const prefix = 'fe80::/64'
+        expect(formatShortExcludedPrefix(prefix, excludedPrefix)).toBe('~:42::/96')
+    })
+
+    it('should not shorten if the excluded prefix has no common part with a prefix', () => {
+        const excludedPrefix = '3001::/96'
+        const prefix = 'fe80::/64'
+        expect(formatShortExcludedPrefix(prefix, excludedPrefix)).toBe('3001::/96')
+    })
+
+    it('should not shorten if the prefix and excluded prefix has common part but one of them is not in a canonical form', () => {
+        const excludedPrefix = 'fe80:42::/96'
+        const prefix = 'fe80:0000::/64'
+        expect(formatShortExcludedPrefix(prefix, excludedPrefix)).toBe('fe80:42::/96')
     })
 })

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { DelegatedPrefix } from '../backend'
+import { formatShortExcludedPrefix } from '../utils'
 
 /**
  * Displays the delegated prefix in a bar form.
@@ -25,29 +26,7 @@ export class DelegatedPrefixBarComponent {
      * length of the bar.
      */
     get excludedPrefixShorten(): string {
-        if (!this.prefix.excludedPrefix) {
-            return ''
-        }
-
-        // Split the network and length.
-        let [baseNetwork, _] = this.prefix.prefix.split('/')
-        let [excludedNetwork, excludedLen] = this.prefix.excludedPrefix.split('/')
-
-        // Trim the trailing double colon.
-        if (baseNetwork.endsWith('::')) {
-            baseNetwork = baseNetwork.slice(0, baseNetwork.length - 1)
-        }
-
-        // Check if the excluded prefix starts with the base prefix.
-        // It should be always true for valid data.
-        if (excludedNetwork.startsWith(baseNetwork)) {
-            // Replace the common part with ~.
-            excludedNetwork = excludedNetwork.slice(baseNetwork.length)
-            return `~:${excludedNetwork}/${excludedLen}`
-        }
-
-        // Fallback to full excluded prefix.
-        return this.prefix.excludedPrefix
+        return formatShortExcludedPrefix(this.prefix.prefix, this.prefix.excludedPrefix)
     }
 
     /**
