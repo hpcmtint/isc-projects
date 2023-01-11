@@ -32,7 +32,7 @@ describe('DelegatedPrefixBarComponent', () => {
             (fixture.debugElement.nativeElement as HTMLElement).textContent
                 .trim()
                 // Replace &nbsp character.
-                .replace(/\u00a0/g, " ")
+                .replace(/\u00a0/g, ' ')
         ).toBe('fe80::/64 del.: 80')
     })
 
@@ -53,7 +53,7 @@ describe('DelegatedPrefixBarComponent', () => {
             (fixture.debugElement.nativeElement as HTMLElement).textContent
                 .trim()
                 // Replace &nbsp character.
-                .replace(/\u00a0/g, " ")
+                .replace(/\u00a0/g, ' ')
         ).toBe('fe80::/64 del.: 80 ex.: ~:42::/96')
     })
 })
