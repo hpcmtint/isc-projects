@@ -175,7 +175,7 @@ export class SharedNetworksPageComponent implements OnInit, OnDestroy {
     /**
      * Returns a list of applications maintaining a given shared network.
      * The list doesn't contain duplicates.
-     * 
+     *
      * @param net Shared network
      * @returns List of the applications (only ID and app name)
      */
