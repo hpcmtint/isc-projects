@@ -19,7 +19,7 @@ type AddressPool struct {
 	Subnet     *Subnet `pg:"rel:has-one"`
 }
 
-// Reflects IPv6 address pool.
+// Reflects IPv6 prefix pool.
 type PrefixPool struct {
 	ID             int64
 	CreatedAt      time.Time
