@@ -50,7 +50,9 @@ export class DelegatedPrefixBarComponent {
         return this.prefix.excludedPrefix
     }
 
-    // Returns true if the excluded prefix is not empty.
+    /**
+     * Returns true if the excluded prefix is not empty.
+     */
     get hasExcluded() {
         return !!this.prefix.excludedPrefix
     }
