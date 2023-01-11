@@ -1,4 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input } from '@angular/core'
+
+// Expected and supported value types for the below component.
+type ValueType = number | string | bigint | null
 
 /**
  * Display a given value in human-readable form using metric prefixes. It
@@ -13,13 +16,13 @@ export class HumanCountComponent {
     /**
      * Stores the value.
      */
-    private _value: any
+    private _value: ValueType
 
     /**
      * Setter for a value. It accepts any kind of value. The strings are
      * converted to numbers (if possible).
      */
-    @Input() set value(value: any) {
+    @Input() set value(value: ValueType) {
         if (typeof value === 'string') {
             try {
                 value = BigInt(value)
@@ -34,7 +37,7 @@ export class HumanCountComponent {
     /**
      * Returns a value.
      */
-    get value(): any {
+    get value(): ValueType {
         return this._value
     }
 
@@ -55,7 +58,7 @@ export class HumanCountComponent {
 
         const type = typeof this._value
         if (type === 'number') {
-            return isNaN(this._value)
+            return isNaN(this._value as number)
         }
         return type !== 'bigint'
     }
