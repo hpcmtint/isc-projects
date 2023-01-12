@@ -1,7 +1,7 @@
 <div class="m-5">
     <div class="grid pb-5">
         <!-- General info -->
-        <div class="col flex-grow-0">
+        <div class="col">
             <p-fieldset legend="General" styleClass="h-full white-space-nowrap">
                 <table class="border-spacing-2">
                     <tr>
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Metrics -->
-        <div class="col flex-grow-0">
+        <div class="col">
             <p-fieldset legend="Statistics" styleClass="h-full">
                 <table class="border-spacing-2">
                     <tr>
@@ -69,7 +69,7 @@
         </div>
 
         <!-- Address/PD pools -->
-        <div class="col flex-grow-0">
+        <div class="col">
             <p-fieldset legend="Address pools" styleClass="h-full white-space-nowrap">
                 <div class="subnet__entries" *ngIf="subnet.pools; else emptySection">
                     <div *ngFor="let p of subnet.pools" class="subnet__entry">
@@ -80,7 +80,7 @@
         </div>
 
         <!-- Prefix delegations -->
-        <div class="col flex-grow-0" *ngIf="isIPv6">
+        <div class="col" *ngIf="isIPv6">
             <p-fieldset legend="Prefix delegations" styleClass="h-full white-space-nowrap">
                 <div class="subnet__entries" *ngIf="subnet.prefixDelegationPools; else emptySection">
                     <app-delegated-prefix-bar
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Hosts -->
-        <div class="col flex-grow-0">
+        <div class="col">
             <p-fieldset legend="Related host reservations" styleClass="h-full white-space-nowrap">
                 <div class="subnet__entries" *ngIf="subnet.hosts; else emptySection">
                     <div *ngFor="let h of subnet.hosts" class="subnet__entry">
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Local subnets -->
-        <div class="col">
+        <div class="col flex-basis-50">
             <p-fieldset legend="Daemon subnets" styleClass="h-full">
                 <table class="w-full border-spacing-3">
                     <tr>
