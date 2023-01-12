@@ -1,3 +1,9 @@
+* 264 [func] slawek
+
+    A dedicated tab on the subnet list page presents the subnet-related
+    details.
+    (Gitlab #931)
+
 * 263 [func] slawek
 
     Extended the UI to display the delegated prefix pools and their
