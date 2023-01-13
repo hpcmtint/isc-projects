@@ -102,7 +102,7 @@
         >
             <ng-template pTemplate="header">
                 <tr>
-                    <th rowspan="2" style="width: 5rem">Config subnet ID</th>
+                    <th rowspan="2" style="width: 5rem">Subnet ID</th>
                     <th rowspan="2" style="width: 11rem">Subnet</th>
                     <th colspan="3" style="width: 16rem">Addresses</th>
                     <th colspan="3" style="width: 16rem" *ngIf="isAnyIPv6SubnetVisible">Prefixes</th>
@@ -127,7 +127,7 @@
             <ng-template pTemplate="body" let-sn>
                 <tr class="alternate-list">
                     <td>
-                        {{ sn.localSubnets?.[0]?.id }}
+                        {{ sn.id }}
                     </td>
                     <td>
                         <app-subnet-bar [subnet]="sn"></app-subnet-bar>
@@ -226,7 +226,7 @@
     </div>
 </div>
 
-<!-- Single subnet tab -->
+<!-- Subnet tab template -->
 <ng-template #openedTabBlock>
     <app-subnet-tab [subnet]="openedSubnets[activeTabIndex]" [grafanaUrl]="grafanaUrl"></app-subnet-tab>
 </ng-template>
