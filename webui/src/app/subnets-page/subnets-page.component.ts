@@ -160,7 +160,9 @@ export class SubnetsPageComponent implements OnInit, OnDestroy {
         this.queryParams.appId = params.get('appId')
     }
 
-    // Set the value of the filter text using the URL query parameters.
+    /**
+     * Set the value of the filter text using the URL query parameters.
+     */
     updateFilterText(params) {
         let text = ''
         if (params.get('text')) {
