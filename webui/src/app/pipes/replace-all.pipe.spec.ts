@@ -8,7 +8,7 @@ describe('ReplaceAllPipe', () => {
 
     it('should replace a raw string properly', () => {
         const pipe = new ReplaceAllPipe()
-        expect(pipe.transform("foo-bar-baz", "ba", "ki")).toBe("foo-kir-kiz")
+        expect(pipe.transform('foo-bar-baz', 'ba', 'ki')).toBe('foo-kir-kiz')
     })
 
     it('should not change the string for a pattern that does not occur', () => {
