@@ -6,37 +6,37 @@ describe('CapitalizeFirstPipe', () => {
         expect(pipe).toBeTruthy()
     })
 
-    it('capitalize null should return an empty string', () => {
+    it('should capitalize null to an empty string', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform(null)).toBe('')
     })
 
-    it('capitalize an empty string should return an empty string', () => {
+    it('should capitalize an empty string to an empty string', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('')).toBe('')
     })
 
-    it('capitalize a number string should return the same number', () => {
+    it('should capitalize a number string to the same number', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('42')).toBe('42')
     })
 
-    it('capitalize a string should returns a string with first upper character', () => {
+    it('should capitalize a string to a string with first upper character', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('foo')).toBe('Foo')
     })
 
-    it('capitalize a multi-word string should change only the first word', () => {
+    it('should change only the first word in a multi-word string', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('foo bar BAZ')).toBe('Foo bar BAZ')
     })
 
-    it('capitalize a string that starts with upper case should not change the string', () => {
+    it('should not change a string that starts with upper case', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('Foo')).toBe('Foo')
     })
 
-    it('capitalize a unicode string should work well', () => {
+    it('should capitalize a unicode string properly', () => {
         const pipe = new CapitalizeFirstPipe()
         expect(pipe.transform('ξσ')).toBe('Ξσ') // Greek Xi and Sigma.
     })

@@ -77,7 +77,7 @@ export function durationToString(duration, short = false) {
 /**
  * Present count in human readable way ie. big numbers get unit, e.g. 102 M instead of 102342543.
  */
-export function humanCount(count: string | bigint | number) {
+export function humanCount(count: string | bigint | number | null) {
     if (count == null || (typeof count !== 'number' && typeof count !== 'bigint') || Number.isNaN(count)) {
         return count + '' // Casting to string safe for null and undefined
     }
