@@ -2,9 +2,14 @@ package agent
 
 import (
 	"testing"
+	"fmt"
+	"os"
+	"io/ioutil"
 
 	"github.com/stretchr/testify/require"
 	storkutil "isc.org/stork/util"
+	"isc.org/stork/testutil"
+	log "github.com/sirupsen/logrus"
 )
 
 // Test the function which extracts the list of log files from the Bind9
@@ -124,8 +129,9 @@ threads support is enabled`
 // Tests if getCtrlAddressFromBind9Config() can handle the right
 // cases:
 // - CASE 1: no controls block (use defaults)
-// - CASE 2: controls block with no options (return nothing)
-// - CASE 3: controls block with options (return the address).
+// - CASE 2: empty controls block (returns nothing)
+// - CASE 3: empty multi-line controls block with no options (returns nothing)
+// - CASE 4: controls block with options (return the address).
 func TestGetCtrlAddressFromBind9Config(t *testing.T) {
 	// Define test cases
 	type testCase struct {
@@ -175,4 +181,58 @@ func TestGetCtrlAddressFromBind9Config(t *testing.T) {
 			require.Equal(t, c, test.expKey)
 		})
 	}
+}
+
+type catCommandExecutor struct{}
+
+// Pretends to run named-checkconf, but instead does a simple read of the
+// specified files contents, similar to "cat" command.
+func (e *catCommandExecutor) Output(command string, args ...string) ([]byte, error) {
+	fmt.Printf("Pretending to run %s, and reading contents of %s instead.\n", command, args[1])
+
+	text, err := ioutil.ReadFile(args[1])
+    if err != nil {
+		// Reading failed.
+        return nil, err
+    }
+
+	return []byte(text), nil
+}
+
+// Checks if BIND9 detection takes STORK_BIND9_CONFIG env var into account
+func TestDetectBind9EnvVar(t *testing.T) {
+	sb := testutil.NewSandbox()
+	defer sb.Close()
+
+	restore := testutil.CreateEnvironmentRestorePoint()
+	defer restore()
+
+	// create alternate config file...
+	varPath, err := sb.Join("testing.conf")
+	sb.Write("testing.conf", "controls { inet 192.0.2.1 port 1234 allow { localhost; }; };")
+
+	// ... and point STORK_BIND9_CONFIG to it
+	os.Setenv("STORK_BIND9_CONFIG", varPath)
+	log.SetLevel(log.DebugLevel)
+
+	// check BIND 9 app detection
+	executor := &catCommandExecutor{}
+	cfgPath, err := sb.Join("etc/path.cfg")
+	fmt.Printf("#### cfgPath = %s\n", cfgPath)
+	require.NoError(t, err)
+	namedDir, err := sb.JoinDir("usr/sbin")
+	require.NoError(t, err)
+	_, err = sb.Join("usr/bin/named-checkconf")
+	require.NoError(t, err)
+	_, err = sb.Join("usr/sbin/rndc")
+	require.NoError(t, err)
+	app := detectBind9App([]string{"", namedDir, fmt.Sprintf("-c %s", cfgPath)}, "", executor)
+	require.NotNil(t, app)
+	require.Equal(t, app.GetBaseApp().Type, AppTypeBind9)
+	require.Len(t, app.GetBaseApp().AccessPoints, 1)
+	point := app.GetBaseApp().AccessPoints[0]
+	require.Equal(t, AccessPointControl, point.Type)
+	require.Equal(t, "192.0.2.1", point.Address)
+	require.EqualValues(t, 1234, point.Port)
+	require.Empty(t, point.Key)
 }

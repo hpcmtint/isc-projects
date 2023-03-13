@@ -516,12 +516,16 @@ func detectBind9App(match []string, cwd string, executor storkutil.CommandExecut
 		log.Warnf("Cannot find BIND 9 %s: %s", namedCheckconfExec, err)
 		return nil
 	}
+
+	fmt.Printf("#### Running %s -p %s\n", namedCheckconfPath, bind9ConfPath)
 	out, err := executor.Output(namedCheckconfPath, "-p", bind9ConfPath)
 	if err != nil {
 		log.Warnf("Cannot parse BIND 9 config file %s: %+v; %s", bind9ConfPath, err, out)
 		return nil
 	}
 	cfgText := string(out)
+
+	fmt.Printf("#### BIND 9 config: %s", cfgText)
 
 	// look for control address in config
 	ctrlAddress, ctrlPort, ctrlKey := getCtrlAddressFromBind9Config(cfgText)
