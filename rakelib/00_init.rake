@@ -655,11 +655,29 @@ end
 # Toolkits
 BUNDLE = File.join(ruby_tools_bin_dir, "bundle")
 file BUNDLE => [GEM, ruby_tools_dir, ruby_tools_bin_dir] do
-    sh GEM, "install",
-            "--minimal-deps",
-            "--no-document",
-            "--install-dir", ruby_tools_dir,
-            "bundler:#{bundler_ver}"
+    # Get gem version.
+    stdout, stderr, status = Open3.capture3(GEM, "--version")
+    if status == 0
+        gem_version = stdout
+    else
+        puts "ERROR: gem --version failed:\n%s\n%s" % stdout, stderr
+        fail
+    end
+
+    # Determine parameters based on version.
+    gem_parameters = [
+      "install",
+      "--minimal-deps",
+      "--no-document",
+      "--install-dir", ruby_tools_dir,
+      "bundler:#{bundler_ver}"
+    ]
+    if "3.0.0" <= gem_version
+        gem_parameters.append "--no-user-install"
+    end
+
+    # Call gem install.
+    sh GEM, *gem_parameters
 
     if !File.exists? BUNDLE
         # Workaround for old Ruby versions
