@@ -1,3 +1,9 @@
+* 300 [doc] tomek
+
+    The Stork Developer's Guide is now a stand-alone document. You can
+    build it using rake `build:devguide` command.
+    (Gitlab #786)
+
 * 299 [bug] marcin
 
     Fixed a bug in the Stork server that could sometimes cause a modification
