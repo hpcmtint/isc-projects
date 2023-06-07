@@ -180,6 +180,48 @@ namespace :hook do
         ENV["REL"] = package_rel
         Rake::Task["utils:list_package_deps"].invoke
     end
+
+    desc "Fetch official hook sources
+        HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}
+        HOOK - name of the hook (e.g: ldap, example) - optional, if not provided
+               all hooks are fetched.
+    "
+    task :fetch_official => [GIT] do
+        hook_directory = ENV["HOOK_DIR"] || DEFAULT_HOOK_DIRECTORY
+        requested_hook = nil
+        hook_prefix = 'stork-hook-'
+        if !ENV["HOOK"].nil?
+            requested_hook = "#{hook_prefix}#{ENV["HOOK"]}"
+        end
+
+        official_hook_repositories = [
+            'git@gitlab.isc.org:isc-projects/stork-hook-ldap.git',
+            'git@gitlab.isc.org:isc-projects/stork-hook-example.git'
+        ]
+
+        official_hook_repositories.each do |url|
+            directory_start_idx = url.rindex('/') + 1
+            directory_end_idx = -('.git'.length + 1)
+            directory_name = url[directory_start_idx..directory_end_idx]
+            hook_name = directory_name[hook_prefix.length..-1]
+
+            Dir.chdir hook_directory do
+                if !requested_hook.nil? && requested_hook != directory_name
+                    puts "Hook '#{hook_name}' is not selected. Skip."
+                    next
+                end
+
+                directory_path = File.expand_path directory_name
+                if File.exists? directory_path
+                    puts "Hook '#{hook_name}' is already fetched. Skip."
+                    next
+                end
+
+                puts "Clone '#{hook_name}' hook..."
+                sh GIT, "clone", url
+            end
+        end
+    end
 end
 
 namespace :run do
