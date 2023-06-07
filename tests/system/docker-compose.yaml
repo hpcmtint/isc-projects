@@ -392,6 +392,14 @@ services:
     depends_on:
       - postgres
 
+  hook-ldap:
+    build:
+      context: .
+      dockerfile: $PWD/docker/images/stork.Dockerfile
+      target: hook-ldap
+    volumes:
+      - hook-ldap-volume:/app/hooks/stork-hook-ldap
+
   postgres:
     image: postgres:11
     command: -c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
@@ -452,3 +460,6 @@ networks:
     ipam:
       config:
         - subnet: 3001:db8:1:42::/64
+
+volumes:
+  hook-ldap-volume:

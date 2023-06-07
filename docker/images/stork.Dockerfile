@@ -205,6 +205,14 @@ ENTRYPOINT [ "/usr/bin/stork-server" ]
 EXPOSE 8080
 HEALTHCHECK CMD [ "wget", "--delete-after", "-q", "http://localhost:8080/api/version" ]
 
+# Hooks
+FROM codebase-backend AS hook-ldap
+WORKDIR /app/hooks/stork-hook-ldap
+COPY hooks/stork-hook-ldap/go.sum hooks/stork-hook-ldap/go.mod ./
+RUN go mod download
+COPY hooks/stork-hook-ldap/ .
+ENTRYPOINT [ "rake", "build" ]
+
 #################################
 ### Kea / Bind9 + Stork Agent ###
 #################################
