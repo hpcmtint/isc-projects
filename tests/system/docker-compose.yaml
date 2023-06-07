@@ -413,6 +413,16 @@ services:
     ports:
       - "42432:5432"
 
+  openldap:
+    image: bitnami/openldap:2
+    environment:
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=adminpassword
+      - LDAP_USERS=user1,user2
+      - LDAP_PASSWORDS=password1,password2
+    networks:
+      - storknet
+
 networks:
   storknet:
     enable_ipv6: true
