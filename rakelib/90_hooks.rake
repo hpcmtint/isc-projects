@@ -6,6 +6,10 @@
 ### Files ###
 #############
 
+_main_module = "isc.org/stork"
+_main_module_with_version = "#{_main_module}@v0.0.0"
+_main_remote_repository_url = "gitlab.isc.org/isc-projects/stork/backend"
+
 default_hook_directory_rel = "hooks"
 DEFAULT_HOOK_DIRECTORY = File.expand_path default_hook_directory_rel
 
@@ -119,47 +123,76 @@ namespace :hook do
         TAG - use the given tag from the remote repository, if specified but empty use the current version as tag - optional
         If no COMMIT or TAG are specified then it remaps to use the local project."
     task :remap_core => [GIT, GO] do
-        main_module = "isc.org/stork"
-        main_module_directory_abs = File.expand_path "backend"
-        remote_url = "gitlab.isc.org/isc-projects/stork/backend"
-        core_commit, _ = Open3.capture2 GIT, "rev-parse", "HEAD"
+        if !ENV["COMMIT"].nil?
+            puts "Remap to use a specific commit"
+            Rake::Task["hook:remap_core:commit"].invoke()
+        elsif !ENV["TAG"].nil?
+            puts "Remap to use a specific tag"
+            Rake::Task["hook:remap_core:tag"].invoke()
+        else
+            puts "Remap to use the local directory"
+            Rake::Task["hook:remap_core:local"].invoke()
+        end
+    end
 
-        forEachHook(lambda { |dir_name|
-            target = nil
+    namespace :remap_core do
+        desc "Remap the dependency path to the Stork core. It specifies the source
+            of the core dependency as remote repository referenced by commit.
+            HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}
+            COMMIT - use the given commit from the remote repository, if specified but empty use the current hash - optional"
+        task :commit => [GO, GIT] do
+            commit = ENV["COMMIT"]
+            if commit.nil? || commit == ""
+                commit, _ = Open3.capture2 GIT, "rev-parse", "HEAD"
+            end
 
-            if !ENV["COMMIT"].nil?
-                puts "Remap to use a specific commit"
-                commit = ENV["COMMIT"]
-                if commit == ""
-                    commit = core_commit
-                end
+            target = "#{_main_remote_repository_url}@#{commit}"
 
-                target = "#{remote_url}@#{commit}"
-            elsif !ENV["TAG"].nil?
-                puts "Remap to use a specific tag"
-                tag = ENV["TAG"]
-                if tag == ""
-                    tag = STORK_VERSION
-                end
+            forEachHook(lambda { |dir_name|
+                sh GO, "mod", "edit", "-replace", "#{_main_module}=#{target}"
+                sh GO, "mod", "tidy"
+            })
+        end
 
-                if !tag.start_with? "v"
-                    tag = "v" + tag
-                end
+        desc "Remap the dependency path to the Stork core. It specifies the source
+            of the core dependency as remote repository referenced by tag.
+            HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}
+            TAG - use the given tag from the remote repository, if specified but empty use the current version as tag - optional"
+        task :tag => [GO] do
+            tag = ENV["TAG"]
+            if tag.nil? || tag == ""
+                tag = STORK_VERSION
+            end
 
-                target = "#{remote_url}@#{tag}"
-            else
-                puts "Remap to use the local directory"
+            if !tag.start_with? "v"
+                tag = "v" + tag
+            end
+
+            target = "#{_main_remote_repository_url}@#{tag}"
+
+            forEachHook(lambda { |dir_name|
+                sh GO, "mod", "edit", "-replace", "#{_main_module}=#{target}"
+                sh GO, "mod", "tidy"
+            })
+        end
+
+        desc "Remap the dependency path to the Stork core. It specifies the source
+            of the core dependency as local repository."
+        task :local => [GO] do
+            main_module_directory_abs = File.expand_path "backend"
+
+            forEachHook(lambda { |dir_name|
                 require 'pathname'
                 main_directory_abs_obj = Pathname.new(main_module_directory_abs)
                 module_directory_abs_obj = Pathname.new(".").realdirpath
                 module_directory_rel_obj = main_directory_abs_obj.relative_path_from module_directory_abs_obj
 
                 target = module_directory_rel_obj.to_s
-            end
 
-            sh GO, "mod", "edit", "-replace", "#{main_module}=#{target}"
-            sh GO, "mod", "tidy"
-        })
+                sh GO, "mod", "edit", "-replace", "#{_main_module}=#{target}"
+                sh GO, "mod", "tidy"
+            })
+        end
     end
 
     desc "List dependencies of a given callout specification package
