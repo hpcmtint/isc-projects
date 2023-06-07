@@ -37,7 +37,7 @@ namespace :hook do
     desc "Init new hook directory
         MODULE - the name  of the hook module used in the go.mod file and as the hook directory name - required
         HOOK_DIR - the directory containing the hooks - optional, default: #{default_hook_directory_rel}"
-    task :init => [GO] do
+    task :init => [GO, GIT] do
         module_name = ENV["MODULE"]
         if module_name.nil?
             fail "You must provide the MODULE variable with the module name"
@@ -58,7 +58,7 @@ namespace :hook do
         sh "mkdir", "-p", destination
 
         Dir.chdir(destination) do
-            sh "git", "init"
+            sh GIT, "init"
             sh GO, "mod", "init", module_name
             sh GO, "mod", "edit", "-require", main_module
             sh GO, "mod", "edit", "-replace", "#{main_module}=#{module_directory_rel}"
@@ -71,7 +71,7 @@ namespace :hook do
     desc "Build all hooks. Remap hooks to use the current codebase.
         DEBUG - build hooks in debug mode, the envvar is passed through to the hook Rakefile - default: false
         HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}"
-    task :build => [GO, :remap_core] do
+    task :build => [GO, GIT, :remap_core] do
         require 'tmpdir'
 
         hook_directory = ENV["HOOK_DIR"] || DEFAULT_HOOK_DIRECTORY
@@ -99,7 +99,7 @@ namespace :hook do
 
         # The plugin filenames after remap lack the version.
         # We need to append it.
-        commit, _ = Open3.capture2 "git", "rev-parse", "--short", "HEAD"
+        commit, _ = Open3.capture2 GIT, "rev-parse", "--short", "HEAD"
         commit = commit.strip()
 
         Dir[File.join(hook_directory, "*.so")].each do |path|
@@ -118,11 +118,11 @@ namespace :hook do
         COMMIT - use the given commit from the remote repository, if specified but empty use the current hash - optional
         TAG - use the given tag from the remote repository, if specified but empty use the current version as tag - optional
         If no COMMIT or TAG are specified then it remaps to use the local project."
-    task :remap_core => [GO] do
+    task :remap_core => [GIT, GO] do
         main_module = "isc.org/stork"
         main_module_directory_abs = File.expand_path "backend"
         remote_url = "gitlab.isc.org/isc-projects/stork/backend"
-        core_commit, _ = Open3.capture2 "git", "rev-parse", "HEAD"
+        core_commit, _ = Open3.capture2 GIT, "rev-parse", "HEAD"
 
         forEachHook(lambda { |dir_name|
             target = nil
