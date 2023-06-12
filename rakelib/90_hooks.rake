@@ -75,7 +75,7 @@ namespace :hook do
     desc "Build all hooks. Remap hooks to use the current codebase.
         DEBUG - build hooks in debug mode, the envvar is passed through to the hook Rakefile - default: false
         HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}"
-    task :build => [GO, GIT, :remap_core] do
+    task :build => [GO, "hook:remap_core:local"] do
         require 'tmpdir'
 
         hook_directory = ENV["HOOK_DIR"] || DEFAULT_HOOK_DIRECTORY
@@ -122,7 +122,7 @@ namespace :hook do
         COMMIT - use the given commit from the remote repository, if specified but empty use the current hash - optional
         TAG - use the given tag from the remote repository, if specified but empty use the current version as tag - optional
         If no COMMIT or TAG are specified then it remaps to use the local project."
-    task :remap_core => [GIT, GO] do
+    task :remap_core do
         if !ENV["COMMIT"].nil?
             puts "Remap to use a specific commit"
             Rake::Task["hook:remap_core:commit"].invoke()
@@ -193,6 +193,13 @@ namespace :hook do
                 sh GO, "mod", "tidy"
             })
         end
+    end
+
+    desc "Install hooks dependencies"
+    task :prepare => [GO] do
+        forEachHook(lambda { |dir_name|
+            sh GO, "mod", "download"
+        })
     end
 
     desc "List dependencies of a given callout specification package

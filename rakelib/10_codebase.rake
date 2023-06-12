@@ -25,22 +25,6 @@ end
 ### Clean ###
 #############
 
-# Ruby has a built-in solution for handling CLEAN and CLOBBER arrays and
-# deleting unnecessary files. But loading the 'rake' module significantly reduces
-# the performance. For these reason we implement the clean and clobber tasks
-# ourselves.
-#
-# Clean up the project by deleting scratch files and backup files. Add files to
-# the CLEAN FileList to have the clean target handle them.
-# Unlike the standard Rake Clean task, this implementation recursively removes
-# the directories.
-CLEAN = FileList[]
-# Clobber all generated and non-source files in a project. The task depends on
-# clean, so all the CLEAN files will be deleted as well as files in the CLOBBER
-# FileList. The intent of this task is to return a project to its pristine,
-# just unpacked state.
-CLOBBER = FileList[]
-
 # Ruby bundler local file
 CLOBBER.append "rakelib/init_debs/.bundle/config"
 
