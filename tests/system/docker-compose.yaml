@@ -83,6 +83,17 @@ services:
     depends_on:
       - postgres
 
+  server-ldap:
+    extends: server-base
+    volumes:
+      - hook-ldap-volume:/app/hooks:ro
+    profiles:
+      - ldap
+    depends_on:
+      - hook-ldap
+      - postgres
+      - openldap
+
   agent-kea-base:
     restart: always
     build:
@@ -398,7 +409,9 @@ services:
       dockerfile: $PWD/docker/images/stork.Dockerfile
       target: hook-ldap
     volumes:
-      - hook-ldap-volume:/app/hooks/stork-hook-ldap
+      - hook-ldap-volume:/hooks
+    profiles:
+      - ldap
 
   postgres:
     image: postgres:11
@@ -428,6 +441,8 @@ services:
       - LDAP_ADMIN_PASSWORD=adminpassword
       - LDAP_USERS=user1,user2
       - LDAP_PASSWORDS=password1,password2
+    profiles:
+      - ldap
     networks:
       - storknet
 

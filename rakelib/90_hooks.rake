@@ -100,7 +100,12 @@ namespace :hook do
                 sh "cp", *mod_files.collect { |f| File.join(temp, f) }, "."
             end
         })
+    end
 
+    desc "Rename the hook files to the conventional names
+        HOOK_DIR - the hook (plugin) directory - optional, default: #{default_hook_directory_rel}"
+    task :rename => [GIT] do
+        hook_directory = ENV["HOOK_DIR"] || DEFAULT_HOOK_DIRECTORY
         # The plugin filenames after remap lack the version.
         # We need to append it.
         commit, _ = Open3.capture2 GIT, "rev-parse", "--short", "HEAD"

@@ -28,9 +28,26 @@ def detect_compose_binary():
     raise Exception("docker compose or docker-compose are not available")
 
 
+def detect_hooks():
+    """Detect available hooks by directory lookup."""
+    main_hook_directory = os.environ.get("HOOK_DIRECTORY", "hooks")
+    hook_directories = {
+        "stork-hook-ldap": "ldap",
+        "stork-hook-example": "example"
+    }
+
+    hooks = []
+
+    for directory, name in hook_directories.items():
+        if os.path.exists(os.path.join(project_directory, main_hook_directory, directory)):
+            hooks.append(name)
+    return hooks
+
+
 def create_docker_compose(env_vars: Dict[str, str] = None,
                           build_args: Dict[str, str] = None,
-                          compose_detector=detect_compose_binary) -> DockerCompose:
+                          compose_detector=detect_compose_binary,
+                          hook_detector=detect_hooks) -> DockerCompose:
     """
     Creates the docker-compose controller that uses the system tests
     docker-compose file.
@@ -56,6 +73,10 @@ def create_docker_compose(env_vars: Dict[str, str] = None,
     profiles = []
     if os.environ.get('CS_REPO_ACCESS_TOKEN', '') != '':
         profiles.append("premium")
+
+    hooks = hook_detector()
+    if "ldap" in hooks:
+        profiles.append("ldap")
 
     return DockerCompose(
         project_directory,

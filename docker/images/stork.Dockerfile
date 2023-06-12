@@ -223,7 +223,9 @@ COPY hooks/stork-hook-ldap/ .
 WORKDIR /app/rakelib
 COPY rakelib/90_hooks.rake ./
 WORKDIR /app
-ENTRYPOINT [ "cp", "hooks/*.so", "/hooks" ]
+RUN rake hook:build
+WORKDIR /hooks
+ENTRYPOINT [ "/bin/sh", "-c", "cp /app/hooks/*.so ./" ]
 
 #################################
 ### Kea / Bind9 + Stork Agent ###

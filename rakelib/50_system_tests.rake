@@ -232,6 +232,10 @@ namespace :systemtest do
             puts "Use the Kea premium containers"
             profiles.append "--profile", "premium"
         end
+        if Dir.exists? "hooks/stork-hook-ldap"
+            puts "Use the LDAP containers"
+            profiles.append "--profile", "ldap"
+        end
 
         sh *DOCKER_COMPOSE,
             "-f", File.expand_path(File.join(system_tests_dir, "docker-compose.yaml")),
