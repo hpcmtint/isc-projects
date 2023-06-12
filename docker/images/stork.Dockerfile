@@ -223,7 +223,8 @@ COPY hooks/stork-hook-ldap/ .
 WORKDIR /app/rakelib
 COPY rakelib/90_hooks.rake ./
 WORKDIR /app
-RUN rake hook:build
+# The server runs in debug mode, so hooks must be built in the same way.
+RUN rake hook:build DEBUG=true
 WORKDIR /hooks
 ENTRYPOINT [ "/bin/sh", "-c", "cp /app/hooks/*.so ./" ]
 
