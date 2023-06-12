@@ -85,6 +85,8 @@ services:
 
   server-ldap:
     extends: server-base
+    environment:
+      STORK_SERVER_HOOK_DIRECTORY: /app/hooks
     volumes:
       - hook-ldap-volume:/app/hooks:ro
     profiles:

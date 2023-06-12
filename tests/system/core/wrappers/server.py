@@ -25,6 +25,8 @@ from openapi_client.model.event import Event
 from openapi_client.model.host import Host
 from openapi_client.model.puller import Puller
 from openapi_client.model.dhcp_daemon import DhcpDaemon
+from openapi_client.model.authentication_methods import AuthenticationMethods
+from openapi_client.model.authentication_method import AuthenticationMethod
 
 
 T1 = TypeVar("T1")
@@ -258,6 +260,12 @@ class Server(ComposeServiceWrapper):
         elif status == 204:
             return ConfigReports(total=0, items=[])
         return reports
+
+    def list_authentication_methods(self) -> List[AuthenticationMethod]:
+        """List the authentication methods supported by the server."""
+        api_instance = UsersApi(self._api_client)
+        authentication_methods: AuthenticationMethods = api_instance.get_authentication_methods()
+        return authentication_methods["items"]
 
     def overview(self) -> DhcpOverview:
         """Fetches the DHCP overview. Warning! The OpenAPI client only
