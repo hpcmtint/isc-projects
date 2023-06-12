@@ -249,6 +249,13 @@ namespace :systemtest do
     task :down do
         Rake::Task["systemtest:sh"].invoke("down", "--volumes", "--remove-orphans")
     end
+
+    namespace :up do
+        desc 'Run Open-LDAP container.'
+        task :ldap do
+            Rake::Task["systemtest:sh"].invoke("up", "-d", "openldap")
+        end
+    end
 end
 
 namespace :gen do
