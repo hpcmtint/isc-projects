@@ -441,8 +441,6 @@ services:
     environment:
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=adminpassword
-      - LDAP_USERS=user1,user2
-      - LDAP_PASSWORDS=password1,password2
     ports:
       - '1389:1389'
       - '1636:1636'
@@ -450,6 +448,8 @@ services:
       - ldap
     networks:
       - storknet
+    volumes:
+      - $PWD/tests/system/config/openldap/tree.ldif:/ldifs/tree.ldif
 
 networks:
   storknet:
