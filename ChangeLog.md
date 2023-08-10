@@ -1,3 +1,8 @@
+[func] slawek
+
+    Lorem ipsum dolor sit amend.
+    (Gitlab #1040)
+
 Stork 1.12.0 released on 2023-08-02.
 
 * 322 [func] slawek
