@@ -489,9 +489,7 @@ func (r *RestAPI) UpdateHostBegin(ctx context.Context, params dhcp.UpdateHostBeg
 	var err error
 	cctx, err = r.ConfigManager.GetKeaModule().BeginHostUpdate(cctx, params.HostID)
 	if err != nil {
-		var (
-			hostNotFound *config.HostNotFoundError
-		)
+		var hostNotFound *config.HostNotFoundError
 		switch {
 		case errors.As(err, &hostNotFound):
 			// Failed to find host.
@@ -501,7 +499,7 @@ func (r *RestAPI) UpdateHostBegin(ctx context.Context, params dhcp.UpdateHostBeg
 				Message: &msg,
 			})
 			return rsp
-		case errors.Is(err, config.LockError):
+		case errors.Is(err, config.ErrLock):
 			// Failed to lock daemons.
 			msg := err.Error()
 			log.WithError(err).Error("Failed to lock daemons for host update")

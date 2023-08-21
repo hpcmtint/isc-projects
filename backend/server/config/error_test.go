@@ -14,7 +14,7 @@ func TestHostNotFoundError(t *testing.T) {
 
 // Test creation of an error which indicates a problem with locking
 // configuration.
-func TestLockError(t *testing.T) {
-	err := LockError
+func TestErrLock(t *testing.T) {
+	err := ErrLock
 	require.EqualError(t, err, "problem with locking daemons configuration")
 }
