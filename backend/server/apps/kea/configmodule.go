@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/pkg/errors"
 	pkgerrors "github.com/pkg/errors"
 	keaconfig "isc.org/stork/appcfg/kea"
 	keactrl "isc.org/stork/appctrl/kea"
@@ -205,7 +206,7 @@ func (module *ConfigModule) BeginHostUpdate(ctx context.Context, hostID int64) (
 	// Try to lock configurations.
 	ctx, err = module.manager.Lock(ctx, daemonIDs...)
 	if err != nil {
-		return ctx, pkgerrors.WithStack(config.NewLockError())
+		return ctx, errors.Wrap(config.LockError, err.Error())
 	}
 	// Create transaction state.
 	state := config.NewTransactionStateWithUpdate[ConfigRecipe]("kea", "host_update", daemonIDs...)

@@ -1,6 +1,10 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+)
 
 // An error returned when specified host is not found in the database.
 type HostNotFoundError struct {
@@ -20,14 +24,4 @@ func (e HostNotFoundError) Error() string {
 }
 
 // An error returned when it was not possible to lock daemons' configuration.
-type LockError struct{}
-
-// Creates new instance of the LockError.
-func NewLockError() error {
-	return &LockError{}
-}
-
-// Returns error string.
-func (e LockError) Error() string {
-	return "problem with locking daemons configuration"
-}
+var LockError = errors.New("problem with locking daemons configuration")
