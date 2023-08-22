@@ -1,3 +1,27 @@
+Stork 42.42 released on 2023-08-23.
+
+* 326 [build] slawek
+
+    Changed the way on how the Changelog is updated. It is now composed
+    from the separate files that are merged on release.
+    (Gitlab #1120)
+
+* 325 [build] slawek
+
+    Rebase without triggering CI pipelines.
+    (Gitlab #1120)
+
+* 324 [build] slawek
+
+    There should be no conflict.
+    (Gitlab #1120)
+
+* 323 [build] slawek
+
+    It should be automatically merged without re-rebase it if the another
+    MR is merged earlier.
+    (Gitlab #1120)
+
 Stork 1.12.0 released on 2023-08-02.
 
 * 322 [func] slawek
