@@ -153,6 +153,9 @@ namespace :release do
             next
         end
 
+        # Reverse the entries.
+        entries.reverse!
+
         # Concat the entries.
         merged = entries.join("\n\n")
 
