@@ -118,7 +118,8 @@ import { AddressPoolBarComponent } from './address-pool-bar/address-pool-bar.com
 import { UtilizationStatsChartComponent } from './utilization-stats-chart/utilization-stats-chart.component'
 import { UtilizationStatsChartsComponent } from './utilization-stats-charts/utilization-stats-charts.component'
 import { CascadedParametersBoardComponent } from './cascaded-parameters-board/cascaded-parameters-board.component'
-import { SharedNetworkTabComponent } from './shared-network-tab/shared-network-tab.component'
+import { SharedNetworkTabComponent } from './shared-network-tab/shared-network-tab.component';
+import { HostDataSourceLabelComponent } from './host-data-source-label/host-data-source-label.component'
 
 /** Create the OpenAPI client configuration. */
 export function cfgFactory() {
@@ -193,6 +194,7 @@ export function cfgFactory() {
         UtilizationStatsChartsComponent,
         CascadedParametersBoardComponent,
         SharedNetworkTabComponent,
+        HostDataSourceLabelComponent,
     ],
     imports: [
         BrowserModule,
