@@ -1,4 +1,4 @@
-import { HostDataSourceLabelComponent } from "./host-data-source-label.component"
+import { HostDataSourceLabelComponent } from './host-data-source-label.component'
 
 import { Story, Meta, moduleMetadata } from '@storybook/angular'
 
@@ -7,7 +7,6 @@ export default {
     component: HostDataSourceLabelComponent,
 } as Meta
 
-
 const Template: Story<HostDataSourceLabelComponent> = (args: HostDataSourceLabelComponent) => ({
     props: args,
 })
@@ -15,15 +14,15 @@ const Template: Story<HostDataSourceLabelComponent> = (args: HostDataSourceLabel
 export const Config = Template.bind({})
 
 Config.args = {
-    dataSource: 'config'
+    dataSource: 'config',
 }
 
 export const Api = Template.bind({})
 Api.args = {
-    dataSource: 'api'
+    dataSource: 'api',
 }
 
 export const Unknown = Template.bind({})
 Unknown.args = {
-    dataSource: 'unknown'
+    dataSource: 'unknown',
 }
