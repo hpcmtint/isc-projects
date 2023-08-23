@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { Router, ActivatedRoute } from '@angular/router'
+import { Router, ActivatedRoute, ParamMap } from '@angular/router'
 
 import { MenuItem, MessageService } from 'primeng/api'
 import { Table } from 'primeng/table'
@@ -10,6 +10,7 @@ import { concat, of, Subscription } from 'rxjs'
 import { filter, take } from 'rxjs/operators'
 import { HostForm } from '../forms/host-form'
 import { Host, LocalHost } from '../backend'
+import { hasDifferentLocalHostData } from '../hosts'
 
 /**
  * Enumeration for different host tab types displayed by the component.
@@ -328,7 +329,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      * This update is triggered when user types in the filter box.
      * @param params query parameters received from activated route.
      */
-    private updateQueryParams(params) {
+    private updateQueryParams(params: ParamMap) {
         this.queryParams.text = params.get('text')
 
         let filterTextFormatErrors: string[] = []
@@ -378,7 +379,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      *
      * @param id host ID.
      */
-    private openHostTab(id) {
+    private openHostTab(id: number) {
         let index = this.openedTabs.findIndex(
             (t) => (t.tabType === HostTabType.Host || t.tabType === HostTabType.EditHost) && t.host.id === id
         )
@@ -439,7 +440,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      * @param tabIndex index of the tab to be closed. It must be equal to or
      *        greater than 1.
      */
-    closeHostTab(event, tabIndex) {
+    closeHostTab(event: Event, tabIndex: number) {
         if (
             this.openedTabs[tabIndex - 1].tabType === HostTabType.NewHost &&
             this.openedTabs[tabIndex - 1].form.transactionId > 0 &&
@@ -509,7 +510,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      *
      * @param tabIndex index of the tab to be selected.
      */
-    private switchToTab(tabIndex) {
+    private switchToTab(tabIndex: number) {
         if (this.activeTabIndex === tabIndex) {
             return
         }
@@ -590,7 +591,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      * @param host host information from which the label should be generated.
      * @returns generated host label.
      */
-    getHostLabel(host) {
+    getHostLabel(host: Host) {
         if (host.addressReservations && host.addressReservations.length > 0) {
             return host.addressReservations[0].address
         }
@@ -606,12 +607,30 @@ export class HostsPageComponent implements OnInit, OnDestroy {
         return '[' + host.id + ']'
     }
 
+    // Returns the state of the local hosts from the same application/daemon.
+    // The state is null if the host reservations are defined only in the
+    // configuration file or host database. If they are defined in both places
+    // the state is one of the following:
+    // - duplicate - reservations have the same boot fields, client classes, and
+    //               DHCP options
+    // - conflict - reservations are configured differently.
+    getLocalHostsState(localHosts: LocalHost[]): 'conflict' | 'duplicate' | null {
+        if (localHosts.length <= 1) {
+            return null
+        }
+        if (hasDifferentLocalHostData(localHosts)) {
+            return 'conflict'
+        } else {
+            return 'duplicate'
+        }
+    }
+
     /**
      * Filters the list of hosts by text. The text may contain key=val
      * pairs allowing filtering by various keys. Filtering is realized
      * server-side.
      */
-    keyUpFilterText(event) {
+    keyUpFilterText(event: KeyboardEvent) {
         if (this.filterText.length >= 2 || event.key === 'Enter') {
             const queryParams = extractKeyValsAndPrepareQueryParams(
                 this.filterText,
@@ -671,7 +690,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      *
      * @param hostId host identifier or zero for new host case.
      */
-    onHostFormCancel(hostId): void {
+    onHostFormCancel(hostId: number): void {
         // Find the form matching the form for which the notification has
         // been sent.
         const index = this.openedTabs.findIndex(
@@ -699,7 +718,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      *
      * @param host an instance carrying host information.
      */
-    onHostEditBegin(host): void {
+    onHostEditBegin(host: Host): void {
         let index = this.openedTabs.findIndex(
             (t) => (t.tabType === HostTabType.Host || t.tabType === HostTabType.EditHost) && t.host.id === host.id
         )
@@ -718,7 +737,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
      *
      * @param host pointer to the deleted host.
      */
-    onHostDelete(host): void {
+    onHostDelete(host: Host): void {
         // Try to find a suitable tab by host id.
         const index = this.openedTabs.findIndex((t) => t.host && t.host.id === host.id)
         if (index >= 0) {
