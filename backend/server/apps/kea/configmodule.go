@@ -325,7 +325,10 @@ func (module *ConfigModule) commitHostUpdate(ctx context.Context) (context.Conte
 			return ctx, errors.WithMessagef(err, "could not retrieve local hosts for host %d from the database", update.Recipe.HostAfterUpdate.ID)
 		}
 		// Concatenate the local hosts from the API and the config file.
-		update.Recipe.HostAfterUpdate.LocalHosts = append(localHostsFromAPI, localHostsFromConfig...)
+		localHosts := []dbmodel.LocalHost{}
+		localHosts = append(localHosts, localHostsFromAPI...)
+		localHosts = append(localHosts, localHostsFromConfig...)
+		update.Recipe.HostAfterUpdate.LocalHosts = localHosts
 
 		// Update the host in the database.
 		err = dbmodel.UpdateHostWithLocalHosts(module.manager.GetDB(), update.Recipe.HostAfterUpdate)
