@@ -29,8 +29,20 @@ func (*DHCPOptionSet) calculateHash(options []DHCPOption) string {
 		return ""
 	}
 
+	// Ignore DHCP option name in hash calculations.
+	names := make([]string, len(options))
+	for i := range options {
+		names[i] = options[i].Name
+		options[i].Name = ""
+	}
+
 	// Calculate hash.
 	hash := storkutil.Fnv128(options)
+
+	// Restore names.
+	for i := range options {
+		options[i].Name = names[i]
+	}
 
 	return hash
 }
