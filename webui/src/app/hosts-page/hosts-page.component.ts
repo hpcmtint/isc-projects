@@ -126,7 +126,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
 
         // For each host group the local hosts by app ID.
         this.localHostsGroupedByApp = Object.fromEntries(
-            this.hosts.map((host) => {
+            (hosts || []).map((host) => {
                 if (!host.localHosts) {
                     return [host.id, []]
                 }
@@ -156,7 +156,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
     totalHosts = 0
 
     /**
-     * Indicates if the hosts are beging fetched from the server.
+     * Indicates if the hosts are being fetched from the server.
      */
     hostsLoading = false
 
