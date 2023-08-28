@@ -66,9 +66,9 @@ func (r *RestAPI) convertFromHost(dbHost *dbmodel.Host) *models.Host {
 			ServerHostname: dbLocalHost.ServerHostname,
 			BootFileName:   dbLocalHost.BootFileName,
 			ClientClasses:  dbLocalHost.ClientClasses,
-			OptionsHash:    dbLocalHost.DHCPOptionSetHash,
+			OptionsHash:    dbLocalHost.DHCPOptionSet.Hash,
 		}
-		localHost.Options = r.unflattenDHCPOptions(dbLocalHost.DHCPOptionSet, "", 0)
+		localHost.Options = r.unflattenDHCPOptions(dbLocalHost.DHCPOptionSet.Options, "", 0)
 		host.LocalHosts = append(host.LocalHosts, &localHost)
 	}
 	return host
@@ -116,13 +116,11 @@ func (r *RestAPI) convertToHost(restHost *models.Host) (*dbmodel.Host, error) {
 			ServerHostname: lh.ServerHostname,
 			BootFileName:   lh.BootFileName,
 		}
-		localHost.DHCPOptionSet, err = r.flattenDHCPOptions("", lh.Options, 0)
+		options, err := r.flattenDHCPOptions("", lh.Options, 0)
 		if err != nil {
 			return nil, err
 		}
-		if len(localHost.DHCPOptionSet) > 0 {
-			localHost.DHCPOptionSetHash = storkutil.Fnv128(localHost.DHCPOptionSet)
-		}
+		localHost.DHCPOptionSet.SetDHCPOptions(options)
 		host.SetLocalHost(&localHost)
 	}
 	return host, nil

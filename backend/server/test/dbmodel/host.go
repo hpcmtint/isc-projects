@@ -259,7 +259,7 @@ func AddTestHosts(t *testing.T, db *pg.DB) (hosts []dbmodel.Host, apps []dbmodel
 						"foo",
 						"bar",
 					},
-					DHCPOptionSet: []dbmodel.DHCPOption{
+					DHCPOptionSet: dbmodel.NewDHCPOptionSet([]dbmodel.DHCPOption{
 						{
 							Code: 23,
 							Fields: []dbmodel.DHCPOptionField{
@@ -276,8 +276,7 @@ func AddTestHosts(t *testing.T, db *pg.DB) (hosts []dbmodel.Host, apps []dbmodel
 							Space:    dhcpmodel.DHCPv6OptionSpace,
 							Universe: storkutil.IPv6,
 						},
-					},
-					DHCPOptionSetHash: "hash-value",
+					}),
 				},
 				{
 					DaemonID:   apps[1].Daemons[1].ID,
@@ -286,7 +285,7 @@ func AddTestHosts(t *testing.T, db *pg.DB) (hosts []dbmodel.Host, apps []dbmodel
 						"foo",
 						"bar",
 					},
-					DHCPOptionSet: []dbmodel.DHCPOption{
+					DHCPOptionSet: dbmodel.NewDHCPOptionSet([]dbmodel.DHCPOption{
 						{
 							Code: 23,
 							Fields: []dbmodel.DHCPOptionField{
@@ -303,8 +302,7 @@ func AddTestHosts(t *testing.T, db *pg.DB) (hosts []dbmodel.Host, apps []dbmodel
 							Space:    dhcpmodel.DHCPv6OptionSpace,
 							Universe: storkutil.IPv6,
 						},
-					},
-					DHCPOptionSetHash: "hash-value",
+					}),
 				},
 			},
 		},

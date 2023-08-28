@@ -136,8 +136,8 @@ func (r *RestAPI) subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 					IPAddresses: keaParameters.Relay.IPAddresses,
 				}
 			}
-			localSubnet.KeaConfigSubnetParameters.SubnetLevelParameters.OptionsHash = lsn.DHCPOptionSetHash
-			localSubnet.KeaConfigSubnetParameters.SubnetLevelParameters.Options = r.unflattenDHCPOptions(lsn.DHCPOptionSet, "", 0)
+			localSubnet.KeaConfigSubnetParameters.SubnetLevelParameters.OptionsHash = lsn.DHCPOptionSet.Hash
+			localSubnet.KeaConfigSubnetParameters.SubnetLevelParameters.Options = r.unflattenDHCPOptions(lsn.DHCPOptionSet.Options, "", 0)
 		}
 		// Shared network level Kea DHCP parameters.
 		if sn.SharedNetwork != nil {
@@ -212,8 +212,8 @@ func (r *RestAPI) subnetToRestAPI(sn *dbmodel.Subnet) *models.Subnet {
 					}
 				}
 				if localSharedNetwork := sn.SharedNetwork.GetLocalSharedNetwork(lsn.DaemonID); localSharedNetwork != nil {
-					localSubnet.KeaConfigSubnetParameters.SharedNetworkLevelParameters.OptionsHash = localSharedNetwork.DHCPOptionSetHash
-					localSubnet.KeaConfigSubnetParameters.SharedNetworkLevelParameters.Options = r.unflattenDHCPOptions(localSharedNetwork.DHCPOptionSet, "", 0)
+					localSubnet.KeaConfigSubnetParameters.SharedNetworkLevelParameters.OptionsHash = localSharedNetwork.DHCPOptionSet.Hash
+					localSubnet.KeaConfigSubnetParameters.SharedNetworkLevelParameters.Options = r.unflattenDHCPOptions(localSharedNetwork.DHCPOptionSet.Options, "", 0)
 				}
 			}
 		}
@@ -478,8 +478,8 @@ func (r *RestAPI) sharedNetworkToRestAPI(sn *dbmodel.SharedNetwork) *models.Shar
 					IPAddresses: keaParameters.Relay.IPAddresses,
 				}
 			}
-			localSharedNetwork.KeaConfigSharedNetworkParameters.SharedNetworkLevelParameters.OptionsHash = lsn.DHCPOptionSetHash
-			localSharedNetwork.KeaConfigSharedNetworkParameters.SharedNetworkLevelParameters.Options = r.unflattenDHCPOptions(lsn.DHCPOptionSet, "", 0)
+			localSharedNetwork.KeaConfigSharedNetworkParameters.SharedNetworkLevelParameters.OptionsHash = lsn.DHCPOptionSet.Hash
+			localSharedNetwork.KeaConfigSharedNetworkParameters.SharedNetworkLevelParameters.Options = r.unflattenDHCPOptions(lsn.DHCPOptionSet.Options, "", 0)
 		}
 
 		// Global configuration parameters.

@@ -12,6 +12,38 @@ var (
 	_ dhcpmodel.DHCPOptionFieldAccessor = (*DHCPOptionField)(nil)
 )
 
+// The common part of the structures that contain the DHCP option set.
+type DHCPOptionSet struct {
+	Options []DHCPOption `pg:"dhcp_option_set"`
+	Hash    string       `pg:"dhcp_option_set_hash"`
+}
+
+func NewDHCPOptionSet(options []DHCPOption) DHCPOptionSet {
+	instance := DHCPOptionSet{}
+	instance.SetDHCPOptions(options)
+	return instance
+}
+
+func (*DHCPOptionSet) calculateHash(options []DHCPOption) string {
+	if len(options) == 0 {
+		return ""
+	}
+
+	// Calculate hash.
+	hash := storkutil.Fnv128(options)
+
+	return hash
+}
+
+func (s *DHCPOptionSet) SetDHCPOptions(options []DHCPOption) {
+	s.Options = options
+	s.Hash = s.calculateHash(options)
+}
+
+func (s *DHCPOptionSet) Equals(other *DHCPOptionSet) bool {
+	return s.Hash == other.Hash
+}
+
 // Represents a DHCP option field.
 type DHCPOptionField struct {
 	FieldType string

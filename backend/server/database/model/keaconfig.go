@@ -181,14 +181,17 @@ func convertSubnetFromKea(keaSubnet keaconfig.Subnet, daemon *Daemon, source Hos
 		}
 		convertedSubnet.Hosts = append(convertedSubnet.Hosts, *host)
 	}
+
+	optionSet := []DHCPOption{}
 	for _, d := range keaSubnet.GetDHCPOptions() {
 		option, err := NewDHCPOptionFromKea(d, keaSubnet.GetUniverse(), lookup)
 		if err != nil {
 			return nil, err
 		}
-		convertedSubnet.LocalSubnets[0].DHCPOptionSet = append(convertedSubnet.LocalSubnets[0].DHCPOptionSet, *option)
-		convertedSubnet.LocalSubnets[0].DHCPOptionSetHash = storkutil.Fnv128(convertedSubnet.LocalSubnets[0].DHCPOptionSet)
+		optionSet = append(optionSet, *option)
 	}
+	convertedSubnet.LocalSubnets[0].SetDHCPOptions(optionSet)
+
 	return convertedSubnet, nil
 }
 
@@ -214,14 +217,16 @@ func NewSharedNetworkFromKea(sharedNetwork keaconfig.SharedNetwork, family int, 
 		}
 		newSharedNetwork.Subnets = append(newSharedNetwork.Subnets, *subnet)
 	}
+
+	optionSet := []DHCPOption{}
 	for _, d := range sharedNetwork.GetDHCPOptions() {
 		option, err := NewDHCPOptionFromKea(d, storkutil.IPType(family), lookup)
 		if err != nil {
 			return nil, err
 		}
-		newSharedNetwork.LocalSharedNetworks[0].DHCPOptionSet = append(newSharedNetwork.LocalSharedNetworks[0].DHCPOptionSet, *option)
-		newSharedNetwork.LocalSharedNetworks[0].DHCPOptionSetHash = storkutil.Fnv128(newSharedNetwork.LocalSharedNetworks[0].DHCPOptionSet)
+		optionSet = append(optionSet, *option)
 	}
+	newSharedNetwork.LocalSharedNetworks[0].SetDHCPOptions(optionSet)
 	return newSharedNetwork, nil
 }
 
@@ -302,14 +307,15 @@ func NewHostFromKeaConfigReservation(reservation keaconfig.Reservation, daemon *
 	if daemon.Name == DaemonNameDHCPv6 {
 		universe = storkutil.IPv6
 	}
+	optionSet := []DHCPOption{}
 	for _, d := range reservation.OptionData {
 		hostOption, err := NewDHCPOptionFromKea(d, universe, lookup)
 		if err != nil {
 			return nil, err
 		}
-		lh.DHCPOptionSet = append(lh.DHCPOptionSet, *hostOption)
-		lh.DHCPOptionSetHash = storkutil.Fnv128(lh.DHCPOptionSet)
+		optionSet = append(optionSet, *hostOption)
 	}
+	lh.SetDHCPOptions(optionSet)
 	host.LocalHosts = append(host.LocalHosts, lh)
 	return &host, nil
 }

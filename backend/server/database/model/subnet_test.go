@@ -230,7 +230,7 @@ func TestGetSubnet(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, returned)
 
-	// Make suare that the local subnet and the daemon have been fetched.
+	// Make sure that the local subnet and the daemon have been fetched.
 	require.Equal(t, subnet.Prefix, returned.Prefix)
 	require.Len(t, returned.LocalSubnets, 1)
 	require.NotNil(t, returned.LocalSubnets[0].Daemon)
@@ -843,7 +843,9 @@ func TestCommitNetworksIntoDB(t *testing.T) {
 			},
 			LocalSharedNetworks: []*LocalSharedNetwork{
 				{
-					DHCPOptionSetHash: "xyz",
+					DHCPOptionSet: DHCPOptionSet{
+						Hash: "xyz",
+					},
 				},
 			},
 		},
@@ -1600,21 +1602,21 @@ func TestSubnetGetDHCPOptions(t *testing.T) {
 		LocalSubnets: []*LocalSubnet{
 			{
 				DaemonID: 110,
-				DHCPOptionSet: []DHCPOption{
+				DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 					{
 						Code:  7,
 						Space: dhcpmodel.DHCPv4OptionSpace,
 					},
-				},
+				}),
 			},
 			{
 				DaemonID: 111,
-				DHCPOptionSet: []DHCPOption{
+				DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 					{
 						Code:  8,
 						Space: dhcpmodel.DHCPv4OptionSpace,
 					},
-				},
+				}),
 			},
 		},
 	}

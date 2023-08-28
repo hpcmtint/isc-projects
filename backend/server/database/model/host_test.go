@@ -928,13 +928,13 @@ func TestAddHostLocalHosts(t *testing.T) {
 			"foo",
 			"bar",
 		},
-		DHCPOptionSet: []DHCPOption{
+		DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 			{
 				Code:  254,
 				Name:  "foo",
 				Space: dhcpmodel.DHCPv4OptionSpace,
 			},
-		},
+		}),
 	})
 	err := AddHostLocalHosts(db, &host)
 	require.NoError(t, err)
@@ -994,9 +994,9 @@ func TestAddHostLocalHosts(t *testing.T) {
 
 	// Make sure that DHCP options are returned.
 	require.Len(t, returnedList[0].LocalHosts[0].DHCPOptionSet, 1)
-	require.EqualValues(t, 254, returnedList[0].LocalHosts[0].DHCPOptionSet[0].Code)
-	require.Equal(t, "foo", returnedList[0].LocalHosts[0].DHCPOptionSet[0].Name)
-	require.Equal(t, dhcpmodel.DHCPv4OptionSpace, returnedList[0].LocalHosts[0].DHCPOptionSet[0].Space)
+	require.EqualValues(t, 254, returnedList[0].LocalHosts[0].DHCPOptionSet.Options[0].Code)
+	require.Equal(t, "foo", returnedList[0].LocalHosts[0].DHCPOptionSet.Options[0].Name)
+	require.Equal(t, dhcpmodel.DHCPv4OptionSpace, returnedList[0].LocalHosts[0].DHCPOptionSet.Options[0].Space)
 }
 
 // Test that the host and its local host can be added within a single transaction.
@@ -1691,13 +1691,13 @@ func TestKeaConfigHostInterface(t *testing.T) {
 					"foo",
 					"bar",
 				},
-				DHCPOptionSet: []DHCPOption{
+				DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 					{
 						Code:        123,
 						Encapsulate: "dhcp4",
 						Universe:    storkutil.IPv4,
 					},
-				},
+				}),
 			},
 		},
 	}

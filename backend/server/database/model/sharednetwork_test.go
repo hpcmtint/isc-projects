@@ -78,21 +78,21 @@ func TestSharedNetworkGetDHCPOptions(t *testing.T) {
 		LocalSharedNetworks: []*LocalSharedNetwork{
 			{
 				DaemonID: 110,
-				DHCPOptionSet: []DHCPOption{
+				DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 					{
 						Code:  7,
 						Space: dhcpmodel.DHCPv4OptionSpace,
 					},
-				},
+				}),
 			},
 			{
 				DaemonID: 111,
-				DHCPOptionSet: []DHCPOption{
+				DHCPOptionSet: NewDHCPOptionSet([]DHCPOption{
 					{
 						Code:  8,
 						Space: dhcpmodel.DHCPv4OptionSpace,
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -587,7 +587,7 @@ func TestDeleteDaemonFromSharedNetworks(t *testing.T) {
 	require.NoError(t, err)
 	require.EqualValues(t, 1, n)
 
-	// Get the shared network fromn the database.
+	// Get the shared network from the database.
 	returned, err := GetSharedNetwork(db, network.ID)
 	require.NoError(t, err)
 	require.NotNil(t, returned)
