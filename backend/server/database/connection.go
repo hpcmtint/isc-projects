@@ -87,7 +87,6 @@ func NewPgDBConn(settings *DatabaseSettings) (*PgDB, error) {
 		db.AddQueryHook(DBLogger{})
 	}
 
-	log.Printf("Checking connection to database")
 	// Test connection to database.
 	for tries := 0; tries < 10; tries++ {
 		var pgError pg.Error
@@ -151,8 +150,6 @@ func NewPgDBConn(settings *DatabaseSettings) (*PgDB, error) {
 			minSupportedDatabaseServerVersionPatch,
 		)
 	}
-
-	log.Infof("Connected to database %s", pgParams.Addr)
 
 	return db, nil
 }

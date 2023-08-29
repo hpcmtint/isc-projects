@@ -1078,7 +1078,7 @@ func TestUpdateHostBeginSubmit(t *testing.T) {
 		require.Equal(t, "stork.example.org", lh.ServerHostname)
 
 		// DHCP options
-		require.Len(t, lh.DHCPOptionSet, 1)
+		require.Len(t, lh.DHCPOptionSet.Options, 1)
 		require.True(t, lh.DHCPOptionSet.Options[0].AlwaysSend)
 		require.EqualValues(t, 3, lh.DHCPOptionSet.Options[0].Code)
 		require.Len(t, lh.DHCPOptionSet.Options[0].Fields, 1)
