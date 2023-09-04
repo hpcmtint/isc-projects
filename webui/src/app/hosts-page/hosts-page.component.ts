@@ -168,6 +168,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
         subnetId: null,
         keaSubnetId: null,
         global: null,
+        conflict: null,
     }
 
     /**
@@ -256,8 +257,13 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.loadHosts()
                 },
                 (error) => {
-                    // ToDo: Fix silent error catching
-                    console.log(error)
+                    const msg = getErrorMessage(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Failed to extract query parameters',
+                        detail: 'Failed to extract query parameters: ' + msg,
+                        life: 10000,
+                    })
                 }
             )
         )
@@ -286,7 +292,13 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     }
                 },
                 (error) => {
-                    console.log(error)
+                    const msg = getErrorMessage(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Failed to extract URL parameters',
+                        detail: 'Failed to extract URL parameters: ' + msg,
+                        life: 10000,
+                    })
                 }
             )
         )
@@ -358,15 +370,17 @@ export class HostsPageComponent implements OnInit, OnDestroy {
             filterTextFormatErrors.push('Please specify keaSubnetId as a number (e.g., keaSubnetId:2).')
         }
 
+        const parseBoolean = (val: string) => {
+            val === 'true' ? true : val === 'false' ? false : null
+        }
+
         // Global.
         const g = params.get('global')
-        if (g === 'true') {
-            this.queryParams.global = true
-        } else if (g === 'false') {
-            this.queryParams.global = false
-        } else {
-            this.queryParams.global = null
-        }
+        this.queryParams.global = parseBoolean(g)
+
+        // Conflict.
+        const c = params.get('conflict')
+        this.queryParams.conflict = parseBoolean(c)
 
         this.filterTextFormatErrors = filterTextFormatErrors
     }
@@ -474,10 +488,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                 )
                 .toPromise()
                 .catch((err) => {
-                    let msg = err.statusText
-                    if (err.error && err.error.message) {
-                        msg = err.error.message
-                    }
+                    const msg = getErrorMessage(err)
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Failed to delete configuration transaction',
@@ -556,7 +567,8 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                 params.subnetId,
                 params.keaSubnetId,
                 params.text,
-                params.global
+                params.global,
+                params.conflict
             )
             .toPromise()
             .then((data) => {
@@ -639,7 +651,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
             const queryParams = extractKeyValsAndPrepareQueryParams(
                 this.filterText,
                 ['appId', 'subnetId', 'keaSubnetId'],
-                ['global']
+                ['global', 'conflict']
             )
             this.router.navigate(['/dhcp/hosts'], {
                 queryParams,
