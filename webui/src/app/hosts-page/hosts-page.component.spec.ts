@@ -1286,15 +1286,15 @@ describe('HostsPageComponent', () => {
             {
                 appId: 1,
                 daemonId: 1,
-                nextServer: 'foo'
+                nextServer: 'foo',
             },
             {
                 appId: 1,
                 daemonId: 2,
-                nextServer: 'bar'
+                nextServer: 'bar',
             },
         ] as LocalHost[]
-        
+
         let state = component.getLocalHostsState(localHosts)
         expect(state).toBe('conflict')
 
@@ -1303,13 +1303,13 @@ describe('HostsPageComponent', () => {
             {
                 appId: 1,
                 daemonId: 1,
-                nextServer: 'foo'
+                nextServer: 'foo',
             },
             {
                 appId: 1,
                 daemonId: 2,
-                nextServer: 'foo'
-            }
+                nextServer: 'foo',
+            },
         ] as LocalHost[]
 
         state = component.getLocalHostsState(localHosts)
@@ -1320,8 +1320,8 @@ describe('HostsPageComponent', () => {
             {
                 appId: 1,
                 daemonId: 1,
-                nextServer: 'foo'
-            }
+                nextServer: 'foo',
+            },
         ] as LocalHost[]
 
         state = component.getLocalHostsState(localHosts)
