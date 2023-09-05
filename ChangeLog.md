@@ -1,3 +1,9 @@
+* 323 [func] slawek
+
+    Stork now detects a given daemon's inconsistent or duplicated DHCP data in
+    different host data sources and displays them as labels on the host list.
+    (Gitlab #977)
+
 Stork 1.12.0 released on 2023-08-02.
 
 * 322 [func] slawek
