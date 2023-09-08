@@ -1,3 +1,8 @@
+* 324 [bug] slawek
+
+    Fixed the minor filtration issues on hosts and shared networks pages.
+    (Gitlab #1140)
+
 * 323 [build] razvan
 
     Updated Kea version to 2.4.0 in demo and system tests.
