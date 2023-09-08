@@ -1,3 +1,8 @@
+* 324 [func] slawek
+
+    Links to IPv6 shared networks on the dashboard.
+    (Gitlab #1133)
+
 * 323 [build] razvan
 
     Updated Kea version to 2.4.0 in demo and system tests.
