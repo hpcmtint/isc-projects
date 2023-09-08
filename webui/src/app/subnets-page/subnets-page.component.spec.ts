@@ -25,13 +25,7 @@ import { MessageModule } from 'primeng/message'
 import { HumanCountPipe } from '../pipes/human-count.pipe'
 import { TabMenuModule } from 'primeng/tabmenu'
 import { EntityLinkComponent } from '../entity-link/entity-link.component'
-
-class MockParamMap {
-    /** Always returns null. */
-    get(name: string): string | null {
-        return null
-    }
-}
+import { MockParamMap } from '../utils'
 
 describe('SubnetsPageComponent', () => {
     let component: SubnetsPageComponent
