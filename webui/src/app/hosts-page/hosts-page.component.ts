@@ -108,7 +108,7 @@ export class HostsPageComponent implements OnInit, OnDestroy {
     totalHosts = 0
 
     /**
-     * Indicates if the hosts are beging fetched from the server.
+     * Indicates if the hosts are being fetched from the server.
      */
     hostsLoading = false
 
@@ -208,8 +208,13 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     this.loadHosts()
                 },
                 (error) => {
-                    // ToDo: Fix silent error catching
-                    console.log(error)
+                    const msg = getErrorMessage(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process the query params',
+                        detail: 'Error processing the query params: ' + msg,
+                        life: 10000,
+                    })
                 }
             )
         )
@@ -238,7 +243,13 @@ export class HostsPageComponent implements OnInit, OnDestroy {
                     }
                 },
                 (error) => {
-                    console.log(error)
+                    const msg = getErrorMessage(error)
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Cannot process the URL params',
+                        detail: 'Error processing the URL params: ' + msg,
+                        life: 10000,
+                    })
                 }
             )
         )
