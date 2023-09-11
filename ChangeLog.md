@@ -1,3 +1,8 @@
+* 324 [bug] slawek
+
+    Fix displaying statistics of the IPv4 shared networks.
+    (Gitlab #1135)
+
 * 323 [build] razvan
 
     Updated Kea version to 2.4.0 in demo and system tests.
