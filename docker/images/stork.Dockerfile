@@ -255,28 +255,28 @@ ARG KEA_LEGACY_PKGS
 RUN wget --no-verbose -O- https://dl.cloudsmith.io/${KEA_REPO}/cfg/setup/bash.deb.sh | bash \
         && apt-get update \
         && if [ ${KEA_LEGACY_PKGS} == "true" ]; then \
-        apt-get install \
-        --no-install-recommends \
-        -y \
-        python3-isc-kea-connector=${KEA_VERSION} \
-        isc-kea-ctrl-agent=${KEA_VERSION} \
-        isc-kea-dhcp4-server=${KEA_VERSION} \
-        isc-kea-dhcp6-server=${KEA_VERSION} \
-        isc-kea-admin=${KEA_VERSION} \
-        isc-kea-common=${KEA_VERSION} \
-        ;\
+                apt-get install \
+                --no-install-recommends \
+                -y \
+                python3-isc-kea-connector=${KEA_VERSION} \
+                isc-kea-ctrl-agent=${KEA_VERSION} \
+                isc-kea-dhcp4-server=${KEA_VERSION} \
+                isc-kea-dhcp6-server=${KEA_VERSION} \
+                isc-kea-admin=${KEA_VERSION} \
+                isc-kea-common=${KEA_VERSION} \
+                ;\
         else \
         apt-get install \
-        --no-install-recommends \
-        -y \
-        isc-kea-ctrl-agent=${KEA_VERSION} \
-        isc-kea-dhcp4=${KEA_VERSION} \
-        isc-kea-dhcp6=${KEA_VERSION} \
-        isc-kea-admin=${KEA_VERSION} \
-        isc-kea-common=${KEA_VERSION} \
-        isc-kea-hooks=${KEA_VERSION} \
-        isc-kea-perfdhcp=${KEA_VERSION} \
-        ;\
+                --no-install-recommends \
+                -y \
+                isc-kea-ctrl-agent=${KEA_VERSION} \
+                isc-kea-dhcp4=${KEA_VERSION} \
+                isc-kea-dhcp6=${KEA_VERSION} \
+                isc-kea-admin=${KEA_VERSION} \
+                isc-kea-common=${KEA_VERSION} \
+                isc-kea-hooks=${KEA_VERSION} \
+                isc-kea-perfdhcp=${KEA_VERSION} \
+                ;\
         fi \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/* \
