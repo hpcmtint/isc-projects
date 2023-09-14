@@ -255,28 +255,28 @@ ARG KEA_LEGACY_PKGS
 RUN wget --no-verbose -O- https://dl.cloudsmith.io/${KEA_REPO}/cfg/setup/bash.deb.sh | bash \
         && apt-get update \
         && if [ ${KEA_LEGACY_PKGS} == "true" ]; then \
-                apt-get install \
-                --no-install-recommends \
-                -y \
-                python3-isc-kea-connector=${KEA_VERSION} \
-                isc-kea-ctrl-agent=${KEA_VERSION} \
-                isc-kea-dhcp4-server=${KEA_VERSION} \
-                isc-kea-dhcp6-server=${KEA_VERSION} \
-                isc-kea-admin=${KEA_VERSION} \
-                isc-kea-common=${KEA_VERSION} \
-                ;\
+        apt-get install \
+        --no-install-recommends \
+        -y \
+        python3-isc-kea-connector=${KEA_VERSION} \
+        isc-kea-ctrl-agent=${KEA_VERSION} \
+        isc-kea-dhcp4-server=${KEA_VERSION} \
+        isc-kea-dhcp6-server=${KEA_VERSION} \
+        isc-kea-admin=${KEA_VERSION} \
+        isc-kea-common=${KEA_VERSION} \
+        ;\
         else \
-                apt-get install \
-                --no-install-recommends \
-                -y \
-                isc-kea-ctrl-agent=${KEA_VERSION} \
-                isc-kea-dhcp4=${KEA_VERSION} \
-                isc-kea-dhcp6=${KEA_VERSION} \
-                isc-kea-admin=${KEA_VERSION} \
-                isc-kea-common=${KEA_VERSION} \
-                isc-kea-hooks=${KEA_VERSION} \
-                isc-kea-perfdhcp=${KEA_VERSION} \
-                ;\
+        apt-get install \
+        --no-install-recommends \
+        -y \
+        isc-kea-ctrl-agent=${KEA_VERSION} \
+        isc-kea-dhcp4=${KEA_VERSION} \
+        isc-kea-dhcp6=${KEA_VERSION} \
+        isc-kea-admin=${KEA_VERSION} \
+        isc-kea-common=${KEA_VERSION} \
+        isc-kea-hooks=${KEA_VERSION} \
+        isc-kea-perfdhcp=${KEA_VERSION} \
+        ;\
         fi \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/* \
@@ -378,6 +378,22 @@ HEALTHCHECK CMD [ "supervisorctl", "status" ]
 # Stork Agent: /etc/stork
 # Bind9 config: /etc/bind/named.conf
 # Bind9 database: /etc/bind/db.test
+
+FROM bind AS bind-chroot
+# Chroot must be called by the root user.
+USER root
+# Prepare a directory for the chroot environment.
+RUN mkdir -p /chroot/etc \
+        # Copy the configuration files.
+        && cp -R -p /etc/bind /chroot/etc/bind \
+        && rm -rf /etc/bind \
+        # Create the necessary directories.
+        && mkdir -p /chroot/var/cache/bind \
+        && chown bind:bind /chroot/var/cache/bind \
+        && mkdir -p /chroot/run/named \
+        && chown bind:bind /chroot/run/named \
+        && mkdir -p /chroot/usr/share \
+        && cp -R -p /usr/share/dns /chroot/usr/share
 
 #################
 ### Packaging ###
