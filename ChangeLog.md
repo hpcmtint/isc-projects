@@ -1,3 +1,8 @@
+* 324 [func] slawek
+
+    Added a support for BIND 9 running in the chroot mode.
+    (Gitlab #974)
+
 * 323 [build] razvan
 
     Updated Kea version to 2.4.0 in demo and system tests.
