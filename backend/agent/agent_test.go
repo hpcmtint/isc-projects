@@ -413,6 +413,8 @@ func TestForwardToNamedStatsNoNamed(t *testing.T) {
 func TestForwardRndcCommandSuccess(t *testing.T) {
 	sa, ctx := setupAgentTest()
 	executor := newTestCommandExecutorDefault()
+	rndcClient := NewRndcClient(executor)
+	rndcClient.BaseCommand = []string{"/rndc"}
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
@@ -421,7 +423,7 @@ func TestForwardRndcCommandSuccess(t *testing.T) {
 			Type:         AppTypeBind9,
 			AccessPoints: accessPoints,
 		},
-		RndcClient: NewRndcClient(executor),
+		RndcClient: rndcClient,
 	})
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
@@ -469,6 +471,8 @@ func TestForwardRndcCommandError(t *testing.T) {
 	sa, ctx := setupAgentTest()
 	executor := newTestCommandExecutorDefault().
 		setRndcStatus("", errors.Errorf("mocking an error"))
+	rndcClient := NewRndcClient(executor)
+	rndcClient.BaseCommand = []string{"/rndc"}
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
@@ -477,7 +481,7 @@ func TestForwardRndcCommandError(t *testing.T) {
 			Type:         AppTypeBind9,
 			AccessPoints: accessPoints,
 		},
-		RndcClient: NewRndcClient(executor),
+		RndcClient: rndcClient,
 	})
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
@@ -522,6 +526,8 @@ func TestForwardRndcCommandNoApp(t *testing.T) {
 func TestForwardRndcCommandEmpty(t *testing.T) {
 	sa, ctx := setupAgentTest()
 	executor := newTestCommandExecutorDefault().setRndcStatus("", nil)
+	rndcClient := NewRndcClient(executor)
+	rndcClient.BaseCommand = []string{"/rndc"}
 
 	accessPoints := makeAccessPoint(AccessPointControl, "127.0.0.1", "_", 1234, false)
 	var apps []App
@@ -530,7 +536,7 @@ func TestForwardRndcCommandEmpty(t *testing.T) {
 			Type:         AppTypeBind9,
 			AccessPoints: accessPoints,
 		},
-		RndcClient: NewRndcClient(executor),
+		RndcClient: rndcClient,
 	})
 	fam, _ := sa.AppMonitor.(*FakeAppMonitor)
 	fam.Apps = apps
