@@ -98,12 +98,21 @@ namespace :release do
         # Read the Changelog file content.
         changelog_content = File.read(changelog_file)
 
+        # Entry header pattern for Changelog.md (full header):
+        # It may start with the optional asterisk to mark the change is not
+        # backward compatible. Then there is the entry number, category and
+        # author.
+        #
+        # Matching group: entry number.
+        released_header_pattern = /^\s*(?:\*\s+)?(\d+)\s+\[\w+\]\s+\w+\s*$/
+
         # Get the start number of the entries by iterating over the Changelog lines.
         start = 0
         changelog_content.each_line do |line|
-            # Seach for first entry header. Skip the release header.
-            if line.start_with? '*'
-                start = Integer(line.split(' ')[1])
+            # Search for first entry header. Skip the release header.
+            m = released_header_pattern.match(line)
+            if m
+                start = Integer(m[1])
                 break
             end
         end
@@ -153,8 +162,20 @@ namespace :release do
             # Increment the start number.
             start += 1
 
-            # Prepend the entry with the number.
-            entry_content = "* #{start} #{entry_content}"
+            # Check if the entry is marked as backward incompatible.
+            is_backward_incompatible = entry_content.start_with? '*'
+
+            # Prepend the entry with the number. Keep the asterisk if present.
+            prepend_component = ''
+            if is_backward_incompatible
+                prepend_component = '* '
+                # Trim the backward incompatible mark from the entry content.
+                entry_content = entry_content[1..-1]
+                # Trim whitespace from the beginning.
+                entry_content.strip!
+            end
+            prepend_component = "#{prepend_component}#{start}"
+            entry_content = "#{prepend_component} #{entry_content}"
 
             # Append the entry to the list.
             entries.push(entry_content)
