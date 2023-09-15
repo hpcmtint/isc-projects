@@ -156,7 +156,7 @@ func TestReadKeaConfigOk(t *testing.T) {
 }
 
 func TestDetectApps(t *testing.T) {
-	am := &appMonitor{}
+	am := &appMonitor{visitedProcesses: map[int32]int64{}}
 	hm := NewHookManager()
 	settings := cli.NewContext(nil, flag.NewFlagSet("", 0), nil)
 	httpClient, _ := NewHTTPClient(false)
@@ -166,7 +166,7 @@ func TestDetectApps(t *testing.T) {
 
 // Test that detectAllowedLogs does not panic when Kea server is unreachable.
 func TestDetectAllowedLogsKeaUnreachable(t *testing.T) {
-	am := &appMonitor{}
+	am := &appMonitor{visitedProcesses: map[int32]int64{}}
 	httpClient, _ := NewHTTPClient(false)
 	am.apps = append(am.apps, &KeaApp{
 		BaseApp: BaseApp{
