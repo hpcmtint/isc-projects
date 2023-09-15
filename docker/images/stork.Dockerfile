@@ -266,7 +266,7 @@ RUN wget --no-verbose -O- https://dl.cloudsmith.io/${KEA_REPO}/cfg/setup/bash.de
                 isc-kea-common=${KEA_VERSION} \
                 ;\
         else \
-        apt-get install \
+                apt-get install \
                 --no-install-recommends \
                 -y \
                 isc-kea-ctrl-agent=${KEA_VERSION} \
